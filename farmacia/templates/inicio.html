@@ -1,14 +1,90 @@
+{% load static %}
+
 <!DOCTYPE html>
 
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title> FARMA PRICEY </title>
+
+    <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
+
 </head>
 <body>
 
-    <h1>FARMA PRICEY</h1>
-    <p>Comparador de precios de farmacias</p>
+    <!-- Encabezado -->
+    
+    <header>
+        <div class="logo">
+            <h1>FARMA PRICEY</h1>
+        </div>
 
-</body>
+        <nav>
+            <a href="#">Inicio</a>
+            <a href="#">Farmacia</a>
+            <a href="#">Medicamentos</a>
+            <a href="#">Inicio sesión</a>
+        </nav>
+    </header>
+    
+    <!-- Contenido principal -->
+    <main>
+
+        <!-- buscador -->
+         <section class="buscador">
+            <h2>Encuentra el mejor precio para tus medicamentos</h2>
+
+            <p>Compara precios y disponibildad en distintas farmacias</p>
+
+            <form>
+                <input type="text" placeholder="Buscar medicamento...">
+                <button type="submit"> Buscar </button>
+            </form>
+         </section>
+
+         <!-- medicamentos populares o algo asi -->
+          <section class="populares">
+            <h2>Medicamentos populares</h2>
+
+            <div class="medicamentos"> 
+
+                <div class="medicamento">
+                    <h3>Paracetamol</h3>
+                    <p>Desde $1.990</p>
+                    <button>Comparar precios</button>
+                </div>
+
+                <div class="medicamento">
+                    <h3>Ibuprofeno</h3>
+                    <p>Desde $2.490</p>
+                    <button>Comparar precios</button>
+                </div>
+
+                <div class="medicamento">
+                    <h3>Loratadina</h3>
+                    <p>Desde $1.790</p>
+                    <button>Comparar precios</button>
+                </div>
+
+            </div>
+          </section>
+          <!-- farmacias cercanas -->
+          <section class="farmacias">
+            <h2> Farmacias cercanas</h2>
+
+            <div class="mapa">
+                <p>aquí se tiene mostrar el mapa, o quizas no se si lo quieren cambiar jaja lol</p>
+            </div>
+          </section>
+    </main>
+    <!-- pata de pagina mmmm pata -->
+     <footer>
+        <p>© 2026 FARMA PRICEY</p>
+     </footer>
+
+    <script src="{% static 'farmacia/js/script.js' %}"></script>
+
+</header>
 </html>
