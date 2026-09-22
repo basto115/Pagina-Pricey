@@ -75,8 +75,37 @@
             </div>
           </section>
           <!-- farmacias cercanas -->
+           <!-- Datos ficticios hasta que se implemente el mapa (soy el mapa, soy el mapa) -->
           <section class="farmacias">
-            <h2> Farmacias cercanas</h2>
+            <h2>Farmacias cercanas</h2>
+
+            <div class="farmacias-contenido">
+
+                <div class="lista-farmacias">
+
+                    <div class="farmacia">
+                        <h3>Farmacia Cruz Verde</h3>
+                        <p>A 1,2km de distancia</p>
+                        <p>Abierta hasta las 21:00</p>
+                        <button>Ver ubicación</button>
+                    </div>
+
+                    <div class="farmacia">
+                        <h3>Farmacias Ahumada</h3>
+                        <p>📍 A 2,1 km de distancia</p>
+                        <p>Abierta hasta las 20:30</p>
+                        <button>Ver ubicación</button>
+                    </div>
+
+                    <div class="farmacia">
+                        <h3>Salcobrand</h3>
+                        <p>📍 A 2,8 km de distancia</p>
+                        <p>Abierta hasta las 21:00</p>
+                        <button>Ver ubicación</button>
+                    </div>
+
+                </div>
+            </div>
 
             <div class="mapa">
                 <p>aquí se tiene mostrar el mapa, o quizas no se si lo quieren cambiar jaja lol</p>
@@ -85,7 +114,29 @@
     </main>
     <!-- pata de pagina mmmm pata -->
      <footer>
-        <p>© 2026 FARMA PRICEY</p>
+        <div class="footer-contenido">
+
+            <div>
+                <h3>FARMA PRICEY</h3>
+                <p>Compara precios de medicamentos de forma sencilla</p>
+            </div>
+
+            <div>
+                <h4>Enlaces</h4>
+                <a href="#">Inicio</a>
+                <a href="#">Medicamentos</a>
+                <a href="#">Farmacias</a>
+            </div>
+
+            <div>
+                <h4>Contacto</h4>
+                <p>contacto@farmapricey.cl</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 FARMA PRICEY. Todos los derechos reservados.</p>
+        </div>
+        
      </footer>
 
     <script src="{% static 'farmacia/js/script.js' %}"></script>
