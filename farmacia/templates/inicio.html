@@ -45,10 +45,14 @@
          </section>
 
          <!-- medicamentos populares o algo asi -->
+
           <!-- Los precios son provisionales, 
            parte de esta sección se deberia borrar (o modificar) 
            cuando ya tengamos la bd y el scrapping funcionando :P-->
 
+           <!-- ahora si tiene una bd, pero no es la definitiva ni el scrapping
+            pero ya funca y coloca solo los medicamentos -->
+        
           <section class="populares">
             <h2>Medicamentos populares</h2>
 
@@ -61,15 +65,35 @@
 
                         <p>{{ medicamento.principio_activo }}</p>
 
+                        {% for producto in medicamento.productos.all %}
+
+                            <p><strong> {{ producto.nombre }} </strong></p>
+
+                            {% for precio in producto.precios.all %}
+
+                                <p> {{ precio.farmacia.nombre }}:
+                                    ${{ precio.precio }} </p>
+
+                            {% empty %}
+                            
+                                <p>No hay precios disponibles</p>
+
+                            {% endfor %}
+
+                        {% empty %}
+                            <p> No hay productos asociados </p>
+                        
+                        {% endfor %}
+
                         <button> Ver medicamento </button>
+
                     </div>
 
                 {% empty %}
                     <p>No hay medicamentos disponibles</p>
                 {% endfor %}
-                
             </div>
-
+            <!-- despues hay que cambiar los precios, para que quede mas mejor -->
           </section>
 
           <!-- farmacias cercanas -->
