@@ -184,3 +184,96 @@ footer {
     margin: 0 auto;
     gap: 40px;
 }
+
+.footer-contenido h3,
+.footer-contenido h4 {
+    margin-bottom: 15px;
+}
+
+.footer-contenido p {
+    margin-bottom: 8px;
+}
+
+.footer-contenido a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 8px;
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid #555;
+    margin-top: 30px;
+    padding-top: 20px;
+}
+
+button {
+    background-color: #2c7be5;
+    color: white;
+    transition: 0.2s;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+/* esto es para que se adapte a celular o a una pantalla mas chica*/
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .buscador {
+        padding: 50px 20px;
+    }
+
+    .buscador h2 {
+        font-size: 25px;
+    }
+
+    .buscador form {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .buscador input {
+        width: 100%;
+        max-width: 450px;
+    }
+
+    .medicamentos {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .medicamento {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .farmacias {
+        padding: 40px 20px;
+    }
+
+    .farmacias-contenido {
+        flex-direction: column;
+    }
+
+    .lista-farmacias,
+    .mapa {
+        width: 100%;
+    }
+
+    .footer-contenido {
+        flex-direction: column;
+        text-align: center;
+    }
+}
