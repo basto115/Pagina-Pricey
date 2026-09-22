@@ -53,27 +53,25 @@
             <h2>Medicamentos populares</h2>
 
             <div class="medicamentos"> 
+                
+                {% for medicamento in medicamentos %}
 
-                <div class="medicamento">
-                    <h3>Paracetamol</h3>
-                    <p>Desde $1.990</p>
-                    <button>Comparar precios</button>
-                </div>
+                    <div class="medicamento">
+                        <h3>{{ medicamento.nombre }}</h3>
 
-                <div class="medicamento">
-                    <h3>Ibuprofeno</h3>
-                    <p>Desde $2.490</p>
-                    <button>Comparar precios</button>
-                </div>
+                        <p>{{ medicamento.principio_activo }}</p>
 
-                <div class="medicamento">
-                    <h3>Loratadina</h3>
-                    <p>Desde $1.790</p>
-                    <button>Comparar precios</button>
-                </div>
+                        <button> Ver medicamento </button>
+                    </div>
 
+                {% empty %}
+                    <p>No hay medicamentos disponibles</p>
+                {% endfor %}
+                
             </div>
+
           </section>
+
           <!-- farmacias cercanas -->
            <!-- Datos ficticios hasta que se implemente el mapa (soy el mapa, soy el mapa) -->
           <section class="farmacias">
