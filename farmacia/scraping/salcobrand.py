@@ -4,9 +4,14 @@ from bs4 import BeautifulSoup
 
 def limpiar_precio(valor):
     """Convierte un precio como '$1.399' en número entero."""
+    
+    valor = str(valor)
+    
     valor = valor.replace("$", "")
-    valor = valor.replace("$", "")
-    valor = valor.replace("$", "")
+    valor = valor.replace(".", "")
+    valor = valor.replace("", "")
+    valor = valor.strip()
+    
     return int(valor)
 
 def obtener_producto(url):
@@ -87,12 +92,28 @@ def obtener_producto(url):
     if coincidencia_sku:
         sku = coincidencia_sku.group(1)
         
+    #disponibilidad
+    disponibilidad = False
+    
+    palabras_disponibilidad = [
+        "Agregar al carro",
+        "Agregar al carrito",
+        "Comprar",
+        "Añadir al carro"
+    ]
+    
+    for palabra in palabras_disponibilidad:
+        if palabra.lower() in texto.lower():
+            disponible = True
+            break
+        
     producto = {
         "nombre": nombre,
         "principio_activo": principio_activo,
         "precio": precio,
         "precio_internet": precio_internet,
         "sku": sku,
+        "disponible": disponible,
         "url": url
     }
     
@@ -116,4 +137,5 @@ if __name__ == "__main__":
     print("Precio farmacia:", producto["precio"])
     print("Precio Internet:", producto["precio_internet"])
     print("SKU:", producto["sku"])
+    print("Disponible:", producto["disponible"])
     print("URL:", producto["url"])
