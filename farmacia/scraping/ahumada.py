@@ -9,7 +9,7 @@ def limpiar_precio(valor):
     
     valor = valor.replace("$", "")
     valor = valor.replace(".", "")
-    valor = valor.replace("", "")
+    valor = valor.replace(" ", "")
     valor = valor.strip()
     
     return int(valor)

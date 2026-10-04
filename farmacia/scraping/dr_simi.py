@@ -126,7 +126,7 @@ def obtener_producto(url):
 
     producto = {
         "nombre": nombre,
-        "laboratorio": laboratorio,
+        "principio_activo": "",
         "precio": precio,
         "precio_normal": None,
         "disponible": disponible,

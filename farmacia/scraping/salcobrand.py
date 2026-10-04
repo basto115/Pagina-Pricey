@@ -111,8 +111,7 @@ def obtener_producto(url):
         "nombre": nombre,
         "principio_activo": principio_activo,
         "precio": precio,
-        "precio_internet": precio_internet,
-        "sku": sku,
+        "precio_normal": precio_internet,
         "disponible": disponible,
         "url": url
     }

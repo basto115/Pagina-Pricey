@@ -31,7 +31,7 @@ class Farmacia(models.Model):
         return self.nombre
 
 class Producto(models.Model):
-    Medicamento = models.ForeignKey(
+    medicamento = models.ForeignKey(
         Medicamento,
         on_delete=models.CASCADE,
         related_name="productos"

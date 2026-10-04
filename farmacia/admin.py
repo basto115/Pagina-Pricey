@@ -1,6 +1,12 @@
 from django.contrib import admin
-from .models import Medicamento, Farmacia, Producto, Precio
-# Register your models here.
+
+from .models import (
+    Medicamento,
+    Farmacia,
+    Producto,
+    Precio
+)
+
 
 admin.site.register(Medicamento)
 admin.site.register(Farmacia)
