@@ -1,0 +1,119 @@
+import re
+
+def limpiar_texto(texto):
+    #limpia espacios y normaliza el texto
+
+    if texto is None:
+        return ""
+    
+    texto = str(texto)
+    texto = texto.strip()
+    texto = re.sub(r"\s+", " ", texto)
+
+    return texto
+
+def normalizar_nombre(nombre):
+    #para normalizar el nombre del prod
+
+    nombre = limpiar_texto(nombre)
+
+    if not nombre:
+        return ""
+
+    return nombre
+
+def normalizar_principio_activo(principio_activo):
+
+    principio_activo = limpiar_texto(principio_activo)
+
+    if not principio_activo:
+        return ""
+    
+    return principio_activo.capitalize()
+
+def normalizar_precio(precio):
+
+    #Convierte los precios "1.490, $1.490, 1490, $1490" en 1490
+
+    if precio is None:
+        return None
+
+    precio = str(precio)
+
+    precio = precio.replace("$", "")
+    precio = precio.replace(".", "")
+    precio = precio.replace(" ", "")
+    precio = precio.strip()
+
+    if not precio:
+        return None
+    
+    try:
+        return int(precio)
+    except ValueError:
+        return None
+
+def normalizar_disponibilidad(disponible):
+    #convierte la disponibilidad en true o false
+
+    if isinstance(disponible, bool):
+        return disponible
+    
+    if disponible is None:
+        return False
+    
+    disponible = str(disponible).strip().lower()
+
+    valores_positivos = [
+        "true",
+        "1",
+        "si",
+        "sí",
+        "disponible",
+        "disponible online",
+        "comprar",
+        "agregar al carro",
+        "agregar al carrito",
+    ]
+
+    return disponible in valores_positivos
+
+def normalizar_url(url):
+    
+    if not url:
+        return ""
+    
+    return str(url).strip()
+
+def normalizar_producto(producto, farmacia):
+    #recibe la informacion de un scraper y la transforma en un formato común
+
+    producto_normalizado = {
+        "nombre": normalizar_nombre(
+            producto.get("nombre")
+        ),
+
+        "principio_activo": normalizar_principio_activo(
+            producto.get("principio_activo")
+        ),
+
+        "precio" : normalizar_precio(
+            producto.get("precio")
+        ),
+
+        "precio_normal": normalizar_precio(
+            producto.get("precio_normal")
+        ),
+
+        "disponible" : normalizar_disponibilidad(
+            producto.get("disponible")
+        ),
+
+        "url" : normalizar_url(
+            producto.get("url")
+        ),
+
+        "farmacia" : farmacia,
+    }
+
+    return producto_normalizado
