@@ -117,3 +117,24 @@ def normalizar_producto(producto, farmacia):
     }
 
     return producto_normalizado
+
+if __name__ == "__main__":
+
+    producto_prueba = {
+        "nombre": "  Paracetamol 500 mg x 16 Comprimidos ",
+        "principio_activo": "PARACETAMOL",
+        "precio": "618",
+        "precio_normal": "1.309",
+        "disponible": True,
+        "url": " https://www.farmaciasahumada.cl/ "
+    }
+
+    resultado = normalizar_producto(
+        producto_prueba,
+        "Farmacia Ahumada"
+    )
+
+    print("\n producto normalizao")
+
+    for campo, valor in resultado.items():
+        print(f"{campo}: {valor}")
