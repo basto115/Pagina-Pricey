@@ -1,20 +1,82 @@
 import re
 import json
+import time
 import requests
+
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+
+
+BASE_URL = "https://www.drsimi.cl"
 
 
 def limpiar_precio(valor):
     """Convierte un precio como '$1.990' en número."""
+    if valor is None:
+        return None
+
+    valor = str(valor)
     valor = valor.replace("$", "")
     valor = valor.replace(".", "")
     valor = valor.replace(" ", "")
-    return int(valor)
+    valor = valor.strip()
+
+    try:
+        return int(valor)
+    except ValueError:
+        return None
+
+
+def obtener_datos_json_ld(soup):
+    """
+    Busca los datos del producto dentro de JSON-LD.
+    """
+    scripts = soup.find_all(
+        "script",
+        type="application/ld+json"
+    )
+
+    for script in scripts:
+        try:
+            datos = json.loads(script.get_text())
+
+            # Puede venir como lista
+            if isinstance(datos, list):
+                for item in datos:
+                    if isinstance(item, dict) and item.get("@type") == "Product":
+                        return item
+
+            # Puede venir como diccionario
+            if isinstance(datos, dict):
+                if datos.get("@type") == "Product":
+                    return datos
+
+                # Algunas páginas utilizan @graph
+                graph = datos.get("@graph", [])
+
+                for item in graph:
+                    if isinstance(item, dict) and item.get("@type") == "Product":
+                        return item
+
+        except (json.JSONDecodeError, TypeError):
+            continue
+
+    return None
 
 
 def obtener_producto(url):
+    """
+    Entra a la página individual de un producto
+    y extrae su información.
+    """
+
     headers = {
-        "User-Agent": "Mozilla/5.0"
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 "
+            "(KHTML, like Gecko) "
+            "Chrome/155.0.0.0 Safari/537.36"
+        )
     }
 
     respuesta = requests.get(
@@ -25,110 +87,180 @@ def obtener_producto(url):
 
     respuesta.raise_for_status()
 
-    soup = BeautifulSoup(respuesta.text, "html.parser")
+    soup = BeautifulSoup(
+        respuesta.text,
+        "html.parser"
+    )
 
-    texto = soup.get_text(" ", strip=True)
+    texto = soup.get_text(
+        " ",
+        strip=True
+    )
 
-    # -------------------------
-    # Nombre del producto
-    # -------------------------
+    # ---------------------------------
+    # JSON-LD
+    # ---------------------------------
+
+    datos_producto = obtener_datos_json_ld(soup)
+
+    # ---------------------------------
+    # Nombre
+    # ---------------------------------
 
     nombre = ""
 
-    scripts = soup.find_all(
-        "script",
-        type="application/ld+json"
-    )
-
-    datos_producto = None
-
-    for script in scripts:
-        try:
-            datos = json.loads(script.get_text())
-
-            if datos.get("@type") == "Product":
-                datos_producto = datos
-                break
-
-        except json.JSONDecodeError:
-            continue
-
     if datos_producto:
-        nombre = datos_producto.get("name", "")
+        nombre = datos_producto.get(
+            "name",
+            ""
+        )
 
-    # Si no se encuentra en JSON-LD, usamos el título
     if not nombre and soup.title:
-        nombre = soup.title.get_text(strip=True)
+        nombre = soup.title.get_text(
+            strip=True
+        )
 
-    # -------------------------
-    # Laboratorio
-    # -------------------------
+    # ---------------------------------
+    # Laboratorio / Marca
+    # ---------------------------------
 
     laboratorio = ""
 
     if datos_producto:
-        marca = datos_producto.get("brand")
+
+        marca = datos_producto.get(
+            "brand"
+        )
 
         if isinstance(marca, dict):
-            laboratorio = marca.get("name", "")
+            laboratorio = marca.get(
+                "name",
+                ""
+            )
 
-    # -------------------------
+        elif isinstance(marca, str):
+            laboratorio = marca
+
+    # ---------------------------------
     # Precio
-    # -------------------------
+    # ---------------------------------
 
     precio = None
+    precio_normal = None
 
     if datos_producto:
-        offers = datos_producto.get("offers", {})
 
-        if "lowPrice" in offers:
-            precio = offers["lowPrice"]
+        offers = datos_producto.get(
+            "offers",
+            {}
+        )
 
-    # Si no se encuentra en JSON-LD, buscamos en el texto
+        # Puede ser diccionario
+        if isinstance(offers, dict):
+
+            precio = offers.get(
+                "price"
+            )
+
+            if precio is None:
+                precio = offers.get(
+                    "lowPrice"
+                )
+
+        # Puede ser lista
+        elif isinstance(offers, list):
+
+            if offers:
+
+                primera_oferta = offers[0]
+
+                precio = primera_oferta.get(
+                    "price"
+                )
+
+    # Convertir precio
+    if precio is not None:
+        try:
+            precio = int(float(precio))
+        except (ValueError, TypeError):
+            precio = limpiar_precio(precio)
+
+    # ---------------------------------
+    # Precio desde texto
+    # ---------------------------------
+
     if precio is None:
 
-        coincidencia_precio = re.search(
-            r"\$\s*(\d+(?:\.\d{3})*)",
+        precios = re.findall(
+            r"\$\s*([\d.]+)",
             texto
         )
 
-        if coincidencia_precio:
+        if precios:
             precio = limpiar_precio(
-                coincidencia_precio.group(1)
+                precios[-1]
             )
 
-    # -------------------------
+    # ---------------------------------
     # Disponibilidad
-    # -------------------------
+    # ---------------------------------
 
     disponible = False
 
     if datos_producto:
-        offers = datos_producto.get("offers", {})
 
-        oferta = offers.get("offers", [])
+        offers = datos_producto.get(
+            "offers",
+            {}
+        )
 
-        if oferta:
-            disponibilidad = oferta[0].get(
+        if isinstance(offers, dict):
+
+            disponibilidad = offers.get(
                 "availability",
                 ""
             )
 
-            disponible = "InStock" in disponibilidad
+            if "InStock" in disponibilidad:
+                disponible = True
 
-    # Si no se encuentra en JSON-LD
+        elif isinstance(offers, list):
+
+            for oferta in offers:
+
+                disponibilidad = oferta.get(
+                    "availability",
+                    ""
+                )
+
+                if "InStock" in disponibilidad:
+                    disponible = True
+                    break
+
+    # ---------------------------------
+    # Disponibilidad desde texto
+    # ---------------------------------
+
     if not disponible:
-        disponible = "En Stock" in texto
 
-    # -------------------------
+        texto_minuscula = texto.lower()
+
+        if (
+            "en stock" in texto_minuscula
+            or "disponible" in texto_minuscula
+        ):
+            disponible = True
+
+    # ---------------------------------
     # Producto final
-    # -------------------------
+    # ---------------------------------
 
     producto = {
         "nombre": nombre,
         "principio_activo": "",
+        "laboratorio": laboratorio,
         "precio": precio,
-        "precio_normal": None,
+        "precio_normal": precio_normal,
         "disponible": disponible,
         "url": url
     }
@@ -136,16 +268,175 @@ def obtener_producto(url):
     return producto
 
 
+def obtener_urls_productos(pagina=1):
+    """
+    Obtiene las URLs de los productos
+    desde una página del catálogo de medicamentos.
+    """
+
+    if pagina == 1:
+        url = f"{BASE_URL}/medicamentos"
+    else:
+        url = f"{BASE_URL}/medicamentos?page={pagina}"
+
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 "
+            "(KHTML, like Gecko) "
+            "Chrome/155.0.0.0 Safari/537.36"
+        )
+    }
+
+    respuesta = requests.get(
+        url,
+        headers=headers,
+        timeout=15
+    )
+
+    respuesta.raise_for_status()
+
+    soup = BeautifulSoup(
+        respuesta.text,
+        "html.parser"
+    )
+
+    urls = set()
+
+    for enlace in soup.find_all("a", href=True):
+
+        href = enlace["href"]
+
+        # Convertimos URL relativa en absoluta
+        url_producto = urljoin(
+            BASE_URL,
+            href
+        )
+
+        # Los productos de Dr. Simi terminan en /p
+        if url_producto.endswith("/p"):
+
+            urls.add(
+                url_producto
+            )
+
+    return list(urls)
+
+
+def obtener_productos(paginas=1):
+    """
+    Recorre una o varias páginas del catálogo
+    y obtiene todos los productos encontrados.
+    """
+
+    productos = []
+
+    urls_vistas = set()
+
+    for pagina in range(1, paginas + 1):
+
+        print(
+            f"\n========== PÁGINA {pagina} =========="
+        )
+
+        try:
+
+            urls = obtener_urls_productos(
+                pagina
+            )
+
+            print(
+                f"Productos encontrados: {len(urls)}"
+            )
+
+        except Exception as e:
+
+            print(
+                f"Error obteniendo página {pagina}: {e}"
+            )
+
+            continue
+
+        for numero, url in enumerate(
+            urls,
+            start=1
+        ):
+
+            if url in urls_vistas:
+                continue
+
+            urls_vistas.add(url)
+
+            try:
+
+                producto = obtener_producto(
+                    url
+                )
+
+                productos.append(
+                    producto
+                )
+
+                print(
+                    f"[{numero}/{len(urls)}] "
+                    f"{producto['nombre']} "
+                    f"- ${producto['precio']}"
+                )
+
+            except Exception as e:
+
+                print(
+                    f"Error obteniendo {url}: {e}"
+                )
+
+            # Esperamos un poco para no hacer
+            # demasiadas solicitudes seguidas
+            time.sleep(0.5)
+
+    return productos
+
+
 if __name__ == "__main__":
 
-    url = "https://www.drsimi.cl/paracetamol-500-mg-16-comprimidos/p"
+    productos = obtener_productos(
+        paginas=1
+    )
 
-    producto = obtener_producto(url)
+    print("\n")
+    print("==============================")
+    print("PRODUCTOS EXTRAÍDOS")
+    print("==============================")
 
-    print("\n--- PRODUCTO EXTRAÍDO ---")
-    print("Nombre:", producto["nombre"])
-    print("Laboratorio:", producto["laboratorio"])
-    print("Precio:", producto["precio"])
-    print("Precio normal:", producto["precio_normal"])
-    print("Disponible:", producto["disponible"])
-    print("URL:", producto["url"])
+    for producto in productos:
+
+        print("\n------------------------------")
+
+        print(
+            "Nombre:",
+            producto["nombre"]
+        )
+
+        print(
+            "Laboratorio:",
+            producto["laboratorio"]
+        )
+
+        print(
+            "Precio:",
+            producto["precio"]
+        )
+
+        print(
+            "Disponible:",
+            producto["disponible"]
+        )
+
+        print(
+            "URL:",
+            producto["url"]
+        )
+
+    print("\n")
+    print(
+        f"TOTAL PRODUCTOS: {len(productos)}"
+    )
