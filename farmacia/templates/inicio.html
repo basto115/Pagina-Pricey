@@ -76,7 +76,7 @@
                                     {{ producto.nombre }}
                                 </p>
 
-                                {% for precio in producto.precios.all %}
+                                {% for precio in producto.precios.all|dictsort:"precio" %}
 
                                     <p class="precio">
                                         {{ precio.farmacia.nombre }}:
