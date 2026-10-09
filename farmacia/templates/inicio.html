@@ -38,8 +38,8 @@
 
             <p>Compara precios y disponibildad en distintas farmacias</p>
 
-            <form>
-                <input type="text" placeholder="Buscar medicamento...">
+            <form method="GET" action="{% url 'inicio' %}">
+                <input type="text" name="buscar" placeholder="Buscar medicamento..." value="{{ busqueda }}">
                 <button type="submit"> Buscar </button>
             </form>
          </section>
@@ -57,7 +57,12 @@
             <h2>Medicamentos populares</h2>
 
             <div class="medicamentos"> 
-                
+                {% if busqueda %}
+                    {% if not medicamentos %}
+                        <p>No se encontraron medicamentos para tu búsqueda.</p>
+                    {% endif %}
+                {% endif %}
+
                 {% for medicamento in medicamentos %}
 
                     <div class="medicamento">
