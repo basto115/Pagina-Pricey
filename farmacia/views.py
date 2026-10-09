@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.db.models import Q
-from .models import Medicamento
+from .models import Medicamento, Farmacia
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -23,3 +24,21 @@ def inicio(request):
     }
 
     return render(request, 'inicio.html', contexto)
+
+
+def listar_farmacias(request):
+    farmacias = Farmacia.objects.all().order_by('nombre')
+
+    datos = [
+        {
+            'id': farmacia.id,
+            'nombre': farmacia.nombre,
+            'direccion': farmacia.direccion,
+            'latitud': float(farmacia.latitud) if farmacia.latitud is not None else None,
+            'longitud': float(farmacia.longitud) if farmacia.longitud is not None else None,
+            'sitio_web': farmacia.sitio_web,
+        }
+        for farmacia in farmacias
+    ]
+
+    return JsonResponse({'farmacias': datos})
