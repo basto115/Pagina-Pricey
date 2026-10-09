@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
-from .models import Medicamento, Farmacia
+from .models import Medicamento, Farmacia, Precio
 from django.http import JsonResponse
 
 # Create your views here.
@@ -42,3 +42,28 @@ def listar_farmacias(request):
     ]
 
     return JsonResponse({'farmacias': datos})
+
+
+
+def listar_precios(request):
+    precios = Precio.objects.select_related(
+        'producto',
+        'farmacia'
+    ).all().order_by('precio')
+
+    datos = [
+        {
+            'id': precio.id,
+            'producto': precio.producto.nombre,
+            'medicamento': precio.producto.medicamento.nombre,
+            'farmacia': precio.farmacia.nombre,
+            'precio': precio.precio,
+            'precio_normal': precio.precio_normal,
+            'disponible': precio.disponible,
+            'fecha_actualizacion': precio.fecha_actualizacion.isoformat(),
+            'url_producto': precio.url_producto,
+        }
+        for precio in precios
+    ]
+
+    return JsonResponse({'precios': datos})
