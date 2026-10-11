@@ -3,7 +3,7 @@
 pa la venv
 python -m venv venv.\venv\Scripts\Activate.ps1
 
-para las dependencias:
+# para las dependencias:
 pip install -r requirements.txt
 
 # Base de dato (Neon)
