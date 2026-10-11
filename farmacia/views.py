@@ -26,7 +26,7 @@ def inicio(request):
 
     return render(request, 'inicio.html', contexto)
 
-
+@require_GET
 def listar_farmacias(request):
     farmacias = Farmacia.objects.all().order_by('nombre')
 
@@ -45,7 +45,7 @@ def listar_farmacias(request):
     return JsonResponse({'farmacias': datos})
 
 
-
+@require_GET
 def listar_precios(request):
     precios = Precio.objects.select_related(
         'producto',
