@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db.models import Q
 from .models import Medicamento, Farmacia, Precio
 from django.http import JsonResponse
+from django.views.decorators.http import require_GET
 
 # Create your views here.
 
@@ -67,3 +68,19 @@ def listar_precios(request):
     ]
 
     return JsonResponse({'precios': datos})
+
+#api sencilla por ahora
+
+@require_GET
+def api_medicamentos(request):
+    medicamentos = Medicamento.objects.all().values(
+        'id',
+        'nombre',
+        'principio_activo',
+    )
+    
+    return JsonResponse(
+        list(medicamentos),
+        safe=False,
+        json_dumps_params={'ensure_ascii': False},
+    )
