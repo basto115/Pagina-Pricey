@@ -77,8 +77,10 @@ class Command(BaseCommand):
                     f"${registro.precio} -> ${precio_nuevo}"
                 )
 
+                
                 if guardar:
                     registro.precio = precio_nuevo
+                    registro.disponible = normalizado["disponible"]
 
                     precio_normal = normalizado["precio_normal"]
                     if precio_normal is not None and precio_normal > 0:
