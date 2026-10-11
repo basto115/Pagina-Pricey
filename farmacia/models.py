@@ -1,12 +1,13 @@
 from django.db import models
 
-
 class Medicamento(models.Model):
     nombre = models.CharField(max_length=200)
+
     principio_activo = models.CharField(
         max_length=200,
         blank=True
     )
+
     descripcion = models.TextField(
         blank=True
     )
@@ -17,22 +18,26 @@ class Medicamento(models.Model):
 
 class Farmacia(models.Model):
     nombre = models.CharField(max_length=200)
+
     direccion = models.CharField(
         max_length=300,
         blank=True
     )
+
     latitud = models.DecimalField(
         max_digits=9,
         decimal_places=6,
         null=True,
         blank=True
     )
+
     longitud = models.DecimalField(
         max_digits=9,
         decimal_places=6,
         null=True,
         blank=True
     )
+
     sitio_web = models.URLField(
         blank=True
     )
@@ -42,14 +47,30 @@ class Farmacia(models.Model):
 
 
 class Producto(models.Model):
+
+    CATEGORIAS = [
+        ("medicamentos", "Medicamentos"),
+        ("cuidado_personal", "Cuidado personal"),
+        ("cosmeticos", "Cosméticos"),
+        ("otros", "Otros productos"),
+    ]
+
     medicamento = models.ForeignKey(
         Medicamento,
-        on_delete=models.CASCADE,
-        related_name="productos"
+        on_delete=models.SET_NULL,
+        related_name="productos",
+        null=True,
+        blank=True
     )
 
     nombre = models.CharField(
         max_length=300
+    )
+
+    categoria = models.CharField(
+        max_length=30,
+        choices=CATEGORIAS,
+        default="otros"
     )
 
     presentacion = models.CharField(
