@@ -218,7 +218,8 @@ nav a:hover {
 .medicamento {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 8px;
     min-width: 0;
     min-height: 280px;
     padding: 25px;
