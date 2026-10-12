@@ -44,6 +44,8 @@ class Farmacia(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+    
 
 
 class Producto(models.Model):

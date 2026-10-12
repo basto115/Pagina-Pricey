@@ -1,72 +1,276 @@
-```html
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ medicamento.nombre }} | Farma Pricey</title>
+
+    <title>{{ medicamento.nombre }} | FARMA PRICEY</title>
+
+    <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
 </head>
 <body>
 
-    <a href="{% url 'inicio' %}">← Volver al inicio</a>
+    <!-- CABECERA -->
+    <header class="detalle-header">
+        <div class="logo">
+            <a href="{% url 'inicio' %}" class="logo-enlace">
+                <img
+                    src="{% static 'farmacia/img/pandaloool.png' %}"
+                    alt="Pandita de FARMA PRICEY"
+                    class="logo-imagen"
+                >
+                <span>FARMA PRICEY</span>
+            </a>
+        </div>
 
-    <main>
-        <h1>{{ medicamento.nombre }}</h1>
+        <nav class="detalle-nav">
+            <a href="{% url 'inicio' %}">Inicio</a>
+            <a href="{% url 'inicio' %}#farmacias">Farmacias</a>
+            <a href="{% url 'inicio' %}">Medicamentos</a>
+            <a href="#">Iniciar sesión</a>
+            </a>
+        </nav>
+    </header>
 
-        {% if medicamento.principio_activo %}
-            <p>
-                <strong>Principio activo:</strong>
-                {{ medicamento.principio_activo }}
-            </p>
-        {% endif %}
+    <main class="detalle-layout">
 
-        {% if medicamento.descripcion %}
-            <p>{{ medicamento.descripcion }}</p>
-        {% endif %}
+        <!-- TITULO PRINCIPAL -->
+        <div class="detalle-cabecera">
+            <a class="detalle-volver" href="{% url 'inicio' %}">
+                ← Volver al catálogo
+            </a>
 
-        <h2>Presentaciones y precios</h2>
+            <h1>{{ medicamento.nombre }}</h1>
 
-        {% for producto in medicamento.productos.all %}
-            <section>
-                <h3>{{ producto.nombre }}</h3>
+            <p>Información del medicamento y comparación de precios</p>
+        </div>
 
-                {% if producto.presentacion %}
-                    <p>Presentación: {{ producto.presentacion }}</p>
-                {% endif %}
+        <!-- DISTRIBUCIÓN EN DOS COLUMNAS -->
+        <div class="detalle-columnas">
 
-                {% with precios=producto.precios.all %}
-                    {% if precios %}
-                        <ul>
-                            {% for precio in precios|dictsort:"precio" %}
-                                <li>
-                                    <strong>{{ precio.farmacia.nombre }}</strong>
-                                    — ${{ precio.precio }}
+            <!-- COLUMNA IZQUIERDA -->
+            <section class="detalle-columna-izquierda">
+
+                <!-- Ficha del medicamento -->
+                <article class="ficha-producto">
+
+                    <div class="producto-imagen">
+                    </div>
+
+                    <div class="producto-descripcion">
+                        <span class="producto-etiqueta">
+                            DETALLES DEL MEDICAMENTO
+                        </span>
+
+                        <h2>{{ medicamento.nombre }}</h2>
+
+                        {% if medicamento.principio_activo %}
+                            <p>
+                                <strong>Principio activo</strong>
+                                <span>{{ medicamento.principio_activo }}</span>
+                            </p>
+                        {% endif %}
+
+                        {% if medicamento.descripcion %}
+                            <p class="producto-texto">
+                                {{ medicamento.descripcion }}
+                            </p>
+                        {% else %}
+                            <p class="producto-texto">
+                                Consulta las presentaciones y los precios
+                                disponibles para este medicamento.
+                            </p>
+                        {% endif %}
+                    </div>
+
+                </article>
+
+                <!-- Presentaciones -->
+                <section class="bloque-presentaciones">
+                    <div class="bloque-titulo">
+                        <h2>Productos relacionados</h2>
+                        <span class="titulo-decoracion"></span>
+                    </div>
+
+                    {% for producto in medicamento.productos.all %}
+                        <article class="presentacion-mini">
+                            <div class="presentacion-icono" aria-hidden="true">
+                                
+                            </div>
+
+                            <div class="presentacion-mini-info">
+                                <h3>{{ producto.nombre }}</h3>
+
+                                {% if producto.presentacion %}
+                                    <p>{{ producto.presentacion }}</p>
+                                {% endif %}
+
+                                <a href="#producto-{{ producto.id }}">
+                                    Comparar precios →
+                                </a>
+                            </div>
+                        </article>
+                    {% empty %}
+                        <p class="detalle-sin-datos">
+                            No hay presentaciones registradas.
+                        </p>
+                    {% endfor %}
+                </section>
+
+                <!-- Aviso -->
+                <aside class="detalle-consejo">
+                    <span aria-hidden="true">ⓘ</span>
+                    <p>
+                        Comprueba la presentación y la disponibilidad
+                        antes de comprar.
+                    </p>
+                </aside>
+
+            </section>
+
+            <!-- COLUMNA DERECHA -->
+            <section class="detalle-columna-derecha">
+
+                <div class="comparacion-intro">
+                    <div>
+                        <span class="producto-etiqueta">
+                            COMPARADOR FARMA PRICEY
+                        </span>
+                        <h2>Compara precios</h2>
+                        <p>Precios registrados por presentación y farmacia.</p>
+                    </div>
+                </div>
+
+                <!-- Comparación de precios por presentación -->
+                {% for producto in medicamento.productos.all %}
+                    <section
+                        class="comparacion-producto"
+                        id="producto-{{ producto.id }}"
+                    >
+
+                        <div class="tarjetas-precios">
+                            {% for precio in producto.precios.all|dictsort:"precio" %}
+                                <article class="tarjeta-precio">
+
+                                    {% if forloop.first %}
+                                        <span class="precio-badge">
+                                            Menor precio registrado
+                                        </span>
+                                    {% endif %}
+
+                                    <div class="farmacia-marca">
+                                        <span class="farmacia-icono"
+                                              aria-hidden="true">✚</span>
+                                        <h4>{{ precio.farmacia.nombre }}</h4>
+                                    </div>
+
+                                    <p class="precio-descripcion">
+                                        Precio registrado
+                                    </p>
+
+                                    <p class="precio-valor">
+                                        ${{ precio.precio }}
+                                    </p>
 
                                     {% if precio.disponible %}
-                                        <span>Disponible</span>
+                                        <p class="precio-estado disponible">
+                                            ● Disponible
+                                        </p>
                                     {% else %}
-                                        <span>No disponible</span>
+                                        <p class="precio-estado no-disponible">
+                                            ● No disponible
+                                        </p>
                                     {% endif %}
 
                                     {% if precio.url_producto %}
-                                        <a href="{{ precio.url_producto }}"
-                                           target="_blank"
-                                           rel="noopener noreferrer">
-                                            Ver en farmacia
+                                        <a
+                                            class="precio-boton"
+                                            href="{{ precio.url_producto }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Ver en farmacia ↗
                                         </a>
+                                    <button type="button" class="precio-boton precio-boton-mapa">
+                                        Ver en mapa
+                                    </button>
+
+                                    {% else %}
+                                        <span class="precio-sin-enlace">
+                                            Enlace no disponible
+                                        </span>
                                     {% endif %}
-                                </li>
+
+                                </article>
+                            {% empty %}
+                                <p class="detalle-sin-datos">
+                                    No hay precios registrados para esta
+                                    presentación.
+                                </p>
                             {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p>No hay precios registrados para esta presentación.</p>
-                    {% endif %}
-                {% endwith %}
+                        </div>
+                    </section>
+                {% empty %}
+                    <div class="comparacion-vacia">
+                        <span aria-hidden="true">🔎</span>
+                        <h3>Aún no hay presentaciones</h3>
+                        <p>
+                            Todavía no hay productos asociados a este
+                            medicamento.
+                        </p>
+                    </div>
+                {% endfor %}
+
+                <!-- Espacio reservado para el mapa -->
+                <section class="mapa-detalle">
+                    <div class="mapa-detalle-titulo">
+                        <span aria-hidden="true">📍</span>
+                        <div>
+                            <h2>Ubicación de farmacias</h2>
+                            <p>Consulta las farmacias crrcanas.</p>
+                        </div>
+                    </div>
+
+                    <div class="mapa-placeholder">
+                        <span aria-hidden="true"></span>
+                        <p>Mapa de farmacias cercanas</p>
+                        <small>
+                        </small>
+                    </div>
+                </section>
+
             </section>
-        {% empty %}
-            <p>No hay presentaciones registradas para este medicamento.</p>
-        {% endfor %}
+        </div>
     </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <div class="footer-contenido">
+
+            <div>
+                <h3>FARMA PRICEY</h3>
+                <p>Compara precios de medicamentos de forma sencilla.</p>
+            </div>
+
+            <div>
+                <h4>Enlaces</h4>
+                <a href="{% url 'inicio' %}">Inicio</a>
+                <a href="{% url 'inicio' %}">Medicamentos</a>
+                <a href="{% url 'inicio' %}#farmacias">Farmacias</a>
+            </div>
+
+            <div>
+                <h4>Contacto</h4>
+                <p>contacto@farmapricey.cl</p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 FARMA PRICEY. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 
 </body>
 </html>
