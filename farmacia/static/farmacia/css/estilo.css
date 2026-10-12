@@ -5,15 +5,15 @@
 
 
    :root {
-    --verde-oscuro: #173f35;
-    --verde: #287653;
-    --verde-lima: #c8f169;
-    --fondo: #f5f7f3;
+    --verde-oscuro: #0B4D3B;
+    --verde: #0F766E;
+    --verde-lima: #A3E635;
+    --fondo: #F5F7F3;
     --blanco: #ffffff;
     --texto: #24332d;
     --texto-secundario: #718078;
     --borde: #e2e9e1;
-    --sombra: 0 8px 24px rgba(23, 63, 53, 0.08);
+    --sombra: 0 8px 24px rgba(11, 77, 59, 0.08);
 
 }
 
@@ -98,11 +98,14 @@ nav a {
     text-decoration: none;
     font-size: 14px;
     font-weight: 600;
-    transition: color 0.2s ease;
+    padding: 8px 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 nav a:hover {
     color: var(--verde);
+    border-bottom-color: var(--verde-lima);
 }
 
 /* =========================
@@ -133,7 +136,7 @@ nav a:hover {
 .buscador p {
     max-width: 600px;
     margin: 0 auto 32px;
-    color: #d4e3dc;
+    color: #D7E9E2;
     font-size: 17px;
 }
 
@@ -183,7 +186,7 @@ nav a:hover {
 }
 
 .buscador button:hover {
-    background-color: #b7e65b;
+    background-color: #B7E65B;
     transform: translateY(-1px);
 }
 
@@ -228,7 +231,8 @@ nav a:hover {
 
 .medicamento:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 30px rgba(23, 63, 53, 0.13);
+    box-shadow: 0 14px 30px rgba(11, 77, 59, 0.13);
+    border-color: #B7DCD2;
 }
 
 .medicamento h3 {
@@ -261,7 +265,7 @@ nav a:hover {
     gap: 6px;
     margin: 7px 0;
     padding: 9px 10px;
-    background-color: #f6f8f5;
+    background-color: #F0F7F4;
     border-radius: 8px;
     color: #526158;
     font-size: 13px;
@@ -270,6 +274,28 @@ nav a:hover {
 .precio strong {
     color: var(--verde-oscuro);
     font-size: 14px;
+}
+
+.enlace-farmacia {
+    display: inline-block;
+    margin: 0 0 10px;
+    color: var(--verde);
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.enlace-farmacia:hover {
+    color: var(--verde-oscuro);
+    text-decoration: underline;
+}
+
+/* para cuando no hay precio (un poco obvio)*/
+.sin-precio {
+    margin: 12px 0;
+    color: var(--texto-secundario);
+    font-size: 13px;
 }
 
 .btn-medicamento {
@@ -411,18 +437,17 @@ footer {
     font-size: 12px;
 }
 
-/* =========================
-   TABLETS
-   ========================= */
+/* TABLETS */
 
-@media (max-width: 950px) {
+@media (max-width: 900px) {
     header {
-        padding-right: 4%;
-        padding-left: 4%;
+        padding: 18px 5%;
+        gap: 18px;
     }
 
-    header nav a {
-        color: white;
+    nav {
+        gap: 16px;
+        flex-wrap: wrap;
     }
 
     .populares,
@@ -431,13 +456,11 @@ footer {
         padding-left: 4%;
     }
 
-    .medicamentos {
+    .medicamentos, .lista-farmacias {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .lista-farmacias {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+
 }
 
 /* =========================
@@ -447,17 +470,16 @@ footer {
 @media (max-width: 600px) {
     header {
         flex-direction: column;
-        gap: 15px;
-        padding: 20px 16px;
+        align-items: stretch;
+        padding: 16px 5%;
     }
 
-    .logo h1 {
-        font-size: 23px;
+    .logo-enlace {
+        align-self: center;
     }
 
     nav {
         justify-content: center;
-        flex-wrap: wrap;
         gap: 12px 20px;
     }
 
@@ -466,11 +488,11 @@ footer {
     }
 
     .buscador {
-        padding: 58px 18px;
+        padding: 60px 18px;
     }
 
     .buscador h2 {
-        font-size: 31px;
+        font-size: 30px;
     }
 
     .buscador p {
@@ -479,50 +501,34 @@ footer {
 
     .buscador form {
         flex-direction: column;
-        padding: 8px;
+        padding: 10px;
     }
 
-    .buscador input {
-        width: 100%;
-        padding: 14px 12px;
-    }
-
+    .buscador input,
     .buscador button {
         width: 100%;
     }
 
     .populares,
     .farmacias {
-        padding: 45px 18px;
+        padding: 40px 5%;
     }
 
     .medicamentos,
     .lista-farmacias {
-        grid-template-columns: 1fr;
-        gap: 18px;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .medicamento {
-        min-height: auto;
-        padding: 21px;
+        min-height: 0;
+        padding: 22px;
     }
 
     .farmacia {
         padding: 20px;
     }
 
-    .footer-contenido {
-        flex-direction: column;
-        gap: 25px;
-    }
-
-    .footer-contenido a {
-        margin-right: auto;
-        margin-left: auto;
-    }
-
-    .footer-contenido,
-    .footer-contenido > div {
-        text-align: center;
+    footer {
+        padding: 35px 5% 20px;
     }
 }

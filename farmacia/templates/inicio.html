@@ -84,25 +84,38 @@
                                 </p>
                             {% endif %}
 
-                            {% for precio in producto.precios.all %}
-                                <p class="precio">
-                                    {{ precio.farmacia.nombre }}:
+                            {% for precio in producto.precios.all|dictsort:"precio" %}
+                                <div>
+                                    <span class="precio">
+                                        {{ precio.farmacia.nombre }}:
+                                    </span>
+                                    
                                     <strong>${{ precio.precio }}</strong>
-                                </p>
 
-                                {% if not precio.disponible %}
-                                    <p>No disponible</p>
+                                </div>
+
+                                {% if precio.disponible %}
+                                    <p class="estado-disponible">
+                                        Disponible
+                                    </p>
+                                {% else %}
+                                    <p class="estado-no-disponible">
+                                        No disponible
+                                    </p>
                                 {% endif %}
 
                                 {% if precio.url_producto %}
-                                    <a href="{{ precio.url_producto }}"
+                                    <a class="enlace-farmacia"
+                                    href="{{ precio.url_producto }}"
                                     target="_blank"
                                     rel="noopener noreferrer">
                                         Ver en la farmacia
                                     </a>
                                 {% endif %}
                             {% empty %}
-                                <p>Precio aún no registrado.</p>
+                                <p class="sin-precio">
+                                    Precio aún no registrado.
+                                </p>
                             {% endfor %}
                         </div>
                     </div>
