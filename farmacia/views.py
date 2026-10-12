@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
+from django.shortcuts import render, get_object_or_404
 
 from .models import Medicamento, Farmacia, Producto, Precio
 
@@ -104,4 +105,18 @@ def api_medicamentos(request):
         list(medicamentos),
         safe=False,
         json_dumps_params={"ensure_ascii": False},
+    )
+
+def detalle_medicamento(request, medicamento_id):
+    medicamento = get_object_or_404(
+        Medicamento.objects.prefetch_related(
+            'productos__precios__farmacia'
+        ),
+        id=medicamento_id
+    )
+
+    return render(
+        request,
+        'detalle_medicamento.html',
+        {'medicamento': medicamento}
     )

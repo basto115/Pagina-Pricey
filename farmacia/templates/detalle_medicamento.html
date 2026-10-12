@@ -1,0 +1,73 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ medicamento.nombre }} | Farma Pricey</title>
+</head>
+<body>
+
+    <a href="{% url 'inicio' %}">← Volver al inicio</a>
+
+    <main>
+        <h1>{{ medicamento.nombre }}</h1>
+
+        {% if medicamento.principio_activo %}
+            <p>
+                <strong>Principio activo:</strong>
+                {{ medicamento.principio_activo }}
+            </p>
+        {% endif %}
+
+        {% if medicamento.descripcion %}
+            <p>{{ medicamento.descripcion }}</p>
+        {% endif %}
+
+        <h2>Presentaciones y precios</h2>
+
+        {% for producto in medicamento.productos.all %}
+            <section>
+                <h3>{{ producto.nombre }}</h3>
+
+                {% if producto.presentacion %}
+                    <p>Presentación: {{ producto.presentacion }}</p>
+                {% endif %}
+
+                {% with precios=producto.precios.all %}
+                    {% if precios %}
+                        <ul>
+                            {% for precio in precios|dictsort:"precio" %}
+                                <li>
+                                    <strong>{{ precio.farmacia.nombre }}</strong>
+                                    — ${{ precio.precio }}
+
+                                    {% if precio.disponible %}
+                                        <span>Disponible</span>
+                                    {% else %}
+                                        <span>No disponible</span>
+                                    {% endif %}
+
+                                    {% if precio.url_producto %}
+                                        <a href="{{ precio.url_producto }}"
+                                           target="_blank"
+                                           rel="noopener noreferrer">
+                                            Ver en farmacia
+                                        </a>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No hay precios registrados para esta presentación.</p>
+                    {% endif %}
+                {% endwith %}
+            </section>
+        {% empty %}
+            <p>No hay presentaciones registradas para este medicamento.</p>
+        {% endfor %}
+    </main>
+
+</body>
+</html>
+```

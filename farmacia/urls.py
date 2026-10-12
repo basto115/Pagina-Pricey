@@ -7,5 +7,6 @@ urlpatterns = [
     path('api/farmacias/', views.listar_farmacias, name='listar_farmacias'),
     path('api/precios/', views.listar_precios, name='listar_precios'),
     path('api/medicamentos/', views.api_medicamentos, name='api_medicamentos'),
+    path('medicamento/<int:medicamento_id>/',views.detalle_medicamento,name='detalle_medicamento'),
 ]
 

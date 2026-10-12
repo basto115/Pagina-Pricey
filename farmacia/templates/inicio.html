@@ -1,21 +1,17 @@
 {% load static %}
-
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title> FARMA PRICEY </title>
+    <title>FARMA PRICEY</title>
 
     <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
-
 </head>
 <body>
 
     <!-- Encabezado -->
-    
     <header>
         <div class="logo">
             <a href="{% url 'inicio' %}" class="logo-enlace">
@@ -29,40 +25,39 @@
         </div>
 
         <nav>
-            <a href="#">Inicio</a>
+            <a href="{% url 'inicio' %}">Inicio</a>
             <a href="#">Farmacia</a>
             <a href="#">Medicamentos</a>
             <a href="#">Inicio sesión</a>
         </nav>
     </header>
-    
+
     <!-- Contenido principal -->
     <main>
 
-        <!-- buscador -->
-         <section class="buscador">
+        <!-- Buscador -->
+        <section class="buscador">
             <h2>Encuentra el mejor precio para tus medicamentos</h2>
 
-            <p>Compara precios y disponibildad en distintas farmacias</p>
+            <p>Compara precios y disponibilidad en distintas farmacias.</p>
 
             <form method="GET" action="{% url 'inicio' %}">
-                <input type="text" name="buscar" placeholder="Buscar medicamento..." value="{{ busqueda }}">
-                <button type="submit"> Buscar </button>
+                <input
+                    type="text"
+                    name="buscar"
+                    placeholder="Buscar medicamento..."
+                    value="{{ busqueda }}"
+                >
+                <button type="submit">Buscar</button>
             </form>
-         </section>
+        </section>
 
-         <!-- medicamentos populares o algo asi -->
-
-          <!-- Los precios son provisionales, 
-           parte de esta sección se deberia borrar (o modificar) 
-           cuando ya tengamos la bd y el scrapping funcionando :P-->
-
-           <!-- ahora si tiene una bd, pero no es la definitiva ni el scrapping
-            pero ya funca y coloca solo los medicamentos -->
+        <!-- Catálogo de productos -->
         <section class="populares">
             <h2>Catálogo de productos</h2>
 
             <div class="medicamentos">
+
                 {% if busqueda and not productos %}
                     <p>No se encontraron productos para tu búsqueda.</p>
                 {% endif %}
@@ -70,11 +65,11 @@
                 {% for producto in productos %}
                     <div class="medicamento">
                         <div class="medicamento-info">
+
                             <h3>{{ producto.nombre }}</h3>
 
                             <p class="presentacion">
-                                Categoría:
-                                {{ producto.get_categoria_display }}
+                                Categoría: {{ producto.get_categoria_display }}
                             </p>
 
                             {% if producto.medicamento and producto.medicamento.principio_activo %}
@@ -84,39 +79,19 @@
                                 </p>
                             {% endif %}
 
-                            {% for precio in producto.precios.all|dictsort:"precio" %}
-                                <div>
-                                    <span class="precio">
-                                        {{ precio.farmacia.nombre }}:
-                                    </span>
-                                    
-                                    <strong>${{ precio.precio }}</strong>
-
-                                </div>
-
-                                {% if precio.disponible %}
-                                    <p class="estado-disponible">
-                                        Disponible
-                                    </p>
-                                {% else %}
-                                    <p class="estado-no-disponible">
-                                        No disponible
-                                    </p>
-                                {% endif %}
-
-                                {% if precio.url_producto %}
-                                    <a class="enlace-farmacia"
-                                    href="{{ precio.url_producto }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer">
-                                        Ver en la farmacia
-                                    </a>
-                                {% endif %}
-                            {% empty %}
+                            {% if producto.medicamento %}
+                                <a
+                                    class="btn-medicamento"
+                                    href="{% url 'detalle_medicamento' producto.medicamento.id %}"
+                                >
+                                    Ver medicamento
+                                </a>
+                            {% else %}
                                 <p class="sin-precio">
-                                    Precio aún no registrado.
+                                    Detalles del medicamento aún no disponibles.
                                 </p>
-                            {% endfor %}
+                            {% endif %}
+
                         </div>
                     </div>
                 {% empty %}
@@ -124,59 +99,60 @@
                         <p>Aún no hay productos registrados.</p>
                     {% endif %}
                 {% endfor %}
+
             </div>
         </section>
 
-          <!-- farmacias cercanas -->
-           <!-- Datos ficticios hasta que se implemente el mapa (soy el mapa, soy el mapa) -->
-          <section class="farmacias">
+        <!-- Farmacias cercanas: sección provisional -->
+        <section class="farmacias">
             <h2>Farmacias cercanas</h2>
 
             <div class="farmacias-contenido">
-
                 <div class="lista-farmacias">
 
                     <div class="farmacia">
                         <h3>Farmacia Cruz Verde</h3>
-                        <p>A 1,2km de distancia</p>
+                        <p>A 1,2 km de distancia</p>
                         <p>Abierta hasta las 21:00</p>
-                        <button>Ver ubicación</button>
+                        <button type="button">Ver ubicación</button>
                     </div>
 
                     <div class="farmacia">
                         <h3>Farmacias Ahumada</h3>
                         <p>📍 A 2,1 km de distancia</p>
                         <p>Abierta hasta las 20:30</p>
-                        <button>Ver ubicación</button>
+                        <button type="button">Ver ubicación</button>
                     </div>
 
                     <div class="farmacia">
                         <h3>Salcobrand</h3>
                         <p>📍 A 2,8 km de distancia</p>
                         <p>Abierta hasta las 21:00</p>
-                        <button>Ver ubicación</button>
+                        <button type="button">Ver ubicación</button>
                     </div>
 
                 </div>
             </div>
 
             <div class="mapa">
-                <p>aquí se tiene mostrar el mapa, o quizas no se si lo quieren cambiar jaja lol</p>
+                <p>Aquí se mostrará el mapa cuando esté implementado.</p>
             </div>
-          </section>
+        </section>
+
     </main>
-    <!-- pata de pagina mmmm pata -->
-     <footer>
+
+    <!-- Pie de página -->
+    <footer>
         <div class="footer-contenido">
 
             <div>
                 <h3>FARMA PRICEY</h3>
-                <p>Compara precios de medicamentos de forma sencilla</p>
+                <p>Compara precios de medicamentos de forma sencilla.</p>
             </div>
 
             <div>
                 <h4>Enlaces</h4>
-                <a href="#">Inicio</a>
+                <a href="{% url 'inicio' %}">Inicio</a>
                 <a href="#">Medicamentos</a>
                 <a href="#">Farmacias</a>
             </div>
@@ -185,18 +161,19 @@
                 <h4>Contacto</h4>
                 <p>contacto@farmapricey.cl</p>
             </div>
+
         </div>
+
         <div class="footer-bottom">
             <p>© 2026 FARMA PRICEY. Todos los derechos reservados.</p>
         </div>
-        
-     </footer>
+    </footer>
 
     <script src="{% static 'farmacia/js/script.js' %}"></script>
 
-</header>
+</body>
 </html>
-
+```
 <!-- 
 MMMMMMMMMMMMMMMMMWKd:,....,::cccccccc::ccc:c::::::cccccc::;,'',;:c::;,cONMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMWNOo;,,'',;:ccc:cc::::;:c::c:c::::::ccc::c::;;,;:::::;;o0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
