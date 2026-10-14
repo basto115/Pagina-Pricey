@@ -1,3 +1,4 @@
+
 import time
 import requests
 import xml.etree.ElementTree as ET
@@ -35,11 +36,17 @@ class Command(BaseCommand):
             default=0,
             help="Cantidad de enlaces que se omitirán al inicio",
         )
+        parser.add_argument(
+            "--solo-probar",
+            action="store_true",
+            help="Consulta productos sin guardarlos en la base de datos",
+        )
 
     def handle(self, *args, **options):
         limite = options["limite"]
         pausa = options["pausa"]
         offset = options["offset"]
+        solo_probar = options["solo_probar"]
 
         if limite < 1 or pausa < 0 or offset < 0:
             raise CommandError(
@@ -56,7 +63,6 @@ class Command(BaseCommand):
                 headers={"User-Agent": "FarmaPricey/1.0"},
             )
             respuesta.raise_for_status()
-
             raiz = ET.fromstring(respuesta.content)
 
         except (requests.RequestException, ET.ParseError) as error:
@@ -82,6 +88,13 @@ class Command(BaseCommand):
             f"Se procesarán {len(urls)} productos."
         )
 
+        if solo_probar:
+            self.stdout.write(
+                self.style.WARNING(
+                    "MODO DE PRUEBA: no se guardarán cambios."
+                )
+            )
+
         guardados = 0
         errores = 0
 
@@ -98,6 +111,15 @@ class Command(BaseCommand):
                     )
                     continue
 
+                if solo_probar:
+                    self.stdout.write(
+                        f"[{numero}/{len(urls)}] "
+                        f"Producto: {datos.get('nombre')} | "
+                        f"Precio: {datos.get('precio')} | "
+                        f"Disponible: {datos.get('disponible')}"
+                    )
+                    continue
+
                 producto = guardar_producto(
                     datos,
                     "Farmacias Ahumada",
@@ -105,13 +127,18 @@ class Command(BaseCommand):
 
                 if producto is None:
                     errores += 1
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"[{numero}] No se pudo guardar: {url}"
+                        )
+                    )
                     continue
 
                 guardados += 1
 
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f"[{numero}/{len(urls)}] Guardado: "
+                        f"[{numero}/{len(urls)}] Procesado: "
                         f"{producto.nombre}"
                     )
                 )
@@ -128,9 +155,18 @@ class Command(BaseCommand):
                 if numero < len(urls):
                     time.sleep(pausa)
 
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Proceso terminado. Productos procesados correctamente: "
-                f"{guardados}. Errores: {errores}."
+        if solo_probar:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Prueba terminada. Productos consultados: "
+                    f"{len(urls) - errores}. Errores: {errores}. "
+                    "No se guardaron cambios mediante este comando."
+                )
             )
-        )
+        else:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Proceso terminado. Productos procesados: "
+                    f"{guardados}. Errores: {errores}."
+                )
+            )
