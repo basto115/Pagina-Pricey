@@ -96,7 +96,7 @@ else:
             'HOST': os.getenv('DB_HOST'),
             'PORT': str(os.getenv('DB_PORT', '5432')).strip() or '5432',
             'OPTIONS': {
-                'sslmode': 'require',
+                'sslmode': 'disable',
             },
         }
     }

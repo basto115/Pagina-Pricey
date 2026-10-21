@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} {% load humanize %} {% load precio_tags %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -170,7 +170,7 @@
                                     </p>
 
                                     <p class="precio-valor">
-                                        ${{ precio.precio }}
+                                        ${{ precio.precio|precio_chileno  }}
                                     </p>
 
                                     {% if precio.disponible %}
