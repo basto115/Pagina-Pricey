@@ -1,184 +1,150 @@
 {% load static %}
-
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title> FARMA PRICEY </title>
-
+    <title>FARMA PRICEY</title>
     <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
-
 </head>
 <body>
 
-    <!-- Encabezado -->
-    
-    <header>
-        <div class="logo">
-            <a href="{% url 'inicio' %}" class="logo-enlace">
-                <img
-                    src="{% static 'farmacia/img/pandaloool.png' %}"
-                    alt="Pandita de FARMA PRICEY"
-                    class="logo-imagen"
-                >
-                <span>FARMA PRICEY</span>
-            </a>
-        </div>
+<header>
+    <div class="logo">
+        <a href="{% url 'inicio' %}" class="logo-enlace">
+            <img
+                src="{% static 'farmacia/img/pandaloool.png' %}"
+                alt="Pandita de FARMA PRICEY"
+                class="logo-imagen"
+            >
+            <span>FARMA PRICEY</span>
+        </a>
+    </div>
 
-        <nav>
-            <a href="#">Inicio</a>
-            <a href="#">Farmacia</a>
-            <a href="#">Medicamentos</a>
-            <a href="#">Inicio sesión</a>
-        </nav>
-    </header>
-    
-    <!-- Contenido principal -->
-    <main>
+    <nav>
+        <a href="{% url 'inicio' %}">Inicio</a>
+        <a href="#farmacias">Farmacias</a>
+        <a href="#medicamentos">Medicamentos</a>
+        <a href="#">Iniciar sesión</a>
+    </nav>
+</header>
 
-        <!-- buscador -->
-         <section class="buscador">
-            <h2>Encuentra el mejor precio para tus medicamentos</h2>
+<main>
+    <section class="buscador">
+        <h2>Encuentra el mejor precio para tus medicamentos</h2>
+        <p>Compara precios y disponibilidad en distintas farmacias.</p>
 
-            <p>Compara precios y disponibildad en distintas farmacias</p>
+        <form method="GET" action="{% url 'inicio' %}">
+            <input
+                type="text"
+                name="buscar"
+                placeholder="Buscar medicamento..."
+                value="{{ busqueda }}"
+            >
+            <button type="submit">Buscar</button>
+        </form>
+    </section>
 
-            <form method="GET" action="{% url 'inicio' %}">
-                <input type="text" name="buscar" placeholder="Buscar medicamento..." value="{{ busqueda }}">
-                <button type="submit"> Buscar </button>
-            </form>
-         </section>
+    <section class="populares" id="medicamentos">
+        <h2>Medicamentos populares</h2>
 
-         <!-- medicamentos populares o algo asi -->
+        <div class="medicamentos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; align-items: stretch;">
+            {% if busqueda and not medicamentos %}
+                <p>No se encontraron medicamentos para tu búsqueda.</p>
+            {% endif %}
 
-          <!-- Los precios son provisionales, 
-           parte de esta sección se deberia borrar (o modificar) 
-           cuando ya tengamos la bd y el scrapping funcionando :P-->
+            {% for medicamento in medicamentos %}
+                <div class="medicamento" style="background: #ffffff; border-radius: 14px; border: 1px solid #dbe6e0; box-shadow: 0 4px 14px rgba(0,0,0,0.04); padding: 1.5rem; display: flex; flex-direction: column; justify-content: flex-start; text-align: left; min-height: 200px; box-sizing: border-box;">
+                    
+                    {% with producto=medicamento.productos.all|first %}
+                        <h3 style="font-size: 1.05rem; font-weight: 700; color: #0b3b2c; margin: 0 0 0.8rem 0; line-height: 1.35; text-align: left;">
+                            {% if producto %}
+                                {{ producto.nombre }}
+                            {% else %}
+                                {{ medicamento.nombre }}
+                            {% endif %}
+                        </h3>
+                    {% endwith %}
 
-           <!-- ahora si tiene una bd, pero no es la definitiva ni el scrapping
-            pero ya funca y coloca solo los medicamentos -->
-        
-          <section class="populares">
-            <h2>Medicamentos populares</h2>
+                    <p style="font-size: 0.88rem; color: #222; margin: 0 0 0.8rem 0; text-align: left;">
+                        <strong>Categoría:</strong> {{ medicamento.categoria.nombre|default:"Medicamentos" }}
+                    </p>
 
-            <div class="medicamentos"> 
-                {% if busqueda %}
-                    {% if not medicamentos %}
-                        <p>No se encontraron medicamentos para tu búsqueda.</p>
-                    {% endif %}
-                {% endif %}
-
-                {% for medicamento in medicamentos %}
-
-                    <div class="medicamento">
-
-                        <div class="medicamento-info">
-
-                            <h3>{{ medicamento.nombre }}</h3>
-
-                            <p class="principio-activo">
-                                {{ medicamento.principio_activo }}
-                            </p>
-
-                            {% for producto in medicamento.productos.all %}
-
-                                <p class="presentacion">
-                                    {{ producto.nombre }}
-                                </p>
-
-                                {% for precio in producto.precios.all|dictsort:"precio" %}
-
-                                    <p class="precio">
-                                        {{ precio.farmacia.nombre }}:
-                                        <strong>${{ precio.precio }}</strong>
-                                    </p>
-
-                                {% endfor %}
-
-                            {% endfor %}
-
+                    {% if medicamento.id %}
+                        <div style="margin-top: 0.2rem;">
+                            <a 
+                                href="{% url 'detalle_medicamento' medicamento.id %}" 
+                                style="display: inline-block; background-color: #1b6351; color: #ffffff !important; font-size: 0.82rem; font-weight: 600; text-decoration: underline; padding: 0.45rem 1rem; border-radius: 6px; border: 1px solid #134e3f; cursor: pointer;"
+                            >
+                                Ver medicamento
+                            </a>
                         </div>
-
-                        <button class="btn-medicamento">
-                            Ver medicamento
-                        </button>
-
-                    </div>
-                {% endfor %}
-            </div>
-            <!-- despues hay que cambiar los precios, para que quede mas mejor -->
-          </section>
-
-          <!-- farmacias cercanas -->
-           <!-- Datos ficticios hasta que se implemente el mapa (soy el mapa, soy el mapa) -->
-          <section class="farmacias">
-            <h2>Farmacias cercanas</h2>
-
-            <div class="farmacias-contenido">
-
-                <div class="lista-farmacias">
-
-                    <div class="farmacia">
-                        <h3>Farmacia Cruz Verde</h3>
-                        <p>A 1,2km de distancia</p>
-                        <p>Abierta hasta las 21:00</p>
-                        <button>Ver ubicación</button>
-                    </div>
-
-                    <div class="farmacia">
-                        <h3>Farmacias Ahumada</h3>
-                        <p>📍 A 2,1 km de distancia</p>
-                        <p>Abierta hasta las 20:30</p>
-                        <button>Ver ubicación</button>
-                    </div>
-
-                    <div class="farmacia">
-                        <h3>Salcobrand</h3>
-                        <p>📍 A 2,8 km de distancia</p>
-                        <p>Abierta hasta las 21:00</p>
-                        <button>Ver ubicación</button>
-                    </div>
+                    {% else %}
+                        <p style="font-size: 0.8rem; color: #7f8c8d; margin: 0; text-align: left;">
+                            Detalles del medicamento aún no disponibles.
+                        </p>
+                    {% endif %}
 
                 </div>
-            </div>
+            {% endfor %}
+        </div>
+    </section>
 
-            <div class="mapa">
-                <p>aquí se tiene mostrar el mapa, o quizas no se si lo quieren cambiar jaja lol</p>
-            </div>
-          </section>
-    </main>
-    <!-- pata de pagina mmmm pata -->
-     <footer>
-        <div class="footer-contenido">
+    <section class="farmacias" id="farmacias">
+        <h2>Farmacias cercanas</h2>
 
-            <div>
-                <h3>FARMA PRICEY</h3>
-                <p>Compara precios de medicamentos de forma sencilla</p>
-            </div>
+        <div class="farmacias-contenido">
+            <div class="lista-farmacias">
+                <div class="farmacia">
+                    <h3>Farmacia Cruz Verde</h3>
+                    <p>Consulta su ubicación y disponibilidad.</p>
+                </div>
 
-            <div>
-                <h4>Enlaces</h4>
-                <a href="#">Inicio</a>
-                <a href="#">Medicamentos</a>
-                <a href="#">Farmacias</a>
-            </div>
+                <div class="farmacia">
+                    <h3>Farmacias Ahumada</h3>
+                    <p>Consulta su ubicación y disponibilidad.</p>
+                </div>
 
-            <div>
-                <h4>Contacto</h4>
-                <p>contacto@farmapricey.cl</p>
+                <div class="farmacia">
+                    <h3>Salcobrand</h3>
+                    <p>Consulta su ubicación y disponibilidad.</p>
+                </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>© 2026 FARMA PRICEY. Todos los derechos reservados.</p>
+
+        <div class="mapa">
+            <p>Espacio reservado para el mapa de farmacias.</p>
         </div>
-        
-     </footer>
+    </section>
+</main>
 
-    <script src="{% static 'farmacia/js/script.js' %}"></script>
+<footer>
+    <div class="footer-contenido">
+        <div>
+            <h3>FARMA PRICEY</h3>
+            <p>Compara precios de medicamentos de forma sencilla.</p>
+        </div>
 
-</header>
+        <div>
+            <h4>Enlaces</h4>
+            <a href="{% url 'inicio' %}">Inicio</a>
+            <a href="#medicamentos">Medicamentos</a>
+            <a href="#farmacias">Farmacias</a>
+        </div>
+
+        <div>
+            <h4>Contacto</h4>
+            <p>contacto@farmapricey.cl</p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 FARMA PRICEY. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<script src="{% static 'farmacia/js/script.js' %}"></script>
+</body>
 </html>
 
 <!-- 

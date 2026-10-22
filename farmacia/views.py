@@ -1,23 +1,25 @@
-from django.shortcuts import render
+
+from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from .models import Medicamento, Farmacia, Precio
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
-# Create your views here.
+from .models import Medicamento, Farmacia, Precio
+
 
 def inicio(request):
     busqueda = request.GET.get('buscar', '').strip()
 
     medicamentos = Medicamento.objects.prefetch_related(
         'productos__precios__farmacia'
-    )
+    ).order_by('nombre')
 
     if busqueda:
         medicamentos = medicamentos.filter(
             Q(nombre__icontains=busqueda) |
-            Q(principio_activo__icontains=busqueda)
-        )
+            Q(principio_activo__icontains=busqueda) |
+            Q(productos__nombre__icontains=busqueda)
+        ).distinct()
 
     contexto = {
         'medicamentos': medicamentos,
@@ -25,6 +27,22 @@ def inicio(request):
     }
 
     return render(request, 'inicio.html', contexto)
+
+
+def detalle_medicamento(request, medicamento_id):
+    medicamento = get_object_or_404(
+        Medicamento.objects.prefetch_related(
+            'productos__precios__farmacia'
+        ),
+        id=medicamento_id
+    )
+
+    return render(
+        request,
+        'detalle_medicamento.html',
+        {'medicamento': medicamento}
+    )
+
 
 @require_GET
 def listar_farmacias(request):
@@ -35,8 +53,16 @@ def listar_farmacias(request):
             'id': farmacia.id,
             'nombre': farmacia.nombre,
             'direccion': farmacia.direccion,
-            'latitud': float(farmacia.latitud) if farmacia.latitud is not None else None,
-            'longitud': float(farmacia.longitud) if farmacia.longitud is not None else None,
+            'latitud': (
+                float(farmacia.latitud)
+                if farmacia.latitud is not None
+                else None
+            ),
+            'longitud': (
+                float(farmacia.longitud)
+                if farmacia.longitud is not None
+                else None
+            ),
             'sitio_web': farmacia.sitio_web,
         }
         for farmacia in farmacias
@@ -49,7 +75,8 @@ def listar_farmacias(request):
 def listar_precios(request):
     precios = Precio.objects.select_related(
         'producto',
-        'farmacia'
+        'farmacia',
+        'producto__medicamento'
     ).all().order_by('precio')
 
     datos = [
@@ -61,7 +88,9 @@ def listar_precios(request):
             'precio': precio.precio,
             'precio_normal': precio.precio_normal,
             'disponible': precio.disponible,
-            'fecha_actualizacion': precio.fecha_actualizacion.isoformat(),
+            'fecha_actualizacion': (
+                precio.fecha_actualizacion.isoformat()
+            ),
             'url_producto': precio.url_producto,
         }
         for precio in precios
@@ -69,7 +98,6 @@ def listar_precios(request):
 
     return JsonResponse({'precios': datos})
 
-#api sencilla por ahora
 
 @require_GET
 def api_medicamentos(request):
@@ -78,7 +106,7 @@ def api_medicamentos(request):
         'nombre',
         'principio_activo',
     )
-    
+
     return JsonResponse(
         list(medicamentos),
         safe=False,
