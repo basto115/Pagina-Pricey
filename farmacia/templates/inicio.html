@@ -59,60 +59,57 @@
 
            <!-- ahora si tiene una bd, pero no es la definitiva ni el scrapping
             pero ya funca y coloca solo los medicamentos -->
-        <section class="populares">
-            <h2>Catálogo de productos</h2>
+        
+          <section class="populares">
+            <h2>Medicamentos populares</h2>
 
-            <div class="medicamentos">
-                {% if busqueda and not productos %}
-                    <p>No se encontraron productos para tu búsqueda.</p>
+            <div class="medicamentos"> 
+                {% if busqueda %}
+                    {% if not medicamentos %}
+                        <p>No se encontraron medicamentos para tu búsqueda.</p>
+                    {% endif %}
                 {% endif %}
 
-                {% for producto in productos %}
-                    <div class="medicamento">
-                        <div class="medicamento-info">
-                            <h3>{{ producto.nombre }}</h3>
+                {% for medicamento in medicamentos %}
 
-                            <p class="presentacion">
-                                Categoría:
-                                {{ producto.get_categoria_display }}
+                    <div class="medicamento">
+
+                        <div class="medicamento-info">
+
+                            <h3>{{ medicamento.nombre }}</h3>
+
+                            <p class="principio-activo">
+                                {{ medicamento.principio_activo }}
                             </p>
 
-                            {% if producto.medicamento and producto.medicamento.principio_activo %}
-                                <p class="principio-activo">
-                                    Principio activo:
-                                    {{ producto.medicamento.principio_activo }}
-                                </p>
-                            {% endif %}
+                            {% for producto in medicamento.productos.all %}
 
-                            {% for precio in producto.precios.all %}
-                                <p class="precio">
-                                    {{ precio.farmacia.nombre }}:
-                                    <strong>${{ precio.precio }}</strong>
+                                <p class="presentacion">
+                                    {{ producto.nombre }}
                                 </p>
 
-                                {% if not precio.disponible %}
-                                    <p>No disponible</p>
-                                {% endif %}
+                                {% for precio in producto.precios.all|dictsort:"precio" %}
 
-                                {% if precio.url_producto %}
-                                    <a href="{{ precio.url_producto }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer">
-                                        Ver en la farmacia
-                                    </a>
-                                {% endif %}
-                            {% empty %}
-                                <p>Precio aún no registrado.</p>
+                                    <p class="precio">
+                                        {{ precio.farmacia.nombre }}:
+                                        <strong>${{ precio.precio }}</strong>
+                                    </p>
+
+                                {% endfor %}
+
                             {% endfor %}
+
                         </div>
+
+                        <button class="btn-medicamento">
+                            Ver medicamento
+                        </button>
+
                     </div>
-                {% empty %}
-                    {% if not busqueda %}
-                        <p>Aún no hay productos registrados.</p>
-                    {% endif %}
                 {% endfor %}
             </div>
-        </section>
+            <!-- despues hay que cambiar los precios, para que quede mas mejor -->
+          </section>
 
           <!-- farmacias cercanas -->
            <!-- Datos ficticios hasta que se implemente el mapa (soy el mapa, soy el mapa) -->
