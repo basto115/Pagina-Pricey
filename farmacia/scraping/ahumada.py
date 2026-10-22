@@ -1,286 +1,218 @@
+
 import json
 import re
-
 import requests
 from bs4 import BeautifulSoup
 
 
 def limpiar_precio(valor):
-    """Convierte un texto de precio a entero. Devuelve None si no es válido."""
+    """Convierte precios como '$1.309' en 1309."""
     if valor is None:
         return None
 
-    texto = str(valor).strip()
-    texto = re.sub(r"[^\d,\.]", "", texto)
-
-    if not texto:
-        return None
-
-    # Los precios de productos chilenos suelen expresarse en pesos enteros.
-    # Si hay separadores de miles, se eliminan.
-    if "," in texto and "." in texto:
-        if texto.rfind(",") > texto.rfind("."):
-            texto = texto.replace(".", "").replace(",", ".")
-        else:
-            texto = texto.replace(",", "")
-    elif "," in texto:
-        texto = texto.replace(",", "")
-    elif "." in texto:
-        partes = texto.split(".")
-        if len(partes) > 1 and len(partes[-1]) == 3:
-            texto = "".join(partes)
+    valor = str(valor).strip()
+    valor = valor.replace("$", "").replace(" ", "")
+    valor = valor.replace(".", "").replace(",", "")
 
     try:
-        precio = int(float(texto))
-    except (ValueError, TypeError, OverflowError):
+        return int(valor)
+    except (ValueError, TypeError):
         return None
-
-    return precio if precio > 0 else None
 
 
 def obtener_producto(url):
-    """Obtiene los datos de un producto desde Farmacias Ahumada."""
-
-    encabezados = {
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/131.0.0.0 Safari/537.36"
-        ),
-        "Accept-Language": "es-CL,es;q=0.9,en;q=0.8",
+    headers = {
+        "User-Agent": "Mozilla/5.0"
     }
 
-    try:
-        respuesta = requests.get(
-            url,
-            headers=encabezados,
-            timeout=20,
-        )
-        respuesta.raise_for_status()
-    except requests.RequestException as error:
-        print(f"Error al consultar Farmacias Ahumada: {error}")
-        return None
+    respuesta = requests.get(
+        url,
+        headers=headers,
+        timeout=30
+    )
 
-    sopa = BeautifulSoup(respuesta.text, "html.parser")
+    print("Código HTTP:", respuesta.status_code)
+    respuesta.raise_for_status()
 
-    nombre = ""
-    sku = ""
-    precio = None
-    precio_normal = None
-    disponible = None
-    principio_activo = ""
-    laboratorio = ""
-    presentacion = ""
+    soup = BeautifulSoup(
+        respuesta.text,
+        "html.parser"
+    )
 
-    # Buscar datos estructurados JSON-LD de tipo Product.
+    texto = soup.get_text(" ", strip=True)
+
+    # ---------------------------------
+    # DATOS ESTRUCTURADOS DEL PRODUCTO
+    # ---------------------------------
+
     datos_producto = None
 
-    for script in sopa.find_all(
-        "script",
-        type="application/ld+json",
-    ):
-        contenido = script.string or script.get_text(strip=True)
+    def buscar_productos(datos):
+        """Busca objetos Product dentro del JSON-LD."""
+        if isinstance(datos, list):
+            for elemento in datos:
+                resultado = buscar_productos(elemento)
+                if resultado:
+                    return resultado
 
-        if not contenido:
-            continue
+        elif isinstance(datos, dict):
+            tipo = datos.get("@type", [])
 
-        try:
-            datos_json = json.loads(contenido)
-        except (json.JSONDecodeError, TypeError):
-            continue
-
-        elementos = (
-            datos_json
-            if isinstance(datos_json, list)
-            else [datos_json]
-        )
-
-        pendientes = list(elementos)
-
-        while pendientes:
-            elemento = pendientes.pop(0)
-
-            if not isinstance(elemento, dict):
-                continue
-
-            grafo = elemento.get("@graph")
-            if isinstance(grafo, list):
-                pendientes.extend(grafo)
-
-            tipo = elemento.get("@type", [])
             if isinstance(tipo, str):
                 tipo = [tipo]
 
-            if any(
-                str(t).lower() == "product"
-                for t in tipo
-            ):
-                datos_producto = elemento
+            if "Product" in tipo:
+                return datos
+
+            # Algunos sitios agrupan datos dentro de @graph.
+            if "@graph" in datos:
+                resultado = buscar_productos(datos["@graph"])
+                if resultado:
+                    return resultado
+
+        return None
+
+    for script in soup.find_all(
+        "script",
+        type="application/ld+json"
+    ):
+        contenido = script.string or script.get_text()
+
+        try:
+            datos = json.loads(contenido)
+            datos_producto = buscar_productos(datos)
+
+            if datos_producto:
                 break
 
-        if datos_producto:
-            break
+        except (json.JSONDecodeError, TypeError):
+            continue
 
-    # Nombre y otros datos del producto.
+    # ---------------------------------
+    # NOMBRE
+    # ---------------------------------
+
+    nombre = ""
+
     if datos_producto:
-        nombre = str(
-            datos_producto.get("name") or ""
-        ).strip()
+        nombre = datos_producto.get("name", "") or ""
 
+    if not nombre:
+        titulo = soup.find("h1")
+
+        if titulo:
+            nombre = titulo.get_text(" ", strip=True)
+
+    if not nombre and soup.title:
+        nombre = soup.title.get_text(" ", strip=True)
+
+    # ---------------------------------
+    # PRECIO Y DISPONIBILIDAD
+    # ---------------------------------
+
+    precio = None
+    precio_normal = None
+    disponible = False
+    sku = ""
+
+    if datos_producto:
         sku = str(
             datos_producto.get("sku")
             or datos_producto.get("mpn")
             or ""
-        ).strip()
+        )
 
-        marca = datos_producto.get("brand")
-        if isinstance(marca, dict):
-            laboratorio = str(
-                marca.get("name") or ""
-            ).strip()
-        elif isinstance(marca, str):
-            laboratorio = marca.strip()
-
-        descripcion = str(
-            datos_producto.get("description") or ""
-        ).strip()
-
-        if descripcion:
-            coincidencia = re.search(
-                r"(?:principio activo|composición|composicion)"
-                r"\s*:\s*([^.;]+)",
-                descripcion,
-                re.IGNORECASE,
-            )
-            if coincidencia:
-                principio_activo = coincidencia.group(1).strip()
-
-        # PRECIO Y DISPONIBILIDAD.
         ofertas = datos_producto.get("offers", [])
 
         if isinstance(ofertas, dict):
             ofertas = [ofertas]
 
+        # Utilizamos una oferta que tenga un precio válido.
         for oferta in ofertas:
             if not isinstance(oferta, dict):
                 continue
 
             moneda = oferta.get("priceCurrency")
 
-            if moneda and str(moneda).upper() != "CLP":
+            if moneda and moneda != "CLP":
                 continue
 
             valor = oferta.get("price")
 
             if valor is None:
-                especificacion = oferta.get(
+                precio_especificacion = oferta.get(
                     "priceSpecification", {}
                 )
 
-                if isinstance(especificacion, dict):
-                    valor = especificacion.get("price")
+                if isinstance(precio_especificacion, dict):
+                    valor = precio_especificacion.get("price")
 
-            precio_candidato = limpiar_precio(valor)
+            if valor is not None:
+                try:
+                    precio = int(float(str(valor).replace(",", ".")))
+                except (ValueError, TypeError):
+                    precio = None
 
-            if precio_candidato is None:
-                continue
+            if precio is not None and precio > 0:
+                disponibilidad = str(
+                    oferta.get("availability", "")
+                ).lower()
 
-            precio = precio_candidato
-
-            disponibilidad = str(
-                oferta.get("availability") or ""
-            ).lower()
-
-            if (
-                "instock" in disponibilidad
-                or "limitedavailability" in disponibilidad
-            ):
-                disponible = True
-            elif (
-                "outofstock" in disponibilidad
-                or "soldout" in disponibilidad
-                or "discontinued" in disponibilidad
-            ):
-                disponible = False
-            else:
-                disponible = None
-
-            # Si hay una oferta válida, se utiliza.
-            break
-
-    # Si el JSON-LD no incluye el nombre, intentar obtenerlo del HTML.
-    if not nombre:
-        encabezado = sopa.find("h1")
-        if encabezado:
-            nombre = encabezado.get_text(" ", strip=True)
-
-    if not nombre:
-        etiqueta_titulo = sopa.find("title")
-        if etiqueta_titulo:
-            nombre = etiqueta_titulo.get_text(" ", strip=True)
-
-    # Intentar recuperar información adicional del texto visible.
-    texto_pagina = sopa.get_text(" ", strip=True)
-
-    if not principio_activo:
-        coincidencia = re.search(
-            r"(?:principio activo|composición|composicion)"
-            r"\s*:?\s*([^.;|]+)",
-            texto_pagina,
-            re.IGNORECASE,
-        )
-        if coincidencia:
-            principio_activo = coincidencia.group(1).strip()
-
-    if not presentacion and nombre:
-        coincidencia = re.search(
-            r"\b\d+(?:[.,]\d+)?\s*"
-            r"(?:mg|g|ml|l|mcg|µg| unidades| comprimidos| cápsulas| capsulas)"
-            r"\b.*",
-            nombre,
-            re.IGNORECASE,
-        )
-        if coincidencia:
-            presentacion = coincidencia.group(0).strip()
-
-    # Si el precio no apareció en JSON-LD, intentar localizarlo
-    # en algunos atributos habituales del HTML.
-    if precio is None:
-        selectores_precio = [
-            "[itemprop='price']",
-            "[data-price]",
-            ".price",
-            ".sales",
-            ".product-price",
-        ]
-
-        for selector in selectores_precio:
-            elemento = sopa.select_one(selector)
-
-            if not elemento:
-                continue
-
-            valor = (
-                elemento.get("content")
-                or elemento.get("data-price")
-                or elemento.get_text(" ", strip=True)
-            )
-
-            precio_candidato = limpiar_precio(valor)
-
-            if precio_candidato is not None:
-                precio = precio_candidato
+                disponible = (
+                    "instock" in disponibilidad
+                    or "limitedavailability" in disponibilidad
+                )
                 break
 
-    # No inventar disponibilidad ni precio normal si no se encontraron.
-    return {
+            precio = None
+
+    # ---------------------------------
+    # PRINCIPIO ACTIVO
+    # ---------------------------------
+
+    principio_activo = ""
+
+    coincidencia_activo = re.search(
+        r"Principio Activo\s*:?\s*"
+        r"([A-Za-zÁÉÍÓÚÑáéíóúñ ,\-]+?)"
+        r"(?=Registro Sanitario|$)",
+        texto,
+        re.IGNORECASE
+    )
+
+    if coincidencia_activo:
+        principio_activo = (
+            coincidencia_activo.group(1).strip()
+        )
+
+    # ---------------------------------
+    # RESULTADO
+    # ---------------------------------
+
+    producto = {
         "nombre": nombre,
         "principio_activo": principio_activo,
         "precio": precio,
         "precio_normal": precio_normal,
         "disponible": disponible,
         "sku": sku,
-        "laboratorio": laboratorio,
-        "presentacion": presentacion,
-        "url": url,
+        "laboratorio": "",
+        "presentacion": "",
+        "url": url
     }
+
+    return producto
+
+
+if __name__ == "__main__":
+    url = (
+        "https://www.farmaciasahumada.cl/"
+        "reflexan-10-mg-x-20-comprimidos-recubiertos-6.html"
+    )
+
+    producto = obtener_producto(url)
+
+    print("\n--- PRODUCTO EXTRAÍDO ---")
+
+    for clave, valor in producto.items():
+        print(f"{clave}: {valor}")

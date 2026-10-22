@@ -129,13 +129,5 @@ class Precio(models.Model):
         auto_now=True
     )
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["producto", "farmacia"],
-                name="unique_precio_producto_farmacia",
-            ),
-        ]
-
     def __str__(self):
         return f"{self.producto} - {self.farmacia}"
