@@ -1,19 +1,8 @@
-# Entornos virtuales
+# Entorno virtual
 venv/
 .venv/
 env/
 ENV/
 
-# Variables de entorno y secretos
+#variable de entorno
 .env
-.env.*
-
-# Caché de Python
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Herramientas y archivos locales
-.pytest_cache/
-.mypy_cache/
-.vscode/

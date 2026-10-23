@@ -1,17 +1,18 @@
 
 from decimal import Decimal, InvalidOperation
-
 from django import template
 
 register = template.Library()
 
 
-@register.filter
+@register.filter(name='precio_chileno')
 def precio_chileno(valor):
-    """Muestra los precios con punto como separador de miles."""
+    if valor is None or valor == '':
+        return ''
+
     try:
         numero = int(Decimal(str(valor)))
-    except (InvalidOperation, TypeError, ValueError):
+    except (InvalidOperation, ValueError, TypeError):
         return valor
 
-    return f"{numero:,}".replace(",", ".")
+    return f"${numero:,}".replace(",", ".")

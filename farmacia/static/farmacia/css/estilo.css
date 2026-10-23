@@ -5,15 +5,15 @@
 
 
    :root {
-    --verde-oscuro: #0B4D3B;
-    --verde: #0F766E;
-    --verde-lima: #A3E635;
-    --fondo: #F5F7F3;
+    --verde-oscuro: #173f35;
+    --verde: #287653;
+    --verde-lima: #c8f169;
+    --fondo: #f5f7f3;
     --blanco: #ffffff;
     --texto: #24332d;
     --texto-secundario: #718078;
     --borde: #e2e9e1;
-    --sombra: 0 8px 24px rgba(11, 77, 59, 0.08);
+    --sombra: 0 8px 24px rgba(23, 63, 53, 0.08);
 
 }
 
@@ -98,14 +98,11 @@ nav a {
     text-decoration: none;
     font-size: 14px;
     font-weight: 600;
-    padding: 8px 0;
-    border-bottom: 2px solid transparent;
-    transition: color 0.2s ease, border-color 0.2s ease;
+    transition: color 0.2s ease;
 }
 
 nav a:hover {
     color: var(--verde);
-    border-bottom-color: var(--verde-lima);
 }
 
 /* =========================
@@ -136,7 +133,7 @@ nav a:hover {
 .buscador p {
     max-width: 600px;
     margin: 0 auto 32px;
-    color: #D7E9E2;
+    color: #d4e3dc;
     font-size: 17px;
 }
 
@@ -186,7 +183,7 @@ nav a:hover {
 }
 
 .buscador button:hover {
-    background-color: #B7E65B;
+    background-color: #b7e65b;
     transform: translateY(-1px);
 }
 
@@ -218,8 +215,7 @@ nav a:hover {
 .medicamento {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: 8px;
+    justify-content: space-between;
     min-width: 0;
     min-height: 280px;
     padding: 25px;
@@ -232,8 +228,7 @@ nav a:hover {
 
 .medicamento:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 30px rgba(11, 77, 59, 0.13);
-    border-color: #B7DCD2;
+    box-shadow: 0 14px 30px rgba(23, 63, 53, 0.13);
 }
 
 .medicamento h3 {
@@ -261,60 +256,20 @@ nav a:hover {
 
 .precio {
     display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 12px;
-    margin: 6px 0;
-    padding: 10px 12px;
-    background-color: #F0F7F4;
+    gap: 6px;
+    margin: 7px 0;
+    padding: 9px 10px;
+    background-color: #f6f8f5;
     border-radius: 8px;
-    color: var(--texto);
+    color: #526158;
     font-size: 13px;
-}
-
-.precio-farmacia {
-    flex: 1;
-    min-width: 0;
-    overflow-wrap: anywhere;
-    font-size: 13px;
-    font-weight: 600;
 }
 
 .precio strong {
-    flex-shrink: 0;
     color: var(--verde-oscuro);
     font-size: 14px;
-    white-space: nowrap;
-}
-
-.estado-disponible,
-.estado-no-disponible {
-    margin: 2px 0 4px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.enlace-farmacia {
-    display: inline-block;
-    margin: 0 0 6px;
-    color: var(--verde);
-    font-size: 12px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.enlace-farmacia:hover {
-    color: var(--verde-oscuro);
-    text-decoration: underline;
-}
-
-/* para cuando no hay precio (un poco obvio)*/
-.sin-precio {
-    margin: 12px 0;
-    color: var(--texto-secundario);
-    font-size: 13px;
 }
 
 .btn-medicamento {
@@ -456,17 +411,18 @@ footer {
     font-size: 12px;
 }
 
-/* TABLETS */
+/* =========================
+   TABLETS
+   ========================= */
 
-@media (max-width: 900px) {
+@media (max-width: 950px) {
     header {
-        padding: 18px 5%;
-        gap: 18px;
+        padding-right: 4%;
+        padding-left: 4%;
     }
 
-    nav {
-        gap: 16px;
-        flex-wrap: wrap;
+    header nav a {
+        color: white;
     }
 
     .populares,
@@ -475,11 +431,13 @@ footer {
         padding-left: 4%;
     }
 
-    .medicamentos, .lista-farmacias {
+    .medicamentos {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-
+    .lista-farmacias {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 /* =========================
@@ -489,16 +447,17 @@ footer {
 @media (max-width: 600px) {
     header {
         flex-direction: column;
-        align-items: stretch;
-        padding: 16px 5%;
+        gap: 15px;
+        padding: 20px 16px;
     }
 
-    .logo-enlace {
-        align-self: center;
+    .logo h1 {
+        font-size: 23px;
     }
 
     nav {
         justify-content: center;
+        flex-wrap: wrap;
         gap: 12px 20px;
     }
 
@@ -507,11 +466,11 @@ footer {
     }
 
     .buscador {
-        padding: 60px 18px;
+        padding: 58px 18px;
     }
 
     .buscador h2 {
-        font-size: 30px;
+        font-size: 31px;
     }
 
     .buscador p {
@@ -520,42 +479,76 @@ footer {
 
     .buscador form {
         flex-direction: column;
-        padding: 10px;
+        padding: 8px;
     }
 
-    .buscador input,
+    .buscador input {
+        width: 100%;
+        padding: 14px 12px;
+    }
+
     .buscador button {
         width: 100%;
     }
 
     .populares,
     .farmacias {
-        padding: 40px 5%;
+        padding: 45px 18px;
     }
 
     .medicamentos,
     .lista-farmacias {
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: 1fr;
+        gap: 18px;
     }
 
     .medicamento {
-        min-height: 0;
-        padding: 22px;
+        min-height: auto;
+        padding: 21px;
     }
 
     .farmacia {
         padding: 20px;
     }
 
-    footer {
-        padding: 35px 5% 20px;
+    .footer-contenido {
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .footer-contenido a {
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .footer-contenido,
+    .footer-contenido > div {
+        text-align: center;
     }
 }
 
 
-/* =====================================
-   DETALLE: DISEÑO DE DOS COLUMNAS
-   ===================================== */
+/* Espacio para la imagen de cada medicamento */
+.imagen-medicamento {
+    width: 100%;
+    height: 150px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f7f3;
+    border-radius: 10px;
+    font-size: 52px;
+}
+
+/* Evita que el enlace parezca un botón con estilo de enlace */
+.btn-medicamento {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
 
 .detalle-header {
     display: flex;
@@ -1044,7 +1037,7 @@ footer {
     font-size: 10px;
 }
 
-/* Adaptación a tabletas */
+/* Adaptaci├│n a tabletas */
 
 @media (max-width: 950px) {
     .detalle-layout {
@@ -1062,7 +1055,7 @@ footer {
     }
 }
 
-/* Adaptación a celulares */
+/* Adaptaci├│n a celulares */
 
 @media (max-width: 650px) {
     .detalle-header {

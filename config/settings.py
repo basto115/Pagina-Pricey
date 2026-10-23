@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',  # Ko'ápe oñemoĩ oiko porã hag̃ua 'humanize'
     'farmacia',
 ]
 

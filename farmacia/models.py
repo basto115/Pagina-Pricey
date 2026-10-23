@@ -49,14 +49,6 @@ class Farmacia(models.Model):
 
 
 class Producto(models.Model):
-
-    CATEGORIAS = [
-        ("medicamentos", "Medicamentos"),
-        ("cuidado_personal", "Cuidado personal"),
-        ("cosmeticos", "Cosméticos"),
-        ("otros", "Otros productos"),
-    ]
-
     medicamento = models.ForeignKey(
         Medicamento,
         on_delete=models.SET_NULL,
@@ -67,12 +59,6 @@ class Producto(models.Model):
 
     nombre = models.CharField(
         max_length=300
-    )
-
-    categoria = models.CharField(
-        max_length=30,
-        choices=CATEGORIAS,
-        default="otros"
     )
 
     presentacion = models.CharField(
@@ -88,6 +74,11 @@ class Producto(models.Model):
     sku = models.CharField(
         max_length=100,
         blank=True
+    )
+
+    categoria = models.CharField(
+        max_length=50,
+        default="medicamentos"
     )
 
     def __str__(self):

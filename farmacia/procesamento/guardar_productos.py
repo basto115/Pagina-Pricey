@@ -1,4 +1,5 @@
-import re
+
+from decimal import Decimal, InvalidOperation
 
 from farmacia.models import (
     Medicamento,
@@ -9,107 +10,65 @@ from farmacia.models import (
 
 
 def normalizar_nombre_busqueda(nombre):
-    """Normaliza nombres para ayudar a identificar productos existentes."""
+    """
+    Normaliza nombres para comparar productos
+    aunque las farmacias los escriban de forma diferente.
+    """
     if not nombre:
         return ""
 
-    nombre = str(nombre).lower().strip()
-    nombre = nombre.replace("×", " ")
+    nombre = str(nombre).lower()
     nombre = nombre.replace("(b)", "")
+    nombre = nombre.replace("×", " ")
+    nombre = nombre.replace("Ã—", " ")
 
-    # Quita la x cuando se utiliza como separador entre cantidades.
-    nombre = re.sub(r"\s+x\s+", " ", nombre)
-
-    # Normaliza espacios repetidos.
-    nombre = " ".join(nombre.split())
-
-    return nombre
+    return " ".join(nombre.split()).strip()
 
 
-def detectar_categoria(nombre, principio_activo=""):
+def convertir_precio(valor):
     """
-    Clasifica el producto usando su nombre y principio activo.
-    La clasificación es orientativa y puede necesitar ajustes.
+    Convierte un precio válido a Decimal.
+    Ejemplos: 1490, '1490', '1.490', '$1.490'.
     """
-    texto = f"{nombre} {principio_activo}".lower()
+    if valor is None or valor == "":
+        return None
 
-    palabras_medicamento = [
-        "comprimido",
-        "cápsula",
-        "capsula",
-        "jarabe",
-        "solución oral",
-        "solucion oral",
-        "suspensión oral",
-        "suspension oral",
-        "gotas",
-        "ampolla",
-        "inyectable",
-        "supositorio",
-        "óvulo",
-        "ovulo",
-        "mg",
-        "mcg",
-        "antibiótico",
-        "antibiotico",
-        "analgésico",
-        "analgesico",
-    ]
+    if isinstance(valor, (int, float, Decimal)):
+        try:
+            precio = Decimal(str(valor))
+        except (InvalidOperation, ValueError):
+            return None
+    else:
+        texto = str(valor).strip()
+        texto = texto.replace("$", "").replace(" ", "")
+        texto = texto.replace(".", "")
 
-    palabras_cosmeticos = [
-        "maquillaje",
-        "labial",
-        "máscara de pestañas",
-        "mascara de pestañas",
-        "base de maquillaje",
-        "sombra de ojos",
-        "rubor",
-        "delineador",
-        "esmalte de uñas",
-    ]
+        if not texto.isdigit():
+            return None
 
-    palabras_cuidado_personal = [
-        "shampoo",
-        "champú",
-        "acondicionador",
-        "desodorante",
-        "agua termal",
-        "protector solar",
-        "crema hidratante",
-        "limpiador facial",
-        "jabón",
-        "jabon",
-        "pañales",
-        "panales",
-        "pasta dental",
-        "cepillo dental",
-        "toallas húmedas",
-        "toallas humedas",
-        "crema corporal",
-        "agua micelar",
-    ]
+        try:
+            precio = Decimal(texto)
+        except InvalidOperation:
+            return None
 
-    if principio_activo:
-        return "medicamentos"
+    if not precio.is_finite() or precio <= 0:
+        return None
 
-    if any(palabra in texto for palabra in palabras_cosmeticos):
-        return "cosmeticos"
-
-    if any(palabra in texto for palabra in palabras_cuidado_personal):
-        return "cuidado_personal"
-
-    if any(palabra in texto for palabra in palabras_medicamento):
-        return "medicamentos"
-
-    return "otros"
+    return precio
 
 
 def buscar_medicamento(nombre, principio_activo=""):
-    """Busca un medicamento existente antes de crear uno nuevo."""
+    """
+    Busca un medicamento por nombre normalizado.
+    Si no existe, lo crea.
+    """
     nombre_busqueda = normalizar_nombre_busqueda(nombre)
 
     for medicamento in Medicamento.objects.all():
-        if normalizar_nombre_busqueda(medicamento.nombre) == nombre_busqueda:
+        if (
+            normalizar_nombre_busqueda(medicamento.nombre)
+            == nombre_busqueda
+        ):
             if principio_activo and not medicamento.principio_activo:
                 medicamento.principio_activo = principio_activo
                 medicamento.save(update_fields=["principio_activo"])
@@ -124,56 +83,70 @@ def buscar_medicamento(nombre, principio_activo=""):
 
 def guardar_producto(datos, nombre_farmacia):
     """
-    Guarda o actualiza un producto y su precio.
-    No registra precios ausentes, inválidos o iguales a cero.
+    Crea o actualiza un producto y su precio.
+    Los productos no medicinales pueden guardarse
+    sin asociación a un medicamento.
     """
-    nombre = (datos.get("nombre") or "").strip()
+    nombre = str(datos.get("nombre") or "").strip()
 
     if not nombre:
-        print("Producto omitido: no tiene nombre.")
-        return None
+        raise ValueError("El producto no tiene nombre.")
 
-    principio_activo = (datos.get("principio_activo") or "").strip()
+    categoria = str(
+        datos.get("categoria") or "medicamentos"
+    ).strip().lower()
 
-    categoria = detectar_categoria(nombre, principio_activo)
+    categorias_validas = {
+        "medicamentos",
+        "cuidado_personal",
+        "cosmeticos",
+        "otros",
+    }
 
-    medicamento = None
+    if categoria not in categorias_validas:
+        categoria = "otros"
+
+    principio_activo = datos.get("principio_activo") or ""
+
+    farmacia, _ = Farmacia.objects.get_or_create(
+        nombre=nombre_farmacia
+    )
 
     if categoria == "medicamentos":
         medicamento = buscar_medicamento(
             nombre,
             principio_activo,
         )
-
-    farmacia, _ = Farmacia.objects.get_or_create(
-        nombre=nombre_farmacia,
-    )
+    else:
+        medicamento = None
 
     nombre_busqueda = normalizar_nombre_busqueda(nombre)
 
-    productos = Producto.objects.filter(
-        categoria=categoria,
-        medicamento=medicamento,
-    )
+    productos = Producto.objects.filter(categoria=categoria)
+
+    if medicamento is not None:
+        productos = productos.filter(medicamento=medicamento)
+    else:
+        productos = productos.filter(medicamento__isnull=True)
 
     producto = None
 
-    for producto_existente in productos:
+    for existente in productos:
         if (
-            normalizar_nombre_busqueda(producto_existente.nombre)
+            normalizar_nombre_busqueda(existente.nombre)
             == nombre_busqueda
         ):
-            producto = producto_existente
+            producto = existente
             break
 
     if producto is None:
         producto = Producto.objects.create(
             medicamento=medicamento,
             nombre=nombre,
-            categoria=categoria,
             presentacion=datos.get("presentacion") or "",
             laboratorio=datos.get("laboratorio") or "",
             sku=datos.get("sku") or "",
+            categoria=categoria,
         )
     else:
         cambios = []
@@ -190,30 +163,13 @@ def guardar_producto(datos, nombre_farmacia):
             producto.sku = datos["sku"]
             cambios.append("sku")
 
-        if producto.categoria != categoria:
-            producto.categoria = categoria
-            cambios.append("categoria")
-
         if cambios:
             producto.save(update_fields=cambios)
 
-    precio_obtenido = datos.get("precio")
+    precio_obtenido = convertir_precio(datos.get("precio"))
 
-    try:
-        precio_obtenido = float(precio_obtenido)
-    except (TypeError, ValueError):
-        precio_obtenido = None
-
-    if precio_obtenido is not None and precio_obtenido > 0:
-        precio_normal = datos.get("precio_normal")
-
-        if precio_normal is not None:
-            try:
-                precio_normal = float(precio_normal)
-                if precio_normal <= 0:
-                    precio_normal = None
-            except (TypeError, ValueError):
-                precio_normal = None
+    if precio_obtenido is not None:
+        precio_normal = convertir_precio(datos.get("precio_normal"))
 
         Precio.objects.update_or_create(
             producto=producto,

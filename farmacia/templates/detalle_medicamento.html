@@ -1,4 +1,7 @@
-{% load static %} {% load humanize %} {% load precio_tags %}
+{% load static %}
+{% load humanize %}
+{% load precio_tags %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -170,16 +173,16 @@
                                     </p>
 
                                     <p class="precio-valor">
-                                        ${{ precio.precio|precio_chileno  }}
+                                        {{ precio.precio|precio_chileno  }}
                                     </p>
 
                                     {% if precio.disponible %}
                                         <p class="precio-estado disponible">
-                                            ● Disponible
+                                             Disponible
                                         </p>
                                     {% else %}
                                         <p class="precio-estado no-disponible">
-                                            ● No disponible
+                                             No disponible
                                         </p>
                                     {% endif %}
 
@@ -213,7 +216,7 @@
                     </section>
                 {% empty %}
                     <div class="comparacion-vacia">
-                        <span aria-hidden="true">🔎</span>
+                        <span aria-hidden="true"></span>
                         <h3>Aún no hay presentaciones</h3>
                         <p>
                             Todavía no hay productos asociados a este
