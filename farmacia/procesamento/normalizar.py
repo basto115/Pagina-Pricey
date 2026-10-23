@@ -1,45 +1,57 @@
 import re
 
-def limpiar_texto(texto):
-    #limpia espacios y normaliza el texto
+CATEGORIAS_VALIDAS = {
+    "medicamentos",
+    "cuidado_personal",
+    "cosmeticos",
+    "otros",
+}
 
+
+def limpiar_texto(texto):
+    """Limpia espacios y normaliza texto."""
     if texto is None:
         return ""
-    
-    texto = str(texto)
-    texto = texto.strip()
+
+    texto = str(texto).strip()
     texto = re.sub(r"\s+", " ", texto)
 
     return texto
 
+
 def normalizar_nombre(nombre):
-    #para normalizar el nombre del prod
+    """Normaliza el nombre del producto."""
+    return limpiar_texto(nombre)
 
-    nombre = limpiar_texto(nombre)
-
-    if not nombre:
-        return ""
-
-    return nombre
 
 def normalizar_principio_activo(principio_activo):
-
+    """Normaliza el principio activo."""
     principio_activo = limpiar_texto(principio_activo)
 
     if not principio_activo:
         return ""
-    
+
     return principio_activo.capitalize()
 
+
+
 def normalizar_precio(precio):
-
-    #Convierte los precios "1.490, $1.490, 1490, $1490" en 1490
-
+    """Convierte precios como '$1.490', '$ 1.490' o '1490' en 1490."""
     if precio is None:
         return None
 
-    precio = str(precio)
+    precio = str(precio).strip()
+    digitos = re.sub(r"\D", "", precio)
 
+    if not digitos:
+        return None
+
+    try:
+        return int(digitos)
+    except ValueError:
+        return None
+    
+    precio = str(precio)
     precio = precio.replace("$", "")
     precio = precio.replace(".", "")
     precio = precio.replace(" ", "")
@@ -47,24 +59,24 @@ def normalizar_precio(precio):
 
     if not precio:
         return None
-    
+
     try:
         return int(precio)
-    except ValueError:
+    except (ValueError, TypeError):
         return None
 
-def normalizar_disponibilidad(disponible):
-    #convierte la disponibilidad en true o false
 
+def normalizar_disponibilidad(disponible):
+    """Convierte diferentes valores a True o False."""
     if isinstance(disponible, bool):
         return disponible
-    
+
     if disponible is None:
         return False
-    
-    disponible = str(disponible).strip().lower()
 
-    valores_positivos = [
+    disponible = limpiar_texto(disponible).lower()
+
+    valores_positivos = {
         "true",
         "1",
         "si",
@@ -74,59 +86,79 @@ def normalizar_disponibilidad(disponible):
         "comprar",
         "agregar al carro",
         "agregar al carrito",
-    ]
+        "añadir al carro",
+    }
 
     return disponible in valores_positivos
 
+
 def normalizar_url(url):
-    
-    if not url:
-        return ""
-    
-    return str(url).strip()
+    """Limpia la URL del producto."""
+    return limpiar_texto(url)
+
+
+def normalizar_categoria(categoria):
+    """Valida y normaliza la categoría del producto."""
+    categoria = limpiar_texto(categoria).lower()
+
+    if categoria in CATEGORIAS_VALIDAS:
+        return categoria
+
+    return "otros" if categoria else "medicamentos"
+
 
 def normalizar_producto(producto, farmacia):
-    #recibe la informacion de un scraper y la transforma en un formato común
-
-    producto_normalizado = {
+    """
+    Unifica los datos recibidos desde los scrapers
+    y conserva los campos útiles para guardar el producto.
+    """
+    return {
         "nombre": normalizar_nombre(
             producto.get("nombre")
         ),
-
         "principio_activo": normalizar_principio_activo(
             producto.get("principio_activo")
         ),
-
-        "precio" : normalizar_precio(
+        "precio": normalizar_precio(
             producto.get("precio")
         ),
-
         "precio_normal": normalizar_precio(
             producto.get("precio_normal")
         ),
-
-        "disponible" : normalizar_disponibilidad(
+        "disponible": normalizar_disponibilidad(
             producto.get("disponible")
         ),
-
-        "url" : normalizar_url(
+        "url": normalizar_url(
             producto.get("url")
         ),
-
-        "farmacia" : farmacia,
+        "farmacia": farmacia,
+        "categoria": normalizar_categoria(
+            producto.get("categoria")
+        ),
+        "sku": limpiar_texto(
+            producto.get("sku")
+        ),
+        "laboratorio": limpiar_texto(
+            producto.get("laboratorio")
+        ),
+        "presentacion": limpiar_texto(
+            producto.get("presentacion")
+        ),
     }
 
-    return producto_normalizado
 
 if __name__ == "__main__":
-
     producto_prueba = {
         "nombre": "  Paracetamol 500 mg x 16 Comprimidos ",
         "principio_activo": "PARACETAMOL",
-        "precio": "618",
-        "precio_normal": "1.309",
+        "precio": "$1.490",
+        "precio_normal": "1.990",
         "disponible": True,
-        "url": " https://www.farmaciasahumada.cl/ "
+        "url": "https://www.farmaciasahumada.cl/",
+        "categoria": "medicamentos",
+        "sku": "12345",
+        "laboratorio": "Laboratorio de prueba",
+        "presentacion": "16 comprimidos",
     }
 
     resultado = normalizar_producto(
@@ -134,7 +166,7 @@ if __name__ == "__main__":
         "Farmacia Ahumada"
     )
 
-    print("\n producto normalizao")
+    print("\nProducto normalizado:")
 
     for campo, valor in resultado.items():
         print(f"{campo}: {valor}")

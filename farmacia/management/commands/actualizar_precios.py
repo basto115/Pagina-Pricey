@@ -17,6 +17,7 @@ from farmacia.procesamento.normalizar import normalizar_producto
 
 SCRAPERS = {
     "farmacia ahumada": obtener_ahumada,
+    "farmacias ahumada": obtener_ahumada,
     "cruz verde": obtener_cruz_verde,
     "salcobrand": obtener_salcobrand,
     "dr. simi": obtener_dr_simi,

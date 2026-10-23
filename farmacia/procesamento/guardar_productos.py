@@ -1,201 +1,185 @@
+
+from decimal import Decimal, InvalidOperation
+
 from farmacia.models import (
     Medicamento,
     Farmacia,
     Producto,
-    Precio
+    Precio,
 )
 
 
 def normalizar_nombre_busqueda(nombre):
     """
-    Normaliza el nombre para poder comparar productos
-    aunque las farmacias lo escriban de forma diferente.
+    Normaliza nombres para comparar productos
+    aunque las farmacias los escriban de forma diferente.
     """
-
     if not nombre:
         return ""
 
     nombre = str(nombre).lower()
-
-    # Diferencias comunes entre farmacias
     nombre = nombre.replace("(b)", "")
-    nombre = nombre.replace(" x ", " ")
     nombre = nombre.replace("×", " ")
+    nombre = nombre.replace("Ã—", " ")
 
-    # Eliminar espacios repetidos
-    nombre = " ".join(nombre.split())
+    return " ".join(nombre.split()).strip()
 
-    return nombre.strip()
+
+def convertir_precio(valor):
+    """
+    Convierte un precio válido a Decimal.
+    Ejemplos: 1490, '1490', '1.490', '$1.490'.
+    """
+    if valor is None or valor == "":
+        return None
+
+    if isinstance(valor, (int, float, Decimal)):
+        try:
+            precio = Decimal(str(valor))
+        except (InvalidOperation, ValueError):
+            return None
+    else:
+        texto = str(valor).strip()
+        texto = texto.replace("$", "").replace(" ", "")
+        texto = texto.replace(".", "")
+
+        if not texto.isdigit():
+            return None
+
+        try:
+            precio = Decimal(texto)
+        except InvalidOperation:
+            return None
+
+    if not precio.is_finite() or precio <= 0:
+        return None
+
+    return precio
 
 
 def buscar_medicamento(nombre, principio_activo=""):
     """
-    Busca un medicamento existente comparando su nombre
-    de forma normalizada.
-
-    Si no existe, crea uno nuevo.
+    Busca un medicamento por nombre normalizado.
+    Si no existe, lo crea.
     """
-
     nombre_busqueda = normalizar_nombre_busqueda(nombre)
 
-    medicamentos = Medicamento.objects.all()
+    for medicamento in Medicamento.objects.all():
+        if (
+            normalizar_nombre_busqueda(medicamento.nombre)
+            == nombre_busqueda
+        ):
+            if principio_activo and not medicamento.principio_activo:
+                medicamento.principio_activo = principio_activo
+                medicamento.save(update_fields=["principio_activo"])
 
-    for medicamento in medicamentos:
-
-        nombre_existente = normalizar_nombre_busqueda(
-            medicamento.nombre
-        )
-
-        if nombre_existente == nombre_busqueda:
             return medicamento
 
-    medicamento = Medicamento.objects.create(
+    return Medicamento.objects.create(
         nombre=nombre,
-        principio_activo=principio_activo or ""
+        principio_activo=principio_activo or "",
     )
-
-    return medicamento
 
 
 def guardar_producto(datos, nombre_farmacia):
     """
-    Guarda o actualiza un producto obtenido
-    desde un scraper.
+    Crea o actualiza un producto y su precio.
+    Los productos no medicinales pueden guardarse
+    sin asociación a un medicamento.
     """
+    nombre = str(datos.get("nombre") or "").strip()
 
-    # -----------------------------
-    # FARMACIA
-    # -----------------------------
+    if not nombre:
+        raise ValueError("El producto no tiene nombre.")
+
+    categoria = str(
+        datos.get("categoria") or "medicamentos"
+    ).strip().lower()
+
+    categorias_validas = {
+        "medicamentos",
+        "cuidado_personal",
+        "cosmeticos",
+        "otros",
+    }
+
+    if categoria not in categorias_validas:
+        categoria = "otros"
+
+    principio_activo = datos.get("principio_activo") or ""
 
     farmacia, _ = Farmacia.objects.get_or_create(
         nombre=nombre_farmacia
     )
 
-    # -----------------------------
-    # DATOS
-    # -----------------------------
+    if categoria == "medicamentos":
+        medicamento = buscar_medicamento(
+            nombre,
+            principio_activo,
+        )
+    else:
+        medicamento = None
 
-    nombre = datos.get("nombre", "")
-    principio_activo = datos.get(
-        "principio_activo",
-        ""
-    )
+    nombre_busqueda = normalizar_nombre_busqueda(nombre)
 
-    # -----------------------------
-    # MEDICAMENTO
-    # -----------------------------
+    productos = Producto.objects.filter(categoria=categoria)
 
-    medicamento = buscar_medicamento(
-        nombre,
-        principio_activo
-    )
-
-    # Actualizar principio activo si antes estaba vacío
-    if (
-        principio_activo
-        and not medicamento.principio_activo
-    ):
-        medicamento.principio_activo = principio_activo
-        medicamento.save()
-
-    # -----------------------------
-    # PRODUCTO
-    # -----------------------------
+    if medicamento is not None:
+        productos = productos.filter(medicamento=medicamento)
+    else:
+        productos = productos.filter(medicamento__isnull=True)
 
     producto = None
 
-    productos = Producto.objects.filter(
-        medicamento=medicamento
-    )
-
-    nombre_busqueda = normalizar_nombre_busqueda(
-        nombre
-    )
-
-    for producto_existente in productos:
-
-        nombre_existente = normalizar_nombre_busqueda(
-            producto_existente.nombre
-        )
-
-        if nombre_existente == nombre_busqueda:
-            producto = producto_existente
+    for existente in productos:
+        if (
+            normalizar_nombre_busqueda(existente.nombre)
+            == nombre_busqueda
+        ):
+            producto = existente
             break
 
-    # Si no existe, crear producto
     if producto is None:
-
         producto = Producto.objects.create(
             medicamento=medicamento,
             nombre=nombre,
-            presentacion=datos.get(
-                "presentacion",
-                ""
-            ),
-            laboratorio=datos.get(
-                "laboratorio",
-                ""
-            ),
-            sku=datos.get(
-                "sku",
-                ""
-            )
+            presentacion=datos.get("presentacion") or "",
+            laboratorio=datos.get("laboratorio") or "",
+            sku=datos.get("sku") or "",
+            categoria=categoria,
         )
+    else:
+        cambios = []
 
-    # -----------------------------
-    # ACTUALIZAR INFORMACIÓN
-    # -----------------------------
+        if not producto.presentacion and datos.get("presentacion"):
+            producto.presentacion = datos["presentacion"]
+            cambios.append("presentacion")
 
-    cambios = False
+        if not producto.laboratorio and datos.get("laboratorio"):
+            producto.laboratorio = datos["laboratorio"]
+            cambios.append("laboratorio")
 
-    if (
-        datos.get("presentacion")
-        and not producto.presentacion
-    ):
-        producto.presentacion = datos["presentacion"]
-        cambios = True
+        if not producto.sku and datos.get("sku"):
+            producto.sku = datos["sku"]
+            cambios.append("sku")
 
-    if (
-        datos.get("laboratorio")
-        and not producto.laboratorio
-    ):
-        producto.laboratorio = datos["laboratorio"]
-        cambios = True
+        if cambios:
+            producto.save(update_fields=cambios)
 
-    if (
-        datos.get("sku")
-        and not producto.sku
-    ):
-        producto.sku = datos["sku"]
-        cambios = True
+    precio_obtenido = convertir_precio(datos.get("precio"))
 
-    if cambios:
-        producto.save()
+    if precio_obtenido is not None:
+        precio_normal = convertir_precio(datos.get("precio_normal"))
 
-    # -----------------------------
-    # PRECIO
-    # -----------------------------
-
-    Precio.objects.update_or_create(
-        producto=producto,
-        farmacia=farmacia,
-        defaults={
-            "precio": datos.get("precio") or 0,
-
-            "precio_normal": datos.get(
-                "precio_normal"
-            ),
-
-            "disponible": datos.get(
-                "disponible",
-                False
-            ),
-
-            "url_producto": datos.get(
-                "url",
-                ""
-            )
-        }
-    )
+        Precio.objects.update_or_create(
+            producto=producto,
+            farmacia=farmacia,
+            defaults={
+                "precio": precio_obtenido,
+                "precio_normal": precio_normal,
+                "disponible": datos.get("disponible", False),
+                "url_producto": datos.get("url") or "",
+            },
+        )
 
     return producto
