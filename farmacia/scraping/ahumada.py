@@ -1,193 +1,100 @@
+import json
 import re
 import requests
 from bs4 import BeautifulSoup
 
 
 def limpiar_precio(valor):
-    """Convierte precios como '$1.309' en 1309."""
+    """Convierte un precio chileno a entero."""
+    if valor is None:
+        return None
 
-    valor = str(valor)
-
-    valor = valor.replace("$", "")
-    valor = valor.replace(".", "")
-    valor = valor.replace(" ", "")
-    valor = valor.strip()
-
-    return int(valor)
+    valor = re.sub(r"[^\d]", "", str(valor))
+    return int(valor) if valor else None
 
 
 def obtener_producto(url):
+    headers = {"User-Agent": "Mozilla/5.0"}
 
-    headers = {
-        "User-Agent": "Mozilla/5.0"
-    }
-
-    respuesta = requests.get(
-        url,
-        headers=headers,
-        timeout=15
-    )
-
-    print(
-        "Código HTTP:",
-        respuesta.status_code
-    )
-
+    respuesta = requests.get(url, headers=headers, timeout=20)
     respuesta.raise_for_status()
 
-    soup = BeautifulSoup(
-        respuesta.text,
-        "html.parser"
-    )
-
-    texto = soup.get_text(
-        " ",
-        strip=True
-    )
-
-    # -----------------------------
-    # NOMBRE
-    # -----------------------------
-
-    nombre = ""
+    soup = BeautifulSoup(respuesta.text, "html.parser")
 
     titulo = soup.find("h1")
+    nombre = titulo.get_text(" ", strip=True) if titulo else ""
 
-    if titulo:
+    precio = None
+    precio_normal = None
+    sku = ""
+    disponible = False
+    laboratorio = ""
+    principio_activo = ""
+    presentacion = ""
 
-        nombre = titulo.get_text(
-            " ",
-            strip=True
-        )
-
-    if not nombre and soup.title:
-
-        nombre = soup.title.get_text(
-            " ",
-            strip=True
-        )
-
-    # -----------------------------
-    # PRECIOS
-    # -----------------------------
-
-    precios = []
-
-    for elemento in soup.find_all(
-        string=re.compile(r"\$")
+    # Leer los datos estructurados del producto.
+    for script in soup.find_all(
+        "script", type="application/ld+json"
     ):
+        try:
+            datos = json.loads(script.get_text(strip=True))
+        except (json.JSONDecodeError, TypeError):
+            continue
 
-        texto_precio = elemento.strip()
+        elementos = datos if isinstance(datos, list) else [datos]
 
-        coincidencia = re.search(
-            r"\$(\d+(?:\.\d{3})*)",
-            texto_precio
-        )
-
-        if coincidencia:
-
-            valor = limpiar_precio(
-                coincidencia.group(1)
-            )
-
-            # Ignorar banner de despacho gratis
-            if valor == 34990:
+        for elemento in elementos:
+            if not isinstance(elemento, dict):
                 continue
 
-            if valor not in precios:
-                precios.append(valor)
+            if elemento.get("@type") != "Product":
+                continue
 
-    precio = (
-        precios[0]
-        if len(precios) > 0
-        else None
-    )
+            nombre = elemento.get("name") or nombre
+            sku = str(elemento.get("sku") or elemento.get("mpn") or "")
 
-    precio_normal = (
-        precios[1]
-        if len(precios) > 1
-        else None
-    )
+            oferta = elemento.get("offers", {})
+            if isinstance(oferta, list):
+                oferta = oferta[0] if oferta else {}
 
-    # -----------------------------
-    # PRINCIPIO ACTIVO
-    # -----------------------------
+            if isinstance(oferta, dict):
+                precio = limpiar_precio(oferta.get("price"))
+                disponibilidad = str(
+                    oferta.get("availability", "")
+                ).lower()
 
-    principio_activo = ""
+                disponible = (
+                    disponibilidad.endswith("/instock")
+                    or disponibilidad.endswith("#instock")
+                )
 
-    coincidencia_activo = re.search(
-        r"Principio Activo\s*:?\s*"
-        r"([A-Za-zÁÉÍÓÚÑáéíóúñ ]+?)"
-        r"(?:Registro Sanitario|$)",
-        texto,
-        re.IGNORECASE
-    )
+            marca = elemento.get("brand", {})
+            if isinstance(marca, dict):
+                laboratorio = marca.get("name", "")
 
-    if coincidencia_activo:
+            if precio is not None:
+                break
 
-        principio_activo = (
-            coincidencia_activo
-            .group(1)
-            .strip()
-        )
-
-    # -----------------------------
-    # DISPONIBILIDAD
-    # -----------------------------
-
-    disponible = False
-
-    palabras_disponibilidad = [
-        "Agregar al carrito",
-        "Agregar al Carrito",
-        "Comprar"
-    ]
-
-    for palabra in palabras_disponibilidad:
-
-        if palabra.lower() in texto.lower():
-
-            disponible = True
+        if precio is not None:
             break
 
-    # -----------------------------
-    # RESULTADO
-    # -----------------------------
-
-    producto = {
-
+    return {
         "nombre": nombre,
-
         "principio_activo": principio_activo,
-
         "precio": precio,
-
         "precio_normal": precio_normal,
-
         "disponible": disponible,
-
-        "sku": "",
-
-        "laboratorio": "",
-
-        "presentacion": "",
-
-        "url": url
+        "sku": sku,
+        "laboratorio": laboratorio,
+        "presentacion": presentacion,
+        "url": url,
     }
-
-    return producto
 
 
 if __name__ == "__main__":
-
     url = (
         "https://www.farmaciasahumada.cl/"
-        "paracetamol-500-mg-x-16-comprimidos-84574.html"
+        "reflexan-10-mg-x-20-comprimidos-recubiertos-6.html"
     )
 
-    producto = obtener_producto(url)
-
-    print("\n--- PRODUCTO EXTRAÍDO ---")
-
-    for clave, valor in producto.items():
-        print(f"{clave}: {valor}")
+    print(obtener_producto(url))
