@@ -1249,3 +1249,47 @@ footer {
         font-size: 25px;
     }
 }
+
+/* ajustes inicio */
+
+.medicamento-categoria {
+    margin: 0 0 12px;
+    color: var(--texto-secundario);
+    font-size: 14px;
+}
+
+.medicamento-categoria strong {
+    color: var(--texto);
+}
+
+.medicamento-acciones {
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+.detalle-no-disponible {
+    margin-top: 12px;
+    color: var(--texto-secundario);
+    font-size: 13px;
+}
+
+.sin-resultado {
+    grid-column: 1 / -1;
+    padding: 25px;
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    color: var(--texto-secundario);
+    text-align: center;
+}
+
+.mapa {
+    max-width: 1100px;
+    margin: 30px auto 0;
+}
+
+@media (max-width: 600px) {
+    .mapa {
+        margin-top: 22px;
+    }
+}

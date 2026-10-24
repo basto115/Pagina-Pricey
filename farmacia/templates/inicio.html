@@ -46,18 +46,26 @@
     </section>
 
     <section class="populares" id="medicamentos">
-        <h2>Medicamentos populares</h2>
+        <h2> 
+            {% if busqueda %}
+                Resultado de búsqueda
+            {% else %}
+                Medicamentos populares
+            {% endif %}
+        </h2>
 
-        <div class="medicamentos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; align-items: stretch;">
+        <div class="medicamentos">
             {% if busqueda and not medicamentos %}
-                <p>No se encontraron medicamentos para tu búsqueda.</p>
+                <p>No se encontraron medicamentos para tu búsqueda.
+                    Intenta con otro nombre.
+                </p>
             {% endif %}
 
             {% for medicamento in medicamentos %}
-                <div class="medicamento" style="background: #ffffff; border-radius: 14px; border: 1px solid #dbe6e0; box-shadow: 0 4px 14px rgba(0,0,0,0.04); padding: 1.5rem; display: flex; flex-direction: column; justify-content: flex-start; text-align: left; min-height: 200px; box-sizing: border-box;">
+                <div class="medicamento">
                     
                     {% with producto=medicamento.productos.all|first %}
-                        <h3 style="font-size: 1.05rem; font-weight: 700; color: #0b3b2c; margin: 0 0 0.8rem 0; line-height: 1.35; text-align: left;">
+                        <h3>
                             {% if producto %}
                                 {{ producto.nombre }}
                             {% else %}
@@ -66,21 +74,22 @@
                         </h3>
                     {% endwith %}
 
-                    <p style="font-size: 0.88rem; color: #222; margin: 0 0 0.8rem 0; text-align: left;">
-                        <strong>Categoría:</strong> {{ medicamento.categoria.nombre|default:"Medicamentos" }}
+                    <p class="medicamento-categoria">
+                        <strong>Categoría:</strong> 
+                        {{ medicamento.categoria.nombre|default:"Medicamentos" }}
                     </p>
 
                     {% if medicamento.id %}
-                        <div style="margin-top: 0.2rem;">
+                        <div class="medicamento-acciones">
                             <a 
                                 href="{% url 'detalle_medicamento' medicamento.id %}" 
-                                style="display: inline-block; background-color: #1b6351; color: #ffffff !important; font-size: 0.82rem; font-weight: 600; text-decoration: underline; padding: 0.45rem 1rem; border-radius: 6px; border: 1px solid #134e3f; cursor: pointer;"
+                                class="btn-medicamento"
                             >
                                 Ver medicamento
                             </a>
                         </div>
                     {% else %}
-                        <p style="font-size: 0.8rem; color: #7f8c8d; margin: 0; text-align: left;">
+                        <p class="detalle-no-disponible">
                             Detalles del medicamento aún no disponibles.
                         </p>
                     {% endif %}
