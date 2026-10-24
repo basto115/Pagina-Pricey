@@ -1293,3 +1293,58 @@ footer {
         margin-top: 22px;
     }
 }
+
+/* paginacion inicio */
+
+.paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 28px auto 10px;
+}
+
+.pagina-numero,
+.pagina-flecha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--borde);
+    border-radius: 9px;
+    background: var(--blanco);
+    color: var(--verde-oscuro);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.pagina-numero:hover,
+.pagina-flecha:hover {
+    background: var(--verde-lima);
+    color: var(--verde-oscuro);
+}
+
+.pagina-numero.pagina-activa {
+    border-color: var(--verde);
+    background: var(--verde);
+    color: var(--blanco);
+}
+
+@media (max-width: 600px) {
+    .paginacion {
+        gap: 6px;
+        margin-top: 22px;
+    }
+
+    .pagina-numero,
+    .pagina-flecha {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 9px;
+    }
+}

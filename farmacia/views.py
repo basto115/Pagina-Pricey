@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from django.shortcuts import render, get_object_or_404
+from django.core.paginator import Paginator
 
 from .models import Medicamento, Farmacia, Precio
 
@@ -76,8 +77,13 @@ def inicio(request):
             pk__in=medicamentos_encontrados.values('pk')
         )
 
+    #mostrar 6 medicamentos por pagina
+    paginador = Paginator(medicamentos, 6)
+    pagina_obj = paginador.get_page(request.GET.get('pagina'))
+    
     contexto = {
-        'medicamentos': medicamentos,
+        'medicamentos': pagina_obj,
+        'pagina_obj': pagina_obj,
         'busqueda': busqueda,
         'no_encontrados': no_encontrados,
     }
