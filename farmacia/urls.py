@@ -5,6 +5,8 @@ from . import views
 
 urlpatterns = [
     path('', views.inicio, name='inicio'),
+    path('login/', views.vista_login, name='login'),
+    path('registro/', views.vista_resgitro, name='registro'),
 
     path(
         'medicamento/<int:medicamento_id>/',

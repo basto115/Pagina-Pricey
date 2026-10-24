@@ -182,3 +182,9 @@ def detalle_medicamento(request, medicamento_id):
         'detalle_medicamento.html',
         {'medicamento': medicamento}
     )
+    
+def vista_login(request):
+    return render(request, 'login.html')
+
+def vista_resgitro(request):
+    return render(request, 'registro.html')
