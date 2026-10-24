@@ -14,17 +14,72 @@ def inicio(request):
     medicamentos = Medicamento.objects.prefetch_related(
         'productos__precios__farmacia'
     ).order_by('nombre')
+    
+    no_encontrados = []
 
     if busqueda:
+        #separadores explicito (coma, punto y coma o espacios)
+        if any(separador in busqueda for separador in [',', ';', '\n']):
+            terminos = [
+                termino.strip()
+                for termino in busqueda.replace(';', ',')
+                .replace('\n', ',').split(',')
+                if termino.strip()
+            ]
+        else:
+            #busqueda completa
+            terminos = [busqueda]
+            
+            #si la frase no coincide con ningun medicamento
+            # se intenta reconocer varios nombre registrados
+            
+            coincidencia_completa = Medicamento.objects.filter(
+                Q(nombre__icontains=busqueda) |
+                Q(principio_activo__icontains=busqueda) |
+                Q(productos__nombre__icontains=busqueda)   
+            ).distinct().exists()
+            
+            if not coincidencia_completa:
+                nombres = list(
+                    Medicamento.objects.values_list('nombre', flat=True)
+                )
+                
+                encontrados = [
+                    nombre for nombre in nombres
+                    if nombre.lower() in busqueda.lower()
+                ]
+                
+                if len(encontrados) >= 2:
+                    terminos = encontrados
+                elif len(busqueda.split()) >= 2:
+                    terminos = busqueda.split()
+                elif encontrados:
+                    terminos = encontrados
+        
+        medicamentos_encontrados = Medicamento.objects.none()
+        
+        for termino in terminos:
+            resultados = Medicamento.objects.filter(
+                Q(nombre__icontains=termino) |
+                Q(principio_activo__icontains=termino) |
+                Q(productos__nombre__icontains=termino)
+            ).distinct()
+            
+            if resultados.exists():
+                medicamentos_encontrados = (
+                    medicamentos_encontrados | resultados
+                )
+            else:
+                no_encontrados.append(termino)
+        
         medicamentos = medicamentos.filter(
-            Q(nombre__icontains=busqueda) |
-            Q(principio_activo__icontains=busqueda) |
-            Q(productos__nombre__icontains=busqueda)
-        ).distinct()
+            pk__in=medicamentos_encontrados.values('pk')
+        )
 
     contexto = {
         'medicamentos': medicamentos,
         'busqueda': busqueda,
+        'no_encontrados': no_encontrados,
     }
 
     return render(request, 'inicio.html', contexto)
