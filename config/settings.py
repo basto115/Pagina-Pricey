@@ -110,3 +110,5 @@ STATIC_URL = 'static/'
 
 # Correo electrónico para desarrollo
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+TESSERACT_CMD = os.environ.get("TESSERACT_CMD", "")

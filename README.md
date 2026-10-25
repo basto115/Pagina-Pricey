@@ -147,3 +147,26 @@ Para que la automatización funcione, los secretos requeridos deben estar config
 10. Control de versiones
 
 El código fuente y los cambios del proyecto se gestionan mediante Git y GitHub, lo que permite mantener el historial de modificaciones y facilitar la colaboración entre los integrantes del equipo.
+
+------------
+Configuración de OCR
+
+El módulo de lectura de recetas utiliza Tesseract OCR para reconocer texto en imágenes, pytesseract para integrarlo con Python y Pillow para procesar imágenes.
+
+Requisitos adicionales
+
+Instalar Tesseract OCR en el sistema operativo.
+
+Instalar los datos de idioma español (spa.traineddata).
+
+Instalar las dependencias de Python mediante pip install -r requirements.txt.
+
+Configurar la variable de entorno TESSERACT_CMD con la ruta del ejecutable tesseract.exe en Windows. En Linux o macOS, se puede utilizar la ruta del ejecutable disponible en el sistema.
+
+Verificación
+
+tesseract --version
+tesseract --list-langs
+python manage.py check
+
+El repositorio contiene el código de integración, pero no incluye el ejecutable de Tesseract ni su instalación completa. Cada integrante debe instalar y configurar esta dependencia en su propio equipo.
