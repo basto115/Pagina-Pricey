@@ -4,8 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>FARMA PRICEY</title>
     <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
+    <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
 </head>
 <body>
 
@@ -28,6 +33,17 @@
         <a href="{% url 'login' %}">Iniciar sesión</a>
     </nav>
 </header>
+
+<!-- Ubicación del usuario -->
+<section class="ubicacion-usuario" aria-label="Mi ubicación">
+    <button type="button" id="btn-ubicacion">
+        Usar mi ubicación
+    </button>
+
+    <p id="mensaje-ubicacion" aria-live="polite">
+        Permite conocer tu ubicación para encontrar farmacias cercanas.
+    </p>
+</section>
 
 <main>
     <section class="buscador">
@@ -151,9 +167,11 @@
             </div>
         </div>
 
+        
         <div class="mapa">
-            <p>Espacio reservado para el mapa de farmacias.</p>
+            <div id="mapa-farmacias" style="height: 400px; width: 100%;"></div>
         </div>
+
     </section>
 </main>
 
@@ -182,6 +200,8 @@
     </div>
 </footer>
 
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="{% static 'farmacia/js/script.js' %}"></script>
 </body>
 </html>
