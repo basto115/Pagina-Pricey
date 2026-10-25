@@ -31,4 +31,6 @@ urlpatterns = [
         views.api_medicamentos,
         name='api_medicamentos'
     ),
+    
+    path("leer-receta/", views.leer_receta, name="leer_receta"),
 ]

@@ -111,4 +111,4 @@ STATIC_URL = 'static/'
 # Correo electrónico para desarrollo
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-TESSERACT_CMD = os.environ.get("TESSERACT_CMD", "")
+TESSERACT_CMD = os.environ.get("TESSERACT_CMD",  r"C:\Program Files\Tesseract-OCR\tesseract.exe")
