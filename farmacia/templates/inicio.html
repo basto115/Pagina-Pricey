@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
@@ -7,39 +8,28 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>FARMA PRICEY</title>
     <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
-    <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
 
 <header>
     <div class="logo">
         <a href="{% url 'inicio' %}" class="logo-enlace">
-            <img
-                src="{% static 'farmacia/img/pandaloool.png' %}"
-                alt="Pandita de FARMA PRICEY"
-                class="logo-imagen"
-            >
+            <img src="{% static 'farmacia/img/pandaloool.png' %}"
+                 alt="Pandita de FARMA PRICEY" class="logo-imagen">
             <span>FARMA PRICEY</span>
         </a>
     </div>
-
     <nav>
         <a href="{% url 'inicio' %}">Inicio</a>
         <a href="#farmacias">Farmacias</a>
-        <a href="#medicamentos">Medicamentos</a>
+        <a href="#catalogo">Catálogo</a>
         <a href="{% url 'login' %}">Iniciar sesión</a>
     </nav>
 </header>
 
-<!-- Ubicación del usuario -->
 <section class="ubicacion-usuario" aria-label="Mi ubicación">
-    <button type="button" id="btn-ubicacion">
-        Usar mi ubicación
-    </button>
-
+    <button type="button" id="btn-ubicacion">Usar mi ubicación</button>
     <p id="mensaje-ubicacion" aria-live="polite">
         Permite conocer tu ubicación para encontrar farmacias cercanas.
     </p>
@@ -47,131 +37,125 @@
 
 <main>
     <section class="buscador">
-        <h2>Encuentra el mejor precio para tus medicamentos</h2>
-        <p>Compara precios y disponibilidad en distintas farmacias.</p>
-
+        <h2>Encuentra el mejor precio</h2>
+        <p>Busca medicamentos, cosméticos, productos de higiene y más.</p>
         <form method="GET" action="{% url 'inicio' %}">
-            <input
-                type="text"
-                name="buscar"
-                placeholder="Buscar medicamento..."
-                value="{{ busqueda }}"
-            >
+            <input type="text" name="buscar"
+                   placeholder="Buscar un producto..."
+                   value="{{ busqueda }}">
             <button type="submit">Buscar</button>
         </form>
     </section>
 
-    <section class="populares" id="medicamentos">
-        <h2> 
+    <section class="populares" id="catalogo">
+        <h2>
             {% if busqueda %}
-                Resultado de búsqueda
+                Resultados de búsqueda
             {% else %}
-                Medicamentos populares
+                Catálogo de productos
             {% endif %}
         </h2>
 
         <div class="medicamentos">
-            {% if busqueda and not medicamentos %}
-                <p>No se encontraron medicamentos para tu búsqueda.
-                    Intenta con otro nombre.
-                </p>
-            {% endif %}
-
-            {% for medicamento in medicamentos %}
-                <div class="medicamento">
-                    
-                    {% with producto=medicamento.productos.all|first %}
-                        <h3>
-                            {% if producto %}
-                                {{ producto.nombre }}
-                            {% else %}
-                                {{ medicamento.nombre }}
-                            {% endif %}
-                        </h3>
-                    {% endwith %}
+            {% for producto in productos %}
+                <article class="medicamento">
+                    <h3>{{ producto.nombre }}</h3>
 
                     <p class="medicamento-categoria">
-                        <strong>Categoría:</strong> 
-                        {{ medicamento.categoria.nombre|default:"Medicamentos" }}
+                        <strong>Categoría:</strong>
+                        {{ producto.get_categoria_display|default:producto.categoria }}
                     </p>
 
-                    {% if medicamento.id %}
-                        <div class="medicamento-acciones">
-                            <a 
-                                href="{% url 'detalle_medicamento' medicamento.id %}" 
-                                class="btn-medicamento"
-                            >
-                                Ver medicamento
-                            </a>
-                        </div>
-                    {% else %}
-                        <p class="detalle-no-disponible">
-                            Detalles del medicamento aún no disponibles.
-                        </p>
+                    {% if producto.presentacion %}
+                        <p>Presentación: {{ producto.presentacion }}</p>
                     {% endif %}
 
-                </div>
+                    {% if producto.laboratorio %}
+                        <p>Laboratorio: {{ producto.laboratorio }}</p>
+                    {% endif %}
+
+                    <h4>Precios por farmacia</h4>
+
+                    {% with precios=producto.precios.all %}
+                        {% if precios %}
+                            <ul>
+                                {% for precio in precios %}
+                                    <li>
+                                        <strong>{{ precio.farmacia.nombre }}</strong>:
+                                        ${{ precio.precio|floatformat:0 }}
+
+                                        {% if precio.precio_normal and precio.precio_normal > precio.precio %}
+                                            <del>${{ precio.precio_normal|floatformat:0 }}</del>
+                                        {% endif %}
+
+                                        {% if not precio.disponible %}
+                                            — Sin disponibilidad confirmada
+                                        {% endif %}
+
+                                        {% if precio.url_producto %}
+                                            <a href="{{ precio.url_producto }}"
+                                               target="_blank"
+                                               rel="noopener noreferrer">
+                                                Ver producto
+                                            </a>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No hay precios registrados.</p>
+                        {% endif %}
+                    {% endwith %}
+
+                    {% if producto.medicamento_id %}
+                        <a href="{% url 'detalle_medicamento' producto.medicamento_id %}"
+                           class="btn-medicamento">
+                            Ver detalles del medicamento
+                        </a>
+                    {% endif %}
+                </article>
+            {% empty %}
+                <p>
+                    No se encontraron productos.
+                    {% if busqueda %}Prueba con otro nombre.{% endif %}
+                </p>
             {% endfor %}
         </div>
 
         {% if pagina_obj.paginator.num_pages > 1 %}
-            <nav class="paginacion" aria-label="Paginación de medicamentos">
-
+            <nav class="paginacion" aria-label="Paginación del catálogo">
                 {% if pagina_obj.has_previous %}
-                    <a 
-                        href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ pagina_obj.previous_page_number }}#medicamentos"
-                        class="pagina-flecha"
-                        aria-label="Página anterior"
-                    >&laquo;</a>
+                    <a href="?buscar={{ busqueda|urlencode }}&pagina={{ pagina_obj.previous_page_number }}#catalogo">
+                        Anterior
+                    </a>
                 {% endif %}
 
-                {% for numero in pagina_obj.paginator.page_range %}
-                    <a 
-                        href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ numero }}#medicamentos"
-                        class="pagina-numero {% if pagina_obj.number == numero %}pagina-activa{% endif %}"
-                        {% if pagina_obj.number == numero %}aria-current="page"{% endif %}
-                    >{{ numero }}</a>
-                {% endfor %}
+                <span>
+                    Página {{ pagina_obj.number }} de {{ pagina_obj.paginator.num_pages }}
+                </span>
 
                 {% if pagina_obj.has_next %}
-                    <a 
-                        href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ pagina_obj.next_page_number }}#medicamentos"
-                        class="pagina-flecha"
-                        aria-label="Página siguiente"
-                        >&raquo;</a>
+                    <a href="?buscar={{ busqueda|urlencode }}&pagina={{ pagina_obj.next_page_number }}#catalogo">
+                        Siguiente
+                    </a>
                 {% endif %}
             </nav>
         {% endif %}
-
     </section>
 
     <section class="farmacias" id="farmacias">
-        <h2>Farmacias cercanas</h2>
-
+        <h2>Farmacias</h2>
         <div class="farmacias-contenido">
             <div class="lista-farmacias">
-                <div class="farmacia">
-                    <h3>Farmacia Cruz Verde</h3>
-                    <p>Consulta su ubicación y disponibilidad.</p>
-                </div>
-
-                <div class="farmacia">
-                    <h3>Farmacias Ahumada</h3>
-                    <p>Consulta su ubicación y disponibilidad.</p>
-                </div>
-
-                <div class="farmacia">
-                    <h3>Salcobrand</h3>
-                    <p>Consulta su ubicación y disponibilidad.</p>
-                </div>
+                <div class="farmacia"><h3>Farmacia Cruz Verde</h3></div>
+                <div class="farmacia"><h3>Farmacias Ahumada</h3></div>
+                <div class="farmacia"><h3>Salcobrand</h3></div>
+                <div class="farmacia"><h3>Dr. Simi</h3></div>
             </div>
         </div>
-
-        
         <div class="mapa">
             <div id="mapa-farmacias" style="height: 400px; width: 100%;"></div>
         </div>
-
     </section>
 </main>
 
@@ -179,27 +163,23 @@
     <div class="footer-contenido">
         <div>
             <h3>FARMA PRICEY</h3>
-            <p>Compara precios de medicamentos de forma sencilla.</p>
+            <p>Compara precios y disponibilidad de productos.</p>
         </div>
-
         <div>
             <h4>Enlaces</h4>
             <a href="{% url 'inicio' %}">Inicio</a>
-            <a href="#medicamentos">Medicamentos</a>
+            <a href="#catalogo">Catálogo</a>
             <a href="#farmacias">Farmacias</a>
         </div>
-
         <div>
             <h4>Contacto</h4>
             <p>contacto@farmapricey.cl</p>
         </div>
     </div>
-
     <div class="footer-bottom">
         <p>&copy; 2026 FARMA PRICEY. Todos los derechos reservados.</p>
     </div>
 </footer>
-
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="{% static 'farmacia/js/script.js' %}"></script>

@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>FARMA PRICEY</title>
+    <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
+    <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <a href="{% url 'inicio' %}" class="logo-enlace">
+            <img
+                src="{% static 'farmacia/img/pandaloool.png' %}"
+                alt="Pandita de FARMA PRICEY"
+                class="logo-imagen"
+            >
+            <span>FARMA PRICEY</span>
+        </a>
+    </div>
+
+    <nav>
+        <a href="{% url 'inicio' %}">Inicio</a>
+        <a href="#farmacias">Farmacias</a>
+        <a href="#medicamentos">Medicamentos</a>
+        <a href="{% url 'login' %}">Iniciar sesión</a>
+    </nav>
+</header>
+
+<!-- Ubicación del usuario -->
+<section class="ubicacion-usuario" aria-label="Mi ubicación">
+    <button type="button" id="btn-ubicacion">
+        Usar mi ubicación
+    </button>
+
+    <p id="mensaje-ubicacion" aria-live="polite">
+        Permite conocer tu ubicación para encontrar farmacias cercanas.
+    </p>
+</section>
+
+<main>
+    <section class="buscador">
+        <h2>Encuentra el mejor precio para tus medicamentos</h2>
+        <p>Compara precios y disponibilidad en distintas farmacias.</p>
+
+        <form method="GET" action="{% url 'inicio' %}">
+            <input
+                type="text"
+                name="buscar"
+                placeholder="Buscar medicamento..."
+                value="{{ busqueda }}"
+            >
+            <button type="submit">Buscar</button>
+        </form>
+    </section>
+
+    <section class="populares" id="medicamentos">
+        <h2> 
+            {% if busqueda %}
+                Resultado de búsqueda
+            {% else %}
+                Medicamentos populares
+            {% endif %}
+        </h2>
+
+        <div class="medicamentos">
+            {% if busqueda and not medicamentos %}
+                <p>No se encontraron medicamentos para tu búsqueda.
+                    Intenta con otro nombre.
+                </p>
+            {% endif %}
+
+            {% for medicamento in medicamentos %}
+                <div class="medicamento">
+                    
+                    {% with producto=medicamento.productos.all|first %}
+                        <h3>
+                            {% if producto %}
+                                {{ producto.nombre }}
+                            {% else %}
+                                {{ medicamento.nombre }}
+                            {% endif %}
+                        </h3>
+                    {% endwith %}
+
+                    <p class="medicamento-categoria">
+                        <strong>Categoría:</strong> 
+                        {{ medicamento.categoria.nombre|default:"Medicamentos" }}
+                    </p>
+
+                    {% if medicamento.id %}
+                        <div class="medicamento-acciones">
+                            <a 
+                                href="{% url 'detalle_medicamento' medicamento.id %}" 
+                                class="btn-medicamento"
+                            >
+                                Ver medicamento
+                            </a>
+                        </div>
+                    {% else %}
+                        <p class="detalle-no-disponible">
+                            Detalles del medicamento aún no disponibles.
+                        </p>
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if pagina_obj.paginator.num_pages > 1 %}
+            <nav class="paginacion" aria-label="Paginación de medicamentos">
+
+                {% if pagina_obj.has_previous %}
+                    <a 
+                        href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ pagina_obj.previous_page_number }}#medicamentos"
+                        class="pagina-flecha"
+                        aria-label="Página anterior"
+                    >&laquo;</a>
+                {% endif %}
+
+                {% for numero in pagina_obj.paginator.page_range %}
+                    <a 
+                        href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ numero }}#medicamentos"
+                        class="pagina-numero {% if pagina_obj.number == numero %}pagina-activa{% endif %}"
+                        {% if pagina_obj.number == numero %}aria-current="page"{% endif %}
+                    >{{ numero }}</a>
+                {% endfor %}
+
+                {% if pagina_obj.has_next %}
+                    <a 
+                        href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ pagina_obj.next_page_number }}#medicamentos"
+                        class="pagina-flecha"
+                        aria-label="Página siguiente"
+                        >&raquo;</a>
+                {% endif %}
+            </nav>
+        {% endif %}
+
+    </section>
+
+    <section class="farmacias" id="farmacias">
+        <h2>Farmacias cercanas</h2>
+
+        <div class="farmacias-contenido">
+            <div class="lista-farmacias">
+                <div class="farmacia">
+                    <h3>Farmacia Cruz Verde</h3>
+                    <p>Consulta su ubicación y disponibilidad.</p>
+                </div>
+
+                <div class="farmacia">
+                    <h3>Farmacias Ahumada</h3>
+                    <p>Consulta su ubicación y disponibilidad.</p>
+                </div>
+
+                <div class="farmacia">
+                    <h3>Salcobrand</h3>
+                    <p>Consulta su ubicación y disponibilidad.</p>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="mapa">
+            <div id="mapa-farmacias" style="height: 400px; width: 100%;"></div>
+        </div>
+
+    </section>
+</main>
+
+<footer>
+    <div class="footer-contenido">
+        <div>
+            <h3>FARMA PRICEY</h3>
+            <p>Compara precios de medicamentos de forma sencilla.</p>
+        </div>
+
+        <div>
+            <h4>Enlaces</h4>
+            <a href="{% url 'inicio' %}">Inicio</a>
+            <a href="#medicamentos">Medicamentos</a>
+            <a href="#farmacias">Farmacias</a>
+        </div>
+
+        <div>
+            <h4>Contacto</h4>
+            <p>contacto@farmapricey.cl</p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 FARMA PRICEY. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'farmacia/js/script.js' %}"></script>
+</body>
+</html>
+
+<!-- 
+MMMMMMMMMMMMMMMMMWKd:,....,::cccccccc::ccc:c::::::cccccc::;,'',;:c::;,cONMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMWNOo;,,'',;:ccc:cc::::;:c::c:c::::::ccc::c::;;,;:::::;;o0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMWNXK0koc:;'',:::cc::::::;,'';::::::::::::::::c:cc::;;:c:::;;ckXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMWWNKOxdl:;:c:,..,::::;;,;;,;;,.....',,;;::::::::::::::::::::::::;;cd0NWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMWNK000Oxl;;:;'..,::;,'...'...............'',,;:::::::;;;;::::::::::;:cxXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMWNNWN0o;',;;'..',;,......'..'................';;:;:::;;,,,;:::::::;;,,:dKWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMWN0d;...,,.....',..,ccldxoodolcc:,.. ....','',;;;;;;;:;,'';;;,,,;;;,,',dXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMXk:,,'.........',';d00KKXKKKK000Oko;......'....,;;,,,;;,..',;,...,,,'..;xNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMNx:coc'.........':dOKXXXXXXXXXXXXXXX0xllll;.......'....''...,;;'....''...;OWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMWKdd0k;........ .'lOXXXXXXXXXXXXXXXXXXXKKKKOo,,;;,...........,;;,.......  .lKWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMWKOKXd.........':okKXXXXXXXXXXXXXXXXXXXXXXXXKkxO0Od;.    ....,,;,'.. ..   .:0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMNKKXXo.   .....cOKXXXXXXXXXXXXXXXXXXXXXXXXKKKKKKKX0d;.......'',,,'.      .;kNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMWWNNXx'   ....,dKXXXXXXXXXXXXXXXXXXXXK00OOO00OOO000Odl:;'.....','..      ,xNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMWKl.  . ..:k00000O0KKXXXXXXXXXXXKK00KKKKKKXXXXXKKOoc;.....',.....   .,xNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMWKo'. ..,oO0000KKKKXXXXXXXXXXXXXXXXXK0O0KKXXXXXXKkd:.........;c:.. .;OWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMWKo. ..;dKXXXXK0OkOKKKKXXXXXXXXXXXXKOkxdddxk0KXX0kl........'col,..:xNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMW0c...;o0XX0xollldOK0kOKXXXXXXXXXX0dclol;,;cdk0K0x;.. ....;lol,,oONWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMNd. .'ck0klcoo:,:oO0Oxx0XXXXXXXXXOdx0X0o;,lxkOKXOl.   ..,codc,c0WWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMWKd:...'oOxokXKd;,lk0K0OOKXXXXXXXXK0KNNXkolkKKKKKO:. ....,col,'lKWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMWXKOc. .;x00KNNKxoxKXXXK00XNXXXXXXXXXNNNXK0XXXXXKOl..;c:,:lc,.;xKWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMWWXo.  .cOXNNXXXXXXXXX0kOXXXXXXXXXXXXXXXXXXXXXXXKxloxxdlc,. .dXNWWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMNOl'...:x0XXXXXXXXXKkdkXXXXXXXXXXXXXXXXXXXXXXXK00Kkl;'.. .;OWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMWKx:'.,cxKXXXXXXXX0xokKXXXXXXXXXXXXXXXXXXXXXXXXX0d'.  ..:xKWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMWNKOkkO0KXXXXXXXKOookKXXXXXXXXXXXXXXXXXXXXXXXXKOl'. ..;kXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMWWWWNXXXXXXXXX0xlldkOOO0KXXXXXXXXXXXXXXXXXXXOd:..'cccOWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMWWNXKXXXXX0xocccllox0KXXXXXXXXXXXXXXXXKOdl;..;kOk0NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMWWNKKKKXXKK0kxddxk0KXXXKXXKKXXXXXXK0Oxoddc,..:kXWWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMWWNXXXK000000OO000000000OkOKKXXK0kdooxOOxxxc.'l0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMWWNXKK00OOOOOOOOOOOOOOO0KKKK0kolodk00KKNNx,..:ONWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMWNKKKK0kxxO0KKKKKKKKKKK0OxolloxkOKXNWWNk,...:kKXNWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWNXKKK0OkOKKKKKKKKK0OxdllclldO0KNWWWWKl'.....';oONWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWNXOO0KKKKKKKKK0OxdlcccccldOXNWWWWWXx,......  .;dKWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWXklcodxkkkkkkxolccccccclxKNWWMMMMW0:....... ....:d0NWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMWX0d:'.,:::cllllcccccccccldOXWWWWWWMWXo'....... ......;lOXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMWXk:..  .;cccccccccccccclox0NWWWWWWWWMWk;.................':x0NWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMWN0d:.     .:oooolcccccccld0XWWWWWWWWWMMWKo'....................,cdOKNWMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMWNKOd:..      .;lddxxxolcccccldOXWWWWWWWMMMWNk;........................';ldOKNWWMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMWNXOdc,..         .:oddddoollcccloood0NMMMMMMWMWKl'............................';cdOKNWMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMWWNKOdl:'..           .'lodddl:colc:codl;';xXWMWWWWWNx;.................................';lkKNWWMMMMMMMMMMMMMM
+MMMMMMMWNKOdc;'........         .:ooodo;.,colllol;..'ckKNWWWMWKl......................................,cdOKXWWMMMMMMMMMM
+MMWWNKkoc,'............         .cooool,..,clll:,..,codkKNWMMNk;.........................................',:okKNWMMMMMMM
+NXOdc,'...................     .'looool:....,;,''.,codddkKNWWKl'..............................................,oKWMMMMMM
+l;'.........................   .;odooooc,...'''''';lxOkxdx0KKx,................................................'oKWMMMMM
+.............................. .:odoloooc,..'''''':xXNX0kxxoc;..................................................'oKWMMMM
+...............................'cddooxkxoc'..'''',cONWWWNXOl;,...................................................,oKWMMM
+...............................,lddk0XX0xdl;......c0WMWWWWKo;'.................................... ...............,dXWMM
+...............................;ox0XWWWNKkdc,.....;kNWWWWNO:'....................................  ................,dXMM
+...............................:x0NWMWMWN0dc,'....'cONWWWXd'....................................   .................;kNM
+..............................'ckXWMMWWMWKx:'.....',lONMW0c....................................   ...................:ON
+:cccccccccccccccccccccccccccccokKNWWWWWWWN0dllllllllokXWWKdc:cccccc::c::::::::::::::ccc:c::::;;,,;;::::::::::::::::::lkN
+NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNWWMWWWWWWWWWNNNNNNNNNNNWWWWNNNNNNNNNNNNNNXXXXXXXXXXNXXNNNXXXNXXXXXXXXXXXXXXXXXXXXXXXXXNNW
+MMMMMMMMMMWWNNNNNNNNNWWWWWWWWWWMWNXXXXXNNWWMMWMMMMMMWWWWWWMMWMMMMMMMMWWNWWMMWNKKK0OkkkxxxkO0KNWMWKO0XWMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMXklcclllllolllllooookKKd:;::ccloxOXNWMWWMWNOdxKWMWWWMMMMMMWKdokXMMNOc,;::::cc:::::lONWXo,:OWMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMN0xdooooc'.,coooolllx0O:.'cdxdl:;;:d0NWWWWKl';xNMMMMMMMWMMNx,'lKWMNk;.;d0KKKXXKK000XWWKl';ONWMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMWWWWWNNk;.;xXNWNNNNWNO:.,xXWWNX0d:';dKWWWKc';xNMMMMMMMMMMNd,'lKWMNk;.:ONWWMMMWMMMWWMWKl';ONWMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMWMMMMW0:.,kNMMMMMMWWO:';kNWWWWWXx;.:ONWWKc.;xXWWWWWMMMMWXd''l0WWNk;.:k0K00000O00XWMWKl';kNWMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMWKl',xNMMMMMMWNk:';xKXXK0ko:,;dKWMWKc.,dXWWWWWMMMMWXo''oKWMXx,.,::;;;;;::co0WMWKl';kNWMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMWXd,'dXWMMMMMWNx;.';:::;,,;cdOXWWMWKl',oXWMMWWMMMMNO:':kNMWXo,'cdkOOO000KKXNWMWKl';kNWMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMNx,'oXWMMMMMWXx;';clc;,',:dOXWWWWWNx;'cONWMMMMMMWKo,,oKWMWKl',dXWWMMMMMMMMMMMWKo,cOWMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMNk,.lKWMMMMMMNk;'cOXXKOxo:;;cx0NWWWXd;,:x0KXNNNKkl,,o0WMMWXo',dKWWWWWWWWWWMMMWN0kOXWMMMMMMMMMMMMMMMMMM
+WMWMMMMMMMMMMMMMMMNOc;dXWMMMMMMNOc,l0WWWWWNXOo:;l0WWWWN0d:;::clllc::lkXWWWWMNk:,;loddooddddkKWMWXxlxXWMMMMMMMMMMMMMMMMMM
+NWWMMMMMMMMMMMMMMMWXOkKWMMMMWMMWKkdONMMMMWMMWX0kOKWMMMMWN0kdooloooxOXWMMWWWWWXkc;''''''''',lONMWXxldKWMMMMMMMMMMMMMMMMMM
+-->

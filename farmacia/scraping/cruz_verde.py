@@ -1,189 +1,121 @@
+
 import re
-import requests
-from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
 
 def limpiar_precio(valor):
-    """Convierte un precio como '$1.399' en número entero."""
+    """Convierte un precio chileno en un número entero."""
+    if valor is None:
+        return None
 
-    valor = str(valor)
-
-    valor = valor.replace("$", "")
-    valor = valor.replace(".", "")
-    valor = valor.replace(" ", "")
-    valor = valor.strip()
-
-    return int(valor)
+    digitos = re.sub(r"\D", "", str(valor))
+    return int(digitos) if digitos else None
 
 
 def obtener_producto(url):
+    """Obtiene el nombre y los precios del producto en Cruz Verde."""
 
-    headers = {
-        "User-Agent": "Mozilla/5.0"
-    }
+    with sync_playwright() as p:
+        navegador = p.chromium.launch(headless=True)
 
-    respuesta = requests.get(
-        url,
-        headers=headers,
-        timeout=15
-    )
-
-    respuesta.raise_for_status()
-
-    soup = BeautifulSoup(
-        respuesta.text,
-        "html.parser"
-    )
-
-    texto = soup.get_text(
-        " ",
-        strip=True
-    )
-
-    # -----------------------------
-    # NOMBRE
-    # -----------------------------
-
-    nombre = ""
-
-    titulo = soup.find("h1")
-
-    if titulo:
-        nombre = titulo.get_text(
-            " ",
-            strip=True
+        pagina = navegador.new_page(
+            locale="es-CL",
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/131.0.0.0 Safari/537.36"
+            ),
         )
 
-    if not nombre and soup.title:
-        nombre = soup.title.get_text(
-            " ",
-            strip=True
-        )
+        try:
+            pagina.goto(
+                url,
+                wait_until="domcontentloaded",
+                timeout=60000,
+            )
 
-    # -----------------------------
-    # PRECIO OFERTA
-    # -----------------------------
+            pagina.locator("h1").first.wait_for(timeout=20000)
+            pagina.wait_for_timeout(3000)
 
-    precio = None
+            nombre = pagina.locator("h1").first.inner_text().strip()
+            texto = pagina.locator("body").inner_text()
 
-    coincidencia_precio = re.search(
-        r"\$(\d+(?:\.\d{3})*)\s*\(Oferta\)",
-        texto
-    )
+            precio = None
+            precio_normal = None
 
-    if coincidencia_precio:
-        precio = limpiar_precio(
-            coincidencia_precio.group(1)
-        )
+            # Limitar la búsqueda a la sección anterior a
+            # "Beneficios y Usos", donde aparece el producto principal.
+            texto_producto = texto.split(
+                "Beneficios y Usos",
+                1,
+            )[0]
 
-    # -----------------------------
-    # PRECIO NORMAL
-    # -----------------------------
+            # Buscar la última aparición del nombre del producto
+            # para evitar precios de productos patrocinados anteriores.
+            posicion = texto_producto.rfind(nombre)
 
-    precio_normal = None
+            if posicion != -1:
+                texto_producto = texto_producto[
+                    posicion + len(nombre):
+                ]
 
-    coincidencia_normal = re.search(
-        r"\$(\d+(?:\.\d{3})*)\s*\(Normal\)",
-        texto
-    )
+                # Precio normal seguido del precio de oferta y descuento.
+                coincidencia_oferta = re.search(
+                    r"\$\s*([\d.]+)\s*\n\s*"
+                    r"\$\s*([\d.]+)\s*\n\s*-?\d+\s*%",
+                    texto_producto,
+                )
 
-    if coincidencia_normal:
-        precio_normal = limpiar_precio(
-            coincidencia_normal.group(1)
-        )
+                if coincidencia_oferta:
+                    precio_normal = limpiar_precio(
+                        coincidencia_oferta.group(1)
+                    )
+                    precio = limpiar_precio(
+                        coincidencia_oferta.group(2)
+                    )
+                else:
+                    # Si no hay oferta, tomar el primer precio
+                    # encontrado después del nombre del producto.
+                    coincidencia_precio = re.search(
+                        r"\$\s*([\d.]+)",
+                        texto_producto,
+                    )
 
-    # -----------------------------
-    # PRINCIPIO ACTIVO
-    # -----------------------------
+                    if coincidencia_precio:
+                        precio = limpiar_precio(
+                            coincidencia_precio.group(1)
+                        )
 
-    principio_activo = ""
+            # Comprobar disponibilidad.
+            disponible = bool(
+                re.search(
+                    r"Stock\s+Disponible|Agregar a la bolsa",
+                    texto,
+                    re.IGNORECASE,
+                )
+            )
 
-    coincidencia_activo = re.search(
-        r"Principio Activo:\s*(.*?)\s*/",
-        texto,
-        re.IGNORECASE
-    )
+            return {
+                "nombre": nombre,
+                "principio_activo": "",
+                "precio": precio,
+                "precio_normal": precio_normal,
+                "disponible": disponible,
+                "sku": "",
+                "laboratorio": "",
+                "presentacion": "",
+                "url": url,
+            }
 
-    if coincidencia_activo:
-        principio_activo = (
-            coincidencia_activo
-            .group(1)
-            .strip()
-        )
-
-    # -----------------------------
-    # SKU
-    # -----------------------------
-
-    sku = ""
-
-    coincidencia_sku = re.search(
-        r"(?:SKU|sku|mpn)[\s:]*([0-9]+)",
-        texto
-    )
-
-    if coincidencia_sku:
-        sku = coincidencia_sku.group(1)
-
-    # -----------------------------
-    # DISPONIBILIDAD
-    # -----------------------------
-
-    disponible = False
-
-    palabras_disponibilidad = [
-        "Agregar a la bolsa",
-        "Agregar al carro",
-        "Agregar al carrito",
-        "Comprar"
-    ]
-
-    for palabra in palabras_disponibilidad:
-
-        if palabra.lower() in texto.lower():
-
-            disponible = True
-            break
-
-    # -----------------------------
-    # RESULTADO
-    # -----------------------------
-
-    producto = {
-
-        "nombre": nombre,
-
-        "principio_activo": principio_activo,
-
-        "precio": precio,
-
-        "precio_normal": precio_normal,
-
-        "disponible": disponible,
-
-        "sku": sku,
-
-        "laboratorio": "",
-
-        "presentacion": "",
-
-        "url": url
-    }
-
-    return producto
+        finally:
+            navegador.close()
 
 
 if __name__ == "__main__":
-
     url = (
-        "https://beta.cruzverde.cl/"
-        "paracetamol-500-mg-16-comprimidos/"
-        "272241.html"
+        "https://www.cruzverde.cl/"
+        "xumadol-paracetamol-1000-mg-20-comprimidos/"
+        "266145.html"
     )
 
-    producto = obtener_producto(url)
-
-    print("\n--- PRODUCTO EXTRAÍDO ---")
-
-    for clave, valor in producto.items():
-        print(f"{clave}: {valor}")
+    print(obtener_producto(url))
