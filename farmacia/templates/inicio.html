@@ -23,7 +23,7 @@
     <nav>
         <a href="{% url 'inicio' %}">Inicio</a>
         <a href="#farmacias">Farmacias</a>
-        <a href="#catalogo">Catálogo</a>
+        <a href="{% url 'leer_receta' %}">Leer receta</a>
         <a href="{% url 'login' %}">Iniciar sesión</a>
     </nav>
 </header>
@@ -124,20 +124,30 @@
 
         {% if pagina_obj.paginator.num_pages > 1 %}
             <nav class="paginacion" aria-label="Paginación del catálogo">
+
                 {% if pagina_obj.has_previous %}
-                    <a href="?buscar={{ busqueda|urlencode }}&pagina={{ pagina_obj.previous_page_number }}#catalogo">
-                        Anterior
-                    </a>
+                    <a 
+                        href="?{% if busqueda %} buscar={{ busqueda|urlencode }}& {% endif %} pagina={{ pagina_obj.previous_page_number }}#catalogo"
+                        class="pagina-flecha"
+                        aria-label="Página anterior"
+                    >&laquo;</a>
                 {% endif %}
 
-                <span>
-                    Página {{ pagina_obj.number }} de {{ pagina_obj.paginator.num_pages }}
-                </span>
+                {% for numero in pagina_obj.paginator.page_range %}
+                    <a 
+                    href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ numero }}#catalogo"
+                    class="pagina-numero {% if pagina_obj.number == numero %}pagina-activa{% endif %}"
+                    {% if pagina_obj.number == numero %}aria-current="page"{% endif %}
+                    > {{numero}} </a>
+
+                {% endfor %}
 
                 {% if pagina_obj.has_next %}
-                    <a href="?buscar={{ busqueda|urlencode }}&pagina={{ pagina_obj.next_page_number }}#catalogo">
-                        Siguiente
-                    </a>
+                    <a 
+                        href="?{% if busqueda %} buscar={{ busqueda|urlencode }}& {% endif %} pagina={{ pagina_obj.next_page_number }}#catalogo"
+                        class="pagina-flecha"
+                        aria-label="Página siguiente"
+                    >&raquo;</a>
                 {% endif %}
             </nav>
         {% endif %}

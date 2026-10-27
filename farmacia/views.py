@@ -1,8 +1,16 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Prefetch
 from django.http import JsonResponse
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_http_methods
 from django.core.paginator import Paginator
+
+import re
+import unicodedata
+import pytesseract
+
+from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 
 from .models import Medicamento, Farmacia, Producto, Precio
 
@@ -17,15 +25,57 @@ def inicio(request):
         ),
         "medicamento",
     ).order_by("nombre")
+    
+    no_encontrados = []
 
     if busqueda:
-        terminos = [
-            termino.strip()
-            for termino in busqueda.replace(";", ",").split(",")
-            if termino.strip()
-        ]
-
+        # Separadores explícitos: coma, punto y coma o salto de línea.
+        if any (separador in busqueda for separador in [",", ";", "\n"]):
+            terminos = [
+                termino.strip()
+                for termino in busqueda.replace(";", ",")
+                .replace("\n", ",")
+                .split(",")
+                if termino.strip()
+            ]
+        else:
+            #si intenta buscar el nombre completo
+            terminos = [busqueda]
+            
+            coincidencia_completa = productos.filter(
+                Q(nombre__icontains=busqueda)
+                | Q(medicamento__nombre__icontains=busqueda)
+                | Q(medicamento__principio_activo__icontains=busqueda)
+                | Q(presentacion__icontains=busqueda)
+                | Q(laboratorio__icontains=busqueda)
+                | Q(categoria__icontains=busqueda)
+            ).exists()
+            
+            #si no lo encuentra intenta detectar varios productos 
+            
+            if not coincidencia_completa:
+                nombres = list(
+                    Medicamento.objects.exclude(nombre="")
+                    .values_list("nombre", flat=True)
+                    .distinct()
+                )
+                
+                encontrados = [
+                    nombre
+                    for nombre in nombres
+                    if nombre.lower() in busqueda.lower()
+                ]
+                
+                if len(encontrados) >= 2:
+                    terminos = encontrados
+                elif encontrados:
+                    terminos = encontrados
+                elif len(busqueda.split()) >= 2:
+                    terminos = busqueda.split()
+                
+        #busca cualquiera que coincida con el termino
         consulta = Q()
+        
         for termino in terminos:
             consulta |= (
                 Q(nombre__icontains=termino)
@@ -35,20 +85,25 @@ def inicio(request):
                 | Q(laboratorio__icontains=termino)
                 | Q(categoria__icontains=termino)
             )
-
+            
         productos = productos.filter(consulta).distinct()
+                
 
-    paginador = Paginator(productos, 12)
+    #Dejenlo en 6 o a lo mucho 9, la pagina se alarga demasiado si ponen muchos
+    
+    paginador = Paginator(productos, 6)
     pagina_obj = paginador.get_page(request.GET.get("pagina"))
 
-    return render(
-        request,
-        "inicio.html",
-        {
+    contexto = {
             "productos": pagina_obj,
             "pagina_obj": pagina_obj,
             "busqueda": busqueda,
-        },
+        }
+    
+    return render(
+        request,
+        "inicio.html",
+        contexto,
     )
 
 
@@ -131,3 +186,204 @@ def vista_login(request):
 
 def vista_resgitro(request):
     return render(request, "registro.html")
+
+def normalizar_texto(texto):
+    texto = unicodedata.normalize("NFD", texto.casefold())
+    texto = "".join(
+        caracter for caracter in texto
+        if unicodedata.category(caracter) != "Mn"
+    )
+    return re.sub(r"\s+", " ", texto).strip()
+
+def extraer_concentraciones(texto):
+    return re.findall(
+        r"(?<!\w)\d+(?:[.,]\d+)?\s*(?:mg|mcg|µg|ug|ml|g|%)\b",
+        texto.casefold()
+    )
+
+@require_http_methods(["GET", "POST"])
+def leer_receta(request):
+    contexto = {
+        "resultado": [],
+        "texto_reconocido": "",
+        "error": "",
+    }
+    
+    if request.method == "GET":
+        return render(request, "leer_receta.html", contexto)
+    
+    archivo = request.FILES.get("receta")
+    
+    if not archivo:
+        contexto["error"] = "Selecciona una imagen de la receta."
+        return render(request, "leer_receta.html", contexto)
+    
+    if archivo.size > 10 * 1024 * 1024: 
+        contexto["error"] = "La imagen no puede superar los 10 MB."
+        return render(request, "leer_receta.html", contexto)
+    
+    if not archivo.content_type.startswith("image/"):
+        contexto["error"] = "El archivo debe ser imagen."
+        return render(request, "leer_receta.html", contexto)
+
+    #para que lea las imagenes
+    try:
+        archivo.seek(0)
+        imagen = Image.open(archivo)
+        imagen.verify()
+
+        archivo.seek(0)
+        imagen = Image.open(archivo).convert("RGB")
+        
+        #aumenta el tamaño para que no le cueste
+        ancho, alto = imagen.size
+        imagen = imagen.resize((ancho * 2, alto * 2))
+        
+        #convierte la escala a grises y la mejora
+        imagen = ImageOps.grayscale(imagen)
+        imagen = ImageOps.autocontrast(imagen)
+        
+        #elimina irregularidades (no se bien a que se refiere)
+        imagen = imagen.filter(ImageFilter.SHARPEN)
+        
+        #convierte a blanco y negro
+        imagen = imagen.point(
+            lambda pixel: 255 if pixel > 160 else 0
+        )
+
+        if getattr(settings, "TESSERACT_CMD", None):
+            pytesseract.pytesseract.tesseract_cmd = (
+                settings.TESSERACT_CMD
+            )
+
+        texto = pytesseract.image_to_string(imagen, lang="spa", config="--psm 6")
+        contexto["texto_reconocido"] = texto
+
+    except pytesseract.TesseractNotFoundError:
+        contexto["error"] = (
+            "No se encontró Tesseract. Revisa su instalación y configuración."
+        )
+        return render(request, "leer_receta.html", contexto)
+
+    except (UnidentifiedImageError, OSError, ValueError) as e:
+        print(f"Error al abrir la receta: {e!r}")
+        contexto["error"] = (
+            "No se puede abrir la imagen. Prueba con otra."
+        )
+        return render(request, "leer_receta.html", contexto)
+
+    except pytesseract.TesseractError:
+        contexto["error"] = (
+            "No se pudo reconocer el texto. Intenta con una imagen más clara."
+        )
+        return render(request, "leer_receta.html", contexto)
+    
+    texto_normalizado = normalizar_texto(texto)
+    
+    if not texto_normalizado:
+        contexto["error"] = (
+            "No se reconoció texto. Prueba con una imagen más nítida."
+        )
+        return render(request, "leer_receta.html", contexto)
+    
+    medicamentos = list(
+        Medicamento.objects.prefetch_related(
+            "productos__precios__farmacia"
+        ).all()
+    )
+    
+    candidatos = {}
+    
+    #buscar el nombre completo del medicamento 
+    for medicamento in medicamentos:
+        nombre = normalizar_texto(medicamento.nombre)
+        
+        productos = list(medicamento.productos.all())
+        nombres_productos = [
+            normalizar_texto(producto.nombre)
+            for producto in productos
+        ]
+        
+        if nombre in texto_normalizado or any(
+            nombre_producto and nombre_producto in texto_normalizado
+            for nombre_producto in nombres_productos
+        ): 
+            candidatos[medicamento.id] = {
+                "medicamento": medicamento,
+                "tipo": "Nombre reconocido",
+                "confirmacion": False,
+            }
+        
+        #si no reconoce el nombre, busca por principio activo 
+        if not candidatos:
+            principios = {
+                normalizar_texto(m.principio_activo)
+                for m in medicamentos
+                if m.principio_activo
+            }
+            
+            concentraciones = extraer_concentraciones(texto_normalizado)
+            
+            for principio in principios:
+                if not re.search(
+                    rf"(?<!\w){re.escape(principio)}(?!\w)",
+                    texto_normalizado
+                ):
+                    continue
+                
+                grupo = [
+                    m for m in medicamentos
+                    if (
+                        principio in normalizar_texto(m.nombre)
+                        or normalizar_texto(m.principio_activo or "") == principio
+                    )
+                ]
+                
+                coincidencias = grupo
+                
+                if concentraciones:
+                    por_concentracion = [
+                        m for m in grupo
+                        if any(
+                            concentracion in normalizar_texto(m.nombre)
+                            or any(
+                                concentracion in normalizar_texto(p.nombre)
+                                for p in m.productos.all()
+                            )
+                            for concentracion in concentraciones
+                        )
+                    ]
+                    
+                    if por_concentracion:
+                        coincidencias = por_concentracion
+                        
+            if "coincidencias" not in locals():
+                coincidencias = []
+                 
+            for medicamento in coincidencias:
+                candidatos[medicamento.id] = {
+                    "medicamento": medicamento,
+                    "tipo": (
+                        "Principio activo y concentración"
+                        if concentraciones
+                        else "Coincidencia por principio activo"
+                    ),
+                    "confirmacion": True,
+                }
+
+    #adjunta el precio 
+    
+    for candidato in candidatos.values():
+        medicamento = candidato["medicamento"]
+
+        precios = Precio.objects.filter(
+            producto__medicamento=medicamento
+        ).select_related(
+            "producto", "farmacia"
+        ).order_by("precio")
+
+        candidato["precios"] = list(precios)
+
+    contexto["resultados"] = list(candidatos.values())
+
+    return render(request, "leer_receta.html", contexto)
