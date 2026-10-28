@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let marcadorUsuario = null;
     let marcadoresFarmacias = [];
     let ubicacionUsuario = null;
+    let controlRuta = null;
 
     
 function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
@@ -121,9 +122,130 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
                         "A " + farmacia.distancia.toFixed(2) + " km en línea recta";
                     contenido.appendChild(distancia);
                 }
+                
 
+                // Botón para calcular la ruta hasta esta farmacia.
+                const botonRuta = document.createElement("button");
+                botonRuta.textContent = "Cómo llegar";
+                botonRuta.type = "button";
+                botonRuta.className = "btn-ruta";
+
+                botonRuta.style.marginTop = "8px";
+                botonRuta.style.padding = "7px 12px";
+                botonRuta.style.border = "none";
+                botonRuta.style.borderRadius = "6px";
+                botonRuta.style.backgroundColor = "#0F766E";
+                botonRuta.style.color = "#FFFFFF";
+                botonRuta.style.cursor = "pointer";
+
+                botonRuta.addEventListener("click", function () {
+                    // Comprobar que el usuario haya compartido su ubicación.
+                    if (!ubicacionUsuario) {
+                        mensajeUbicacion.textContent =
+                            "Primero debes obtener tu ubicación para calcular la ruta.";
+                        return;
+                    }
+
+                    // Comprobar que Leaflet Routing Machine esté cargado.
+                    if (
+                        typeof L.Routing === "undefined" ||
+                        typeof L.Routing.control !== "function"
+                    ) {
+                        mensajeUbicacion.textContent =
+                            "No se pudo cargar el complemento de rutas. Revisa tu conexión.";
+                        return;
+                    }
+
+                    // Eliminar la ruta anterior, si existe.
+                    if (controlRuta) {
+                        mapa.removeControl(controlRuta);
+                        controlRuta = null;
+                    }
+
+                     mensajeUbicacion.textContent =
+                        "Calculando ruta hacia " + farmacia.nombre + "...";
+
+                    try {
+                        // Crear el control sin agregarlo todavía al mapa.
+                        const nuevoControlRuta = L.Routing.control({
+                            waypoints: [
+                                L.latLng(
+                                    ubicacionUsuario.latitud,
+                                    ubicacionUsuario.longitud
+                                ),
+                                L.latLng(
+                                    farmacia.latitud,
+                                    farmacia.longitud
+                                )
+                            ],
+
+                            router: L.Routing.osrmv1({
+                                serviceUrl: "https://router.project-osrm.org/route/v1"
+                            }),
+
+                            addWaypoints: false,
+                            draggableWaypoints: false,
+                            fitSelectedRoutes: true,
+                            show: true,
+                            routeWhileDragging: false,
+                            language: "es",
+
+                            // Evita crear marcadores adicionales para la ruta.
+                            createMarker: function () {
+                                return null;
+                            }
+                        });
+
+                        // Guardar el control antes de agregarlo al mapa.
+                        controlRuta = nuevoControlRuta;
+
+                        // El resultado de la ruta.
+                        controlRuta.on("routesfound", function (evento) {
+                            if (
+                                !evento.routes || evento.routes.length === 0
+                            ) {
+                                mensajeUbicacion.textContent =
+                                    "No se encontró una ruta para esta farmacia.";
+                                return;
+                            }
+
+                            const ruta = evento.routes[0];
+                            const distanciaKm = ruta.summary.totalDistance / 1000;
+                            const duracionMinutos = Math.round(ruta.summary.totalTime / 60);
+
+                            mensajeUbicacion.textContent = 
+                                "Ruta hacia " +
+                                farmacia.nombre +
+                                ": " +
+                                distanciaKm.toFixed(2) +
+                                " km. Duración estimada: " +
+                                duracionMinutos +
+                                " minutos.";
+                    
+                        });
+
+                        // Gestionar errores del servicio de rutas.
+                        controlRuta.on( "routingerror", function (){
+                            mensajeUbicacion.textContent =
+                                "No se pudo calcular la ruta. Inténtalo nuevamente.";
+                        });
+
+                        // Agregar el control al mapa después de registrar los eventos.
+                        controlRuta.addTo(mapa);
+                            
+                    } catch (error) {
+                        console.error("Error al calcular la ruta:", error);
+
+                        mensajeUbicacion.textContent = 
+                            "Ocurrió un error al intentar calcular la ruta.";
+                    }
+
+                });
+
+                contenido.appendChild(botonRuta);
                 marcador.bindPopup(contenido);
                 marcadoresFarmacias.push(marcador);
+
             });
 
             console.log(
