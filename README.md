@@ -155,9 +155,9 @@ El módulo de lectura de recetas utiliza Tesseract OCR para reconocer texto en i
 
 Requisitos adicionales
 
-Instalar Tesseract OCR en el sistema operativo.
+Instalar Tesseract OCR en el sistema operativo. https://github.com/UB-Mannheim/tesseract/wiki?utm_source=chatgpt.com
 
-Instalar los datos de idioma español (spa.traineddata).
+Instalar los datos de idioma español (buscar el archivo spa.traineddata) (el archivo se debe copiar en la carperta tessdata de Tesseract-OCR). https://github.com/tesseract-ocr/tessdata?utm_source=chatgpt.com
 
 Instalar las dependencias de Python mediante pip install -r requirements.txt.
 
