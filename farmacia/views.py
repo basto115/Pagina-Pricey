@@ -204,7 +204,7 @@ def extraer_concentraciones(texto):
 @require_http_methods(["GET", "POST"])
 def leer_receta(request):
     contexto = {
-        "resultado": [],
+        "resultados": [],
         "texto_reconocido": "",
         "error": "",
     }
@@ -247,9 +247,9 @@ def leer_receta(request):
         imagen = imagen.filter(ImageFilter.SHARPEN)
         
         #convierte a blanco y negro
-        imagen = imagen.point(
-            lambda pixel: 255 if pixel > 160 else 0
-        )
+       # imagen = imagen.point(
+       #     lambda pixel: 255 if pixel > 160 else 0
+        #)
 
         if getattr(settings, "TESSERACT_CMD", None):
             pytesseract.pytesseract.tesseract_cmd = (
@@ -257,6 +257,13 @@ def leer_receta(request):
             )
 
         texto = pytesseract.image_to_string(imagen, lang="spa", config="--psm 6")
+
+        #separa el texto reconocido en lineas  
+        lineas_receta = [
+            normalizar_texto(linea)
+            for linea in texto.splitlines()
+            if linea.strip()
+        ]       
         contexto["texto_reconocido"] = texto
 
     except pytesseract.TesseractNotFoundError:
@@ -293,6 +300,16 @@ def leer_receta(request):
     )
     
     candidatos = {}
+
+    print("OCR NORMALIZADO:", repr(texto_normalizado))
+
+    for medicamento in medicamentos:
+        print(
+            "MEDICAMENTO BD:",
+            repr(medicamento.nombre),
+            "->",
+            repr(normalizar_texto(medicamento.nombre))
+        )
     
     #buscar el nombre completo del medicamento 
     for medicamento in medicamentos:
@@ -304,27 +321,53 @@ def leer_receta(request):
             for producto in productos
         ]
         
-        if nombre in texto_normalizado or any(
-            nombre_producto and nombre_producto in texto_normalizado
+        nombre_encontrado = (
+            bool(nombre) and nombre in texto_normalizado
+        ) or any(
+            nombre_producto
+            and nombre_producto in texto_normalizado
             for nombre_producto in nombres_productos
-        ): 
+        )
+
+        palabras_nombre = nombre.split()
+
+        if not nombre_encontrado and palabras_nombre:
+            nombre_base = palabras_nombre[0]
+
+            concentraciones = extraer_concentraciones(texto_normalizado)
+
+            if (
+                nombre_base in texto_normalizado
+                and any(
+                    concentracion in nombre
+                    for concentracion in concentraciones
+                )
+            ):
+                nombre_encontrado = True
+            
+        if nombre_encontrado:
             candidatos[medicamento.id] = {
                 "medicamento": medicamento,
                 "tipo": "Nombre reconocido",
                 "confirmacion": False,
             }
         
-        #si no reconoce el nombre, busca por principio activo 
-        if not candidatos:
-            principios = {
-                normalizar_texto(m.principio_activo)
-                for m in medicamentos
-                if m.principio_activo
-            }
+            #busca por principio activo
+                
+        concentraciones = extraer_concentraciones(texto_normalizado)
+
+        principios = {
+            normalizar_texto(m.principio_activo)
+            for m in medicamentos
+            if m.principio_activo
+        }
+
+
             
-            concentraciones = extraer_concentraciones(texto_normalizado)
-            
-            for principio in principios:
+        for principio in principios:
+                if not principio:
+                    continue
+
                 if not re.search(
                     rf"(?<!\w){re.escape(principio)}(?!\w)",
                     texto_normalizado
@@ -339,11 +382,15 @@ def leer_receta(request):
                     )
                 ]
                 
-                coincidencias = grupo
+                #no volver a agregar medicamentos encontrados por nombre
+                pendientes = [
+                    m for m in grupo
+                    if m.id not in candidatos
+                ]
                 
                 if concentraciones:
                     por_concentracion = [
-                        m for m in grupo
+                        m for m in pendientes
                         if any(
                             concentracion in normalizar_texto(m.nombre)
                             or any(
@@ -354,13 +401,11 @@ def leer_receta(request):
                         )
                     ]
                     
-                    if por_concentracion:
-                        coincidencias = por_concentracion
+                    pendientes = por_concentracion
                         
-            if "coincidencias" not in locals():
-                coincidencias = []
+
                  
-            for medicamento in coincidencias:
+        for medicamento in pendientes:
                 candidatos[medicamento.id] = {
                     "medicamento": medicamento,
                     "tipo": (
@@ -383,6 +428,58 @@ def leer_receta(request):
         ).order_by("precio")
 
         candidato["precios"] = list(precios)
+
+    print("TEXTO OCR:", texto)
+    print("CANDIDATOS:", [
+        c["medicamento"].nombre
+        for c in candidatos.values()
+    ])
+
+    #mostrar medicamentos no encontrados
+    no_encontrados = []
+
+    for linea in lineas_receta:
+        concentraciones_linea = extraer_concentraciones(linea)
+
+        if not concentraciones_linea:
+            continue
+
+        coincidencia = False
+
+        for medicamento in medicamentos:
+            nombre = normalizar_texto(medicamento.nombre)
+            principio = normalizar_texto(medicamento.principio_activo or "")
+            nombres = [nombre, principio]
+
+            nombres.extend(
+                normalizar_texto(producto.nombre)
+                for producto in medicamento.productos.all()
+            )
+
+            palabras_clave = [
+                n.split()[0]
+                for n in nombres
+                if n
+            ]
+
+            nombre_en_linea = any(
+                palabra in linea.split()
+                for palabra in palabras_clave
+            )
+
+            concentracion_en_catalogo = any(
+                concentracion in nombre
+                for nombre in nombres
+                for concentracion in concentraciones_linea
+            )
+
+            if nombre_en_linea and concentracion_en_catalogo:
+                coincidencia = True
+                break
+        if not coincidencia and linea not in no_encontrados:
+            no_encontrados.append(linea)
+    
+    contexto["no_encontrados"] = no_encontrados
 
     contexto["resultados"] = list(candidatos.values())
 

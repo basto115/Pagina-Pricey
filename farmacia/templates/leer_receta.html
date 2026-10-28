@@ -131,6 +131,28 @@
                 </article>
             {% endfor %}
         </section>
+    
+        {% if no_encontrados %}
+            <section class="receta-panel">
+                <h2>Medicamentos no encontrados</h2>
+
+                <p>
+                    No se encontraron coincidencias en el cátalogo
+                    para los siguientes elementos de la receta:
+                </p>
+
+                <ul>
+                    {% for linea in no_encontrados %}
+                        <li>{{ linea }}</li>
+                    {% endfor %}
+                </ul>
+
+                <p>
+                    Verifique el nombre y la concentracion en la receta original.
+                </p>
+
+            </section>
+        {% endif %}
 
     {% elif texto_reconocido and not error %}
         <section class="receta-panel">
