@@ -107,18 +107,64 @@ def inicio(request):
     )
 
 
+
 def detalle_medicamento(request, medicamento_id):
     medicamento = get_object_or_404(
         Medicamento.objects.prefetch_related(
-            "productos__precios__farmacia"
+            Prefetch(
+                "productos",
+                queryset=Producto.objects.prefetch_related(
+                    Prefetch(
+                        "precios",
+                        queryset=Precio.objects.select_related(
+                            "farmacia"
+                        ).order_by("precio"),
+                    )
+                ),
+            )
         ),
         id=medicamento_id,
     )
+
+    # Preparar los datos que necesita el mapa.
+    farmacias_mapa = {}
+    productos = list(medicamento.productos.all())
+
+    for producto in productos:
+        for precio in producto.precios.all():
+            farmacia = precio.farmacia
+
+            # Sin coordenadas no podemos situar la farmacia en el mapa.
+            if farmacia.latitud is None or farmacia.longitud is None:
+                continue
+
+            if farmacia.id not in farmacias_mapa:
+                farmacias_mapa[farmacia.id] = {
+                    "id": farmacia.id,
+                    "nombre": farmacia.nombre,
+                    "direccion": farmacia.direccion,
+                    "latitud": float(farmacia.latitud),
+                    "longitud": float(farmacia.longitud),
+                    "productos": [],
+                }
+
+            farmacias_mapa[farmacia.id]["productos"].append({
+                "producto_id": producto.id,
+                "producto_nombre": producto.nombre,
+                "precio": str(precio.precio),
+                "disponible": precio.disponible,
+                "url_producto": precio.url_producto,
+            })
+
     return render(
         request,
         "detalle_medicamento.html",
-        {"medicamento": medicamento},
+        {
+            "medicamento": medicamento,
+            "farmacias_mapa": list(farmacias_mapa.values()),
+        },
     )
+
 
 
 @require_GET

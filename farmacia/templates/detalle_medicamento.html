@@ -11,6 +11,10 @@
     <title>{{ medicamento.nombre }} | FARMA PRICEY</title>
 
     <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
+    <link 
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/
+    >
 </head>
 <body>
 
@@ -195,15 +199,20 @@
                                         >
                                             Ver en farmacia ↗
                                         </a>
-                                    <button type="button" class="precio-boton precio-boton-mapa">
-                                        Ver en mapa
-                                    </button>
-
                                     {% else %}
                                         <span class="precio-sin-enlace">
                                             Enlace no disponible
                                         </span>
                                     {% endif %}
+
+                                    <button
+                                        type="button"
+                                        class="precio-boton precio-boton-mapa"
+                                        data-farmacia-id="{{ precio.farmacia_id }}"
+                                        data-producto-id="{{ producto.id }}"
+                                    >
+                                        Ver en mapa
+                                    </button>
 
                                 </article>
                             {% empty %}
@@ -231,17 +240,20 @@
                         <span aria-hidden="true">📍</span>
                         <div>
                             <h2>Ubicación de farmacias</h2>
-                            <p>Consulta las farmacias crrcanas.</p>
+                            <p>Farmacias con precios registrados para este medicamento.</p>
                         </div>
                     </div>
 
-                    <div class="mapa-placeholder">
-                        <span aria-hidden="true"></span>
-                        <p>Mapa de farmacias cercanas</p>
-                        <small>
-                        </small>
-                    </div>
+                    <div
+                        id="mapa-detalle-farmacias"
+                        style="width: 100%; height: 380px; border-radius: 12px;"
+                    ></div>
+
+                    <p id="estado-mapa-detalle" role="status">
+                        Cargando mapa...
+                    </p>
                 </section>
+
 
             </section>
         </div>
@@ -275,6 +287,155 @@
         </div>
     </footer>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+    {{ farmacias_mapa|json_script:"farmacias-mapa-data" }}
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const contenedor = document.getElementById("mapa-detalle-farmacias");
+        const estado = document.getElementById("estado-mapa-detalle");
+
+        if (!contenedor || typeof L === "undefined") {
+            if (estado) {
+                estado.textContent = "No se pudo cargar Leaflet. Revisa la conexión y los scripts.";
+            }
+            return;
+        }
+
+        const elementoDatos = document.getElementById("farmacias-mapa-data");
+        const farmacias = elementoDatos
+            ? JSON.parse(elementoDatos.textContent)
+            : [];
+
+        const mapa = L.map(contenedor);
+
+        
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(mapa);
+        ;
+
+        const marcadores = {};
+        const puntos = [];
+
+        farmacias.forEach(function (farmacia) {
+            const lat = Number(farmacia.latitud);
+            const lng = Number(farmacia.longitud);
+
+            if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                return;
+            }
+
+            const marcador = L.marker([lat, lng]).addTo(mapa);
+
+            const popup = document.createElement("div");
+            const titulo = document.createElement("strong");
+            titulo.textContent = farmacia.nombre;
+            popup.appendChild(titulo);
+
+            if (farmacia.direccion) {
+                const direccion = document.createElement("p");
+                direccion.textContent = farmacia.direccion;
+                popup.appendChild(direccion);
+            }
+
+            (farmacia.productos || []).forEach(function (producto) {
+                const linea = document.createElement("p");
+                const precio = Number(producto.precio);
+
+                linea.textContent =
+                    producto.producto_nombre + ": " +
+                    (Number.isFinite(precio)
+                        ? precio.toLocaleString("es-CL", {
+                            style: "currency",
+                            currency: "CLP",
+                            maximumFractionDigits: 0
+                        })
+                        : "Precio no válido");
+
+                popup.appendChild(linea);
+            });
+
+            marcador.bindPopup(popup);
+            marcadores[String(farmacia.id)] = marcador;
+            puntos.push([lat, lng]);
+        });
+
+        if (puntos.length) {
+            mapa.fitBounds(puntos, {
+                padding: [25, 25],
+                maxZoom: 14
+            });
+
+            if (estado) {
+                estado.textContent = "Selecciona una farmacia en el mapa para ver sus precios.";
+            }
+        } else {
+            mapa.setView([-33.4489, -70.6693], 12);
+
+            if (estado) {
+                estado.textContent =
+                    "No hay farmacias con coordenadas registradas para este medicamento.";
+            }
+        }
+
+        document.querySelectorAll(".precio-boton-mapa").forEach(function (boton) {
+            boton.addEventListener("click", function () {
+                const marcador = marcadores[String(boton.dataset.farmaciaId)];
+
+                if (marcador) {
+                    mapa.setView(marcador.getLatLng(), 16);
+                    marcador.openPopup();
+
+                    contenedor.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                } else if (estado) {
+                    estado.textContent =
+                        "Esta farmacia no tiene coordenadas registradas.";
+                }
+            });
+        });
+
+        // Si la ubicación ya se guardó en la sesión, se reutiliza.
+        // No se solicita permiso de ubicación desde esta página.
+        try {
+            const ubicacionGuardada = sessionStorage.getItem("ubicacionUsuario");
+
+            if (ubicacionGuardada) {
+                const ubicacion = JSON.parse(ubicacionGuardada);
+                const lat = Number(ubicacion.lat);
+                const lng = Number(ubicacion.lng);
+
+                if (Number.isFinite(lat) && Number.isFinite(lng)) {
+                    L.circleMarker([lat, lng], {
+                        radius: 8
+                    })
+                    .addTo(mapa)
+                    .bindPopup("Tu ubicación");
+
+                    if (estado) {
+                        estado.textContent =
+                            "Se reutilizó tu ubicación guardada durante esta sesión.";
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn("No se pudo recuperar la ubicación guardada.", error);
+        }
+
+        // Leaflet debe calcular el tamaño después de que se muestre el contenedor.
+        setTimeout(function () {
+            mapa.invalidateSize();
+        }, 100);
+    });
+    </script>
+
+    
 </body>
 </html>
 ```

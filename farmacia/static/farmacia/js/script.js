@@ -10,6 +10,32 @@ document.addEventListener("DOMContentLoaded", function () {
     let ubicacionUsuario = null;
     let controlRuta = null;
 
+    // Recuperar la ubicación guardada durante esta sesión.
+    try {
+        const ubicacionGuardada = sessionStorage.getItem("ubicacionUsuario");
+
+        if (ubicacionGuardada) {
+            const ubicacion = JSON.parse(ubicacionGuardada);
+            const latitud = Number(ubicacion.lat);
+            const longitud = Number(ubicacion.lng);
+
+            if (
+                Number.isFinite(latitud) &&
+                Number.isFinite(longitud) &&
+                latitud >= -90 && latitud <= 90 &&
+                longitud >= -180 && longitud <= 180
+            ) {
+                ubicacionUsuario = {
+                    latitud: latitud,
+                    longitud: longitud
+                };
+            }
+        }
+    } catch (error) {
+        console.warn("No se pudo recuperar la ubicación guardada.", error);
+    }
+
+
     
 function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
     const radioTierra = 6371;
@@ -285,6 +311,37 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
     }
 
     botonUbicacion.addEventListener("click", function () {
+        if (ubicacionUsuario) {
+            mensajeUbicacion.textContent =
+                "Ya tenemos tu ubicación guardada durante esta sesión.";
+
+            if (mapa) {
+                mapa.setView([
+                    ubicacionUsuario.latitud,
+                    ubicacionUsuario.longitud
+                ], 15);
+
+                if (marcadorUsuario) {
+                    marcadorUsuario.setLatLng([
+                        ubicacionUsuario.latitud,
+                        ubicacionUsuario.longitud
+                    ]);
+                } else {
+                    marcadorUsuario = L.marker([
+                        ubicacionUsuario.latitud,
+                        ubicacionUsuario.longitud
+                    ]).addTo(mapa);
+                }
+
+                marcadorUsuario.bindPopup("¡Estás aquí!").openPopup();
+                cargarFarmacias();
+            }
+
+            return;
+        }
+
+
+
         if (!navigator.geolocation) {
             mensajeUbicacion.textContent =
                 "Tu navegador no admite la geolocalización.";
@@ -302,6 +359,18 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
                     latitud: latitud,
                     longitud: longitud
                 };
+                // Guardar para reutilizar en otras páginas durante esta sesión.
+                try {
+                    sessionStorage.setItem(
+                        "ubicacionUsuario",
+                        JSON.stringify({
+                            lat: latitud,
+                            lng: longitud
+                        })
+                    );
+                } catch (error) {
+                    console.warn("No se pudo guardar la ubicación.", error);
+                }
 
                 mensajeUbicacion.textContent =
                     "¡Ubicación obtenida correctamente!";
