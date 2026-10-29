@@ -32,5 +32,6 @@ urlpatterns = [
         name='api_medicamentos'
     ),
     
-    path("leer-receta/", views.leer_receta, name="leer_receta"),
+    path('leer-receta/', views.leer_receta, name='leer_receta'),
+    path('mi-lista/', views.ver_lista, name='ver_lista'),
 ]

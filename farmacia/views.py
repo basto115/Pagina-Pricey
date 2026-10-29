@@ -1,8 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Prefetch
 from django.http import JsonResponse
-from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django.core.paginator import Paginator
+from django.contrib import messages
 
 import re
 import unicodedata
@@ -567,3 +568,46 @@ def leer_receta(request):
     contexto["farmacias_mapa"] = list(farmacias_mapa.values())
 
     return render(request, "leer_receta.html", contexto)
+
+#lista de producto (no es un carrito)
+@require_POST
+def agregar_a_lista(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    lista = request.session.get("lista_medicamentos", {})
+    
+    producto_id = str(producto.id)
+    
+    cantidad_actual = lista.get(producto_id, 0)
+    lista[producto_id] = cantidad_actual + 1
+    
+    request.session["lista_medicamentos"] = lista
+    
+    messages.success(request, f"{producto.nombre} se agregó a tu lista")
+    
+    return redirect(request.META.get("HTTP_REFERER", "inicio"))
+
+#para ver la lista... por eso se llama ver_lista...
+def ver_lista(request):
+    lista = request.session.get("lista_medicamentos", {})
+    
+    productos = Producto.objects.filter(
+        id__in=lista.keys()
+    ).prefetch_related(
+        Prefetch(
+            "precios",
+            queryset=Precio.objects.select_related(
+                "farmacia"
+            ).order_by("precio")
+        )
+    )
+    
+    items = []
+    
+    for producto in productos:
+        items.append({
+            "producto": producto,
+            "cantidad": lista.get(str(producto.id), 1),
+        })
+        
+    return render(request, "lista_medicamentos.html", {"items": items,})
+    

@@ -1,0 +1,138 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>Mi lista | FARMA PRICEY</title>
+    <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
+</head>
+
+<body>
+<header>
+    <div class="logo">
+        <a href="{% url 'inicio' %}" class="logo-enlace">
+            <img src="{% static 'farmacia/img/pandaloool.png' %}"
+                 alt="Pandita de FARMA PRICEY" class="logo-imagen">
+            <span>FARMA PRICEY</span>
+        </a>
+    </div>
+
+    <nav>
+        <a href="{% url 'inicio' %}">Inicio</a>
+        <a href="{% url 'ver_lista' %}">Mi lista</a>
+        <a href="{% url 'leer_receta' %}">Leer receta</a>
+        <a href="{% url 'login' %}">Iniciar sesión</a>
+</header>
+
+<main>
+    <section class="populares">
+        <h2>Mi lista de productos</h2>
+
+        <p>
+            Organiza los medicamentos que necesitas y compara sus precios entre farmacias.
+        </p>
+
+        <div class="medicamentos">
+            {% for item in items %}
+                <article class="medicamento">
+
+                    <h3>{{ items.producto.nombre}}</h3>
+
+                    {% if item.producto.presentacion %}
+                        <p>
+                            <strong>Presentación:</strong>
+                            {{ item.producto.presentacion }}
+                        </p>
+                    {% endif %}
+
+                    {% if item.producto.laboratorio %}
+                        <p>
+                            <strong>Laboratorio:</strong>
+                            {{ item.producto.laboratorio }}
+                        </p>
+                    {% endif %}
+
+                    <p>
+                        <strong>Cantidad:</strong>
+                        {{ item.cantidad }}
+                    </p>
+
+                    <h4>Precios por farmacia</h4>
+
+                    {% with precios=item.producto.precios.all %}
+                        {% if precios %}
+                            <ul>
+                                {% for precio in precios %}
+                                    <li>
+                                        <strong> {{ precio.farmacia.nombre }} </strong>
+                                        ${{ precio.precio|floatformat:0 }}
+
+                                        {% if not precio.disponible %}
+                                            - Sin disponibilidad confirmada
+                                        {% endif %}
+
+                                        {% if precio.url_producto %}
+                                            <a href="{{ precio.url_producto }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer">
+                                                Ver producto
+                                            </a>
+                                        {% endif %}
+
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No hay precios registrados.</p>
+                        {% endif %}
+                    {% endwith %}
+                </article>
+
+            {% empty %}
+                <article class="medicamento">
+                    <h3>Tu lista está vacía</h3>
+                    <p>
+                        Todavía no has agregado productos.
+                        Explora nuestro catálogo para comenzar.
+                    </p>
+                    <a href="{% url 'inicio' %}" class="btn-mediamento">
+                        Explorar productos
+                    </a>
+
+                </article>
+            {% endfor %}
+        </div>
+
+    </section>
+</main>
+
+<footer>
+    <div class="footer-contenido">
+        <div>
+            <h3>FARMA PRICEY</h3>
+            <p>Compara precios y disponibilidad de productos.</p>
+        </div>
+
+        <div>
+            <h4>Enlaces</h4>
+            <a href="{% url 'inicio' %}">Inicio</a>
+            <a href="{% url 'ver_lista' %}">Mi lista</a>
+            <a href="{% url 'leer_receta' %}">Leer receta</a>
+        </div>
+
+        <div>
+            <h4>Contacto</h4>
+            <p>contacto@farmapricey.cl</p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 FARMA PRICEY. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+</body>
+</html>
