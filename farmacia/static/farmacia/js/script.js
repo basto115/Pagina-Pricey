@@ -58,6 +58,127 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
     return radioTierra * c;
 }
 
+    // Mapa de farmacias que aparecen en la lectura de recetas.
+    const contenedorMapaReceta = document.getElementById("mapa-receta");
+
+    if (contenedorMapaReceta && typeof L !== "undefined") {
+        const elementoDatos = document.getElementById("farmacias-receta-data");
+        const mensajeMapa = document.getElementById("mensaje-mapa-receta");
+
+        let farmaciasReceta = [];
+
+        if (elementoDatos) {
+            try {
+                farmaciasReceta = JSON.parse(elementoDatos.textContent);
+            } catch (error) {
+                console.error("No se pudieron leer los datos de las farmacias.", error);
+            }
+        }
+
+        const mapaReceta = L.map("mapa-receta");
+
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(mapaReceta);
+
+        const puntosReceta = [];
+
+        farmaciasReceta.forEach(function (farmacia) {
+            const latitud = Number(farmacia.latitud);
+            const longitud = Number(farmacia.longitud);
+
+            if (
+                !Number.isFinite(latitud) ||
+                !Number.isFinite(longitud) ||
+                latitud < -90 || latitud > 90 ||
+                longitud < -180 || longitud > 180
+            ) {
+                return;
+            }
+
+            const contenido = document.createElement("div");
+            const nombre = document.createElement("strong");
+
+            nombre.textContent = farmacia.nombre;
+            contenido.appendChild(nombre);
+
+            const direccion = document.createElement("p");
+            direccion.textContent = farmacia.direccion || "Dirección no disponible";
+            contenido.appendChild(direccion);
+
+            (farmacia.productos || []).forEach(function (producto) {
+                const detalle = document.createElement("p");
+                const precio = Number(producto.precio);
+
+                detalle.textContent =
+                    (producto.producto || producto.medicamento) + ": " +
+                    (Number.isFinite(precio)
+                        ? precio.toLocaleString("es-CL", {
+                            style: "currency",
+                            currency: "CLP",
+                            maximumFractionDigits: 0
+                        })
+                        : "Precio no disponible");
+
+                contenido.appendChild(detalle);
+            });
+
+            L.marker([latitud, longitud])
+                .addTo(mapaReceta)
+                .bindPopup(contenido);
+
+            puntosReceta.push([latitud, longitud]);
+        });
+
+        // Mostrar también la ubicación guardada desde Inicio, si existe.
+        try {
+            const guardada = sessionStorage.getItem("ubicacionUsuario");
+
+            if (guardada) {
+                const ubicacion = JSON.parse(guardada);
+                const latitud = Number(ubicacion.lat);
+                const longitud = Number(ubicacion.lng);
+
+                if (
+                    Number.isFinite(latitud) &&
+                    Number.isFinite(longitud) &&
+                    latitud >= -90 && latitud <= 90 &&
+                    longitud >= -180 && longitud <= 180
+                ) {
+                    L.circleMarker([latitud, longitud], {
+                        radius: 8,
+                        color: "#2563eb",
+                        fillColor: "#3b82f6",
+                        fillOpacity: 1
+                    }).addTo(mapaReceta).bindPopup("Tu ubicación");
+
+                    puntosReceta.push([latitud, longitud]);
+                }
+            }
+        } catch (error) {
+            console.warn("No se pudo recuperar la ubicación guardada.", error);
+        }
+
+        if (puntosReceta.length > 0) {
+            mapaReceta.fitBounds(puntosReceta, {
+                padding: [25, 25],
+                maxZoom: 14
+            });
+        } else {
+            mapaReceta.setView([-33.4489, -70.6693], 12);
+        }
+
+        if (mensajeMapa) {
+            mensajeMapa.textContent = farmaciasReceta.length > 0
+                ? "Selecciona un marcador para consultar los precios."
+                : "No hay farmacias con coordenadas para los medicamentos reconocidos.";
+        }
+
+        setTimeout(function () {
+            mapaReceta.invalidateSize();
+        }, 100);
+    }
 
     if (!botonUbicacion || !mensajeUbicacion) {
         console.error("No se encontró el botón o el mensaje de ubicación.");

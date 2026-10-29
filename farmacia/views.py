@@ -253,6 +253,7 @@ def leer_receta(request):
         "resultados": [],
         "texto_reconocido": "",
         "error": "",
+        "farmacias_mapa": [],
     }
     
     if request.method == "GET":
@@ -525,8 +526,44 @@ def leer_receta(request):
         if not coincidencia and linea not in no_encontrados:
             no_encontrados.append(linea)
     
+
     contexto["no_encontrados"] = no_encontrados
 
     contexto["resultados"] = list(candidatos.values())
+
+    
+
+    # Preparar las farmacias para el mapa de la receta.
+    farmacias_mapa = {}
+
+    for resultado in contexto["resultados"]:
+        medicamento = resultado["medicamento"]
+
+        for precio in resultado["precios"]:
+            farmacia = precio.farmacia
+
+            # Omitir farmacias sin coordenadas.
+            if farmacia.latitud is None or farmacia.longitud is None:
+                continue
+
+            if farmacia.id not in farmacias_mapa:
+                farmacias_mapa[farmacia.id] = {
+                    "id": farmacia.id,
+                    "nombre": farmacia.nombre,
+                    "direccion": farmacia.direccion,
+                    "latitud": float(farmacia.latitud),
+                    "longitud": float(farmacia.longitud),
+                    "productos": [],
+                }
+
+            farmacias_mapa[farmacia.id]["productos"].append({
+                "medicamento": medicamento.nombre,
+                "producto": precio.producto.nombre,
+                "precio": str(precio.precio),
+                "disponible": precio.disponible,
+                "url_producto": precio.url_producto,
+            })
+
+    contexto["farmacias_mapa"] = list(farmacias_mapa.values())
 
     return render(request, "leer_receta.html", contexto)

@@ -7,6 +7,8 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Leer receta | FARMA PRICEY</title>
     <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
 </head>
 <body>
 
@@ -130,8 +132,29 @@
                     {% endfor %}
                 </article>
             {% endfor %}
+            <h2>Farmacias en el mapa</h2>
+            <p>
+                Selecciona un marcador para consultar los precios
+                de los medicamentos reconocidos.
+            </p>
+
+            <div
+                id="mapa-receta"
+                style="height: 400px; width: 100%; border-radius: 12px;"
+            ></div>
+
+            <p id="mensaje-mapa-receta" role="status" aria-live="polite"></p>
+
+            
         </section>
-    
+
+
+        <!-- Mapa de farmacias para los medicamentos de la receta -->
+        <section class="receta-panel">
+            
+        </section>
+
+
         {% if no_encontrados %}
             <section class="receta-panel">
                 <h2>Medicamentos no encontrados</h2>
@@ -203,5 +226,11 @@
     </div>
 </footer>
 
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+{{ farmacias_mapa|json_script:"farmacias-receta-data" }}
+
+<script src="{% static 'farmacia/js/script.js' %}"></script>
 </body>
 </html>
