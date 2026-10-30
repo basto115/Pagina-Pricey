@@ -1416,3 +1416,155 @@ footer {
 .leaflet-routing-alt table {
     display: none;
 }
+
+/* para mi lista*/
+
+.bloque-comparacion {
+    margin-top: 45px;
+    padding: 28px;
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    box-shadow: var(--sombra);
+}
+
+.bloque-comparacion h2 {
+    margin-top: 10px;
+    color: var(--verde-oscuro);
+    font-size: 23px;
+}
+
+.bloque-comparacion > p {
+    margin-top: 20px;
+    color: var(--texto-secundario);
+    font-size: 14px;
+}
+
+.bloque-comparacion .medicamentos {
+    margin-top: 20px;
+}
+
+.bloque-comparacion .medicamento {
+    min-height: auto;
+    justify-content: flex-start;
+}
+
+.bloque-comparacion h3 {
+    color: var(--verde-oscuro);
+}
+
+/*controles cantidad*/
+
+.cantidad-controles {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.cantidad-controles form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cantidad-controles button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--verde);
+    border-radius: 8px;
+    background: var(--blanco);
+    color: var(--verde);
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cantidad-controles button:hover {
+    background: var(--verde);
+    color: var(--blanco);
+}
+
+/*eliminar producto*/
+
+.btn-eliminar {
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px;
+    border: 1px solid #db5c50;
+    border-radius: 8px;
+    background: #fff5f4;
+    color: #b42318;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-eliminar:hover {
+    background: #fee4e2;
+}
+
+/*lista de precios*/
+
+.medicamento ul,
+.bloque-comparacion ul {
+    padding-left: 20px;
+}
+
+.medicamento li,
+.bloque-comparacion li {
+    margin: 8px 0;
+    color: var(--texto-secundario);
+    font-size: 13px;
+}
+
+.medicamento li a{
+    margin-left: 5px;
+    color: var(--verde);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/*para el ipad kid (telefono)*/
+
+@media (max-width: 600px){
+    .bloque-comparacion {
+        margin-top: 28px;
+        padding: 18px;
+    }
+
+    .bloque-comparacion h2 {
+         font-size: 20px;
+    }
+
+    .cantidad-controles {
+        flex-wrap: wrap;
+    }
+}
+
+/* Botón eliminar de Mi lista */
+button.btn-eliminar {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 12px;
+    padding: 10px 14px;
+
+    background-color: #fff5f4 !important;
+    color: #b42318 !important;
+
+    border: 1px solid #e3b4b0;
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    white-space: normal;
+    cursor: pointer;
+}
+
+button.btn-eliminar:hover {
+    background-color: #fee4e2 !important;
+    color: #b42318 !important;
+}
