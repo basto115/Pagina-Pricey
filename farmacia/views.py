@@ -634,10 +634,81 @@ def ver_lista(request):
     items = []
     
     for producto in productos:
+        cantidad = lista.get(str(producto.id), 1)
+        precios_disponibles = [
+            precio for precio in producto.precios.all()
+            if precio.disponible
+        ]
+        
         items.append({
             "producto": producto,
             "cantidad": lista.get(str(producto.id), 1),
+            "precios_disponibles": precios_disponibles,
+        })
+    
+    comparacion_farmacias = []
+    
+    farmacias = Farmacia.objects.all().order_by("nombre")
+    
+    for farmacia in farmacias:
+        total = 0
+        productos_faltantes = []
+        
+        for item in items:
+            precio_farmacia = next(
+                (
+                    precio for precio in item["precios_disponibles"] 
+                    if precio.farmacia_id == farmacia.id
+                ), 
+                None
+            )
+
+            if precio_farmacia:
+                total += precio_farmacia.precio * item["cantidad"]
+            else:
+                productos_faltantes.append(
+                    item["producto"].nombre
+                )
+        
+        comparacion_farmacias.append({
+            "farmacia": farmacia,
+            "total": total,
+            "productos_faltantes": productos_faltantes,
+            "completa": len(productos_faltantes) == 0,
         })
         
-    return render(request, "lista_medicamentos.html", {"items": items,})
+    #selecciona el menor precio por producto
+    total_menor_precio = 0
+    productos_menor_precio = []
+    productos_sin_precio = []
+    
+    for item in items:
+        if item["precios_disponibles"]:
+            mejor_precio = min(
+                item["precios_disponibles"],
+                key=lambda precio: precio.precio
+            )
+            
+            subtotal = mejor_precio.precio * item["cantidad"]
+            total_menor_precio += subtotal
+            
+            productos_menor_precio.append({
+                "producto": item["producto"],
+                "cantidad": item["cantidad"],
+                "farmacia": mejor_precio.farmacia,
+                "precio_unitario": mejor_precio.precio,
+                "subtotal": subtotal
+            })
+        else:
+            productos_sin_precio.append(item["producto"].nombre)
+            
+        
+    return render(request, "lista_medicamentos.html", 
+                  {
+                      "items": items,
+                      "comparacion_farmacias": comparacion_farmacias,
+                      "total_menor_precio": total_menor_precio,
+                      "productos_menor_precio": productos_menor_precio,
+                      "productos_sin_precio": productos_sin_precio
+                      })
     

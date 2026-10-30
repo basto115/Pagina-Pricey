@@ -128,7 +128,109 @@
             {% endfor %}
         </div>
 
+        {% if items %}
+            <div class="bloque-comparacion">
+                <h2>Comparar compra por farmacia</h2>
+
+                <p>
+                    Revisa cuánto costaría comprar todos los productos 
+                    de tu lista en una misma farmacia.
+                </p>
+
+                <div class="medicamentos">
+                    {% for comparacion in comparacion_farmacias %}
+                        <article class="medicamento">
+                            <h3> {{ comparacion.farmacia.nombre }} </h3>
+
+                            {% if comparacion.completa %}
+                                <p>
+                                    <strong>Total de la compra:</strong>
+                                    ${{ comparacion.total|floatformat:0 }}
+                                </p>
+                                <p>Todos los productos estan disponibles.</p>
+                            {% else %}
+                                <p>
+                                    <strong>Subtotal de productos disponibles:</strong>
+                                    ${{ comparacion.total|floatformat:0 }}
+                                </p>
+
+                                <p>Esta compra esta incompleta. <br> Faltan:</p>
+                                <ul>
+                                    {% for nombre in comparacion.productos_faltantes %}
+                                        <li> {{ nombre }} </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </article>
+                    {% empty %}
+                        <p>No hay farmacias registradas.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="bloque-comparacion">
+                <h2>Comprar al menor precio</h2>
+
+                <p>
+                    Seleccionamos el precio más bajo disponible
+                    para cada producto, aunque pertenezca a una farmacia distinta.
+                </p>
+
+                {% if productos_menor_precio %}
+                    <div class="medicamentos">
+                        {% for item in productos_menor_precio %}
+                            <article class="medicamento">   
+                                <h3> {{ item.producto.nombre }} </h3>
+
+                                <p>
+                                    <strong>Cantidad:</strong>
+                                    {{ item.cantidad }}
+                                </p>
+
+                                <p>
+                                    <strong>Farmacia:</strong>
+                                    {{ item.farmacia.nombre }}
+                                </p>
+
+                                <p>
+                                    <strong>Precio unitario:</strong>
+                                    {{ item.precio_unitario|floatformat:0 }}
+                                </p>
+
+                                <p>
+                                    <strong>Subtotal:</strong>
+                                    ${{ item.subtotal|floatformat:0 }}
+                                </p>
+                            </article>
+                        {% endfor %}
+                    </div>
+                    <h3>
+                        {% if productos_sin_precios %}
+                            Subtotal de productos con precio disponible:
+                        {% else %}
+                        Total más económico: 
+                        {% endif %}
+                        ${{ total_menor_precio|floatformat:0 }}
+                    </h3>
+                {% else %}
+                    <p>No hay precios disponibles para los productos de tu lista.</p>
+                {% endif %}
+
+                {% if productos_sin_precios %}
+                    <p>
+                        <strong>Productos sin precios disponibles:</strong>
+                    </p>
+
+                    <ul>
+                        {% for nombre in productos_sin_precios %}
+                            <li> {{ nombre }} </li>
+                        {% endfor %}
+                    </ul> 
+                {% endif %}
+            </div>
+        {% endif %}
     </section>
+
 </main>
 
 <footer>
