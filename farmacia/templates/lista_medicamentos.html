@@ -39,7 +39,7 @@
             {% for item in items %}
                 <article class="medicamento">
 
-                    <h3>{{ items.producto.nombre}}</h3>
+                    <h3>{{ item.producto.nombre }}</h3>
 
                     {% if item.producto.presentacion %}
                         <p>
@@ -55,10 +55,32 @@
                         </p>
                     {% endif %}
 
-                    <p>
+                    <div class="cantidad-controles">
                         <strong>Cantidad:</strong>
-                        {{ item.cantidad }}
-                    </p>
+                        
+                        <form method="POST"
+                              action="{% url 'modificar_cantidad_lista' item.producto.id %}">
+                              {% csrf_token %}
+                              <button type="submit" name="accion" value="disminuir">
+                                -
+                              </button>
+
+                              <span> {{ item.cantidad }} </span>
+
+                              <button type="submit" name="accion" value="aumentar">
+                                +
+                              </button>
+                        </form>
+
+                        <form action="{% url 'eliminar_de_lista' item.producto.id %}" 
+                              method="post">
+                              {% csrf_token %}
+                              <button type="submit" class="btn-eliminar">
+                                Eliminar de mi lista
+                              </button>
+                        </form>
+
+                    </div>
 
                     <h4>Precios por farmacia</h4>
 

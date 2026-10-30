@@ -34,4 +34,8 @@ urlpatterns = [
     
     path('leer-receta/', views.leer_receta, name='leer_receta'),
     path('mi-lista/', views.ver_lista, name='ver_lista'),
+    path('mi-lista/agregar/<int:producto_id>/', views.agregar_a_lista, name='agregar_a_lista'),
+    path('mi-lista/modificar/<int:producto_id>/', views.modificar_cantidad_lista, 
+         name='modificar_cantidad_lista'),
+    path('mi-lista/eliminar/<int:producto_id>/', views.eliminar_de_lista, name='eliminar_de_lista'),
 ]

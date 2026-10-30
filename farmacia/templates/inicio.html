@@ -115,6 +115,13 @@
                             Ver detalles del medicamento
                         </a>
                     {% endif %}
+                    <form method="POST"
+                        action="{% url 'agregar_a_lista' producto.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-medicamento">
+                            + Agregar a la lista
+                        </button>
+                    </form>
                 </article>
             {% empty %}
                 <p>

@@ -34,7 +34,8 @@
         <nav class="detalle-nav">
             <a href="{% url 'inicio' %}">Inicio</a>
             <a href="{% url 'inicio' %}#farmacias">Farmacias</a>
-            <a href="{% url 'inicio' %}">Medicamentos</a>
+            <a href="{% url 'leer_receta' %}">Leer receta</a>
+            <a href="{% url 'ver_lista' %}">Mi lista</a>
             <a href="{% url 'login' %}">Iniciar sesión</a>
             </a>
         </nav>
@@ -116,6 +117,13 @@
                                 <a href="#producto-{{ producto.id }}">
                                     Comparar precios →
                                 </a>
+                                <form method="POST"
+                                    action="{% url 'agregar_a_lista' producto.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-medicamento">
+                                        + Agregar a mi lista
+                                    </button>
+                                </form>
                             </div>
                         </article>
                     {% empty %}
@@ -222,6 +230,15 @@
                                 </p>
                             {% endfor %}
                         </div>
+                        
+                        <form method="POST"
+                            action="{% url 'agregar_a_lista' producto.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-medicamento">
+                                + Agregar esta presentación a mi lista
+                            </button>
+                        </form>
+
                     </section>
                 {% empty %}
                     <div class="comparacion-vacia">

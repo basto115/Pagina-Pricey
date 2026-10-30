@@ -586,6 +586,36 @@ def agregar_a_lista(request, producto_id):
     
     return redirect(request.META.get("HTTP_REFERER", "inicio"))
 
+#agregar o quitar productos
+@require_POST
+def modificar_cantidad_lista(request, producto_id):
+    lista = request.session.get("lista_medicamentos", {})
+    producto_id = str(producto_id)
+    
+    accion = request.POST.get("accion")
+    
+    if producto_id in lista:
+        if accion == "aumentar":
+            lista[producto_id] += 1
+        
+        elif accion == "disminuir":
+            lista[producto_id] -= 1
+            
+            if lista[producto_id] <= 0:
+                del lista[producto_id]
+    request.session["lista_medicamentos"] = lista
+    return redirect("ver_lista")
+
+#borrar la lista
+@require_POST
+def eliminar_de_lista(request, producto_id):
+    lista = request.session.get("lista_medicamentos", {})
+    producto_id = str(producto_id)
+    
+    lista.pop(producto_id, None)
+    request.session["lista_medicamentos"] = lista
+    return redirect("ver_lista")
+
 #para ver la lista... por eso se llama ver_lista...
 def ver_lista(request):
     lista = request.session.get("lista_medicamentos", {})
