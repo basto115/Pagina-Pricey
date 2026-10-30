@@ -593,6 +593,7 @@ def modificar_cantidad_lista(request, producto_id):
     producto_id = str(producto_id)
     
     accion = request.POST.get("accion")
+    eliminado = False
     
     if producto_id in lista:
         if accion == "aumentar":
@@ -604,8 +605,11 @@ def modificar_cantidad_lista(request, producto_id):
             if lista[producto_id] <= 0:
                 del lista[producto_id]
     request.session["lista_medicamentos"] = lista
-    return redirect("ver_lista")
-
+    return JsonResponse({
+        "cantidad": lista.get(producto_id, 0),
+        "eliminado": eliminado,
+    })
+    
 #borrar la lista
 @require_POST
 def eliminar_de_lista(request, producto_id):
@@ -614,7 +618,7 @@ def eliminar_de_lista(request, producto_id):
     
     lista.pop(producto_id, None)
     request.session["lista_medicamentos"] = lista
-    return redirect("ver_lista")
+    return JsonResponse({"eliminado": True,})
 
 #para ver la lista... por eso se llama ver_lista...
 def ver_lista(request):

@@ -35,7 +35,7 @@
             Organiza los medicamentos que necesitas y compara sus precios entre farmacias.
         </p>
 
-        <div class="medicamentos">
+        <div class="medicamentos" id="contenedor-lista">
             {% for item in items %}
                 <article class="medicamento">
 
@@ -55,32 +55,31 @@
                         </p>
                     {% endif %}
 
-                    <div class="cantidad-controles">
-                        <strong>Cantidad:</strong>
-                        
-                        <form method="POST"
-                              action="{% url 'modificar_cantidad_lista' item.producto.id %}">
-                              {% csrf_token %}
-                              <button type="submit" name="accion" value="disminuir">
-                                -
-                              </button>
+                    <div class="cantidad-controles"
+                        data-url="{% url 'modificar_cantidad_lista' item.producto.id %}">
+                        {% csrf_token %}
 
-                              <span> {{ item.cantidad }} </span>
+                        <button type="button"
+                                onclick="modificarCantidad(this, 'disminuir')">
+                            -
+                        </button>
 
-                              <button type="submit" name="accion" value="aumentar">
-                                +
-                              </button>
-                        </form>
+                        <span>{{ item.cantidad }}</span>
 
-                        <form action="{% url 'eliminar_de_lista' item.producto.id %}" 
-                              method="post">
-                              {% csrf_token %}
-                              <button type="submit" class="btn-eliminar">
-                                Eliminar
-                              </button>
-                        </form>
+                        <button type="button"
+                                onclick="modificarCantidad(this, 'aumentar')">
+                            +
+                        </button>
 
+                        <button type="button"
+                            class="btn-eliminar"
+                            data-url="{% url 'eliminar_de_lista' item.producto.id %}"
+                            onclick="eliminarProducto(this)">
+                        Eliminar
+                        </button>
                     </div>
+
+
 
                     <h4>Precios por farmacia</h4>
 
@@ -128,8 +127,21 @@
             {% endfor %}
         </div>
 
+        <div id="mensaje-lista-vacia" style="display: none;">
+            <article class="medicamento">
+                <h3>Tu lista está vacía</h3>
+                <p>
+                    Todavía no has agregado productos.
+                    Explora nuestro catálogo para comenzar.
+                </p>
+                <a href="{% url 'inicio' %}" class="btn-medicamento">
+                    Explorar productos
+                </a>
+            </article>
+        </div>
+
         {% if items %}
-            <div class="bloque-comparacion">
+            <div class="bloque-comparacion seccion-comparacion">
                 <h2>Comparar compra por farmacia</h2>
 
                 <p>
@@ -168,7 +180,7 @@
                 </div>
             </div>
 
-            <div class="bloque-comparacion">
+            <div class="bloque-comparacion seccion-comparacion">
                 <h2>Comprar al menor precio</h2>
 
                 <p>
@@ -222,7 +234,7 @@
                     </p>
 
                     <ul>
-                        {% for nombre in productos_sin_precios %}
+                        {% for nombre in productos_sin_precio %}
                             <li> {{ nombre }} </li>
                         {% endfor %}
                     </ul> 
@@ -257,6 +269,92 @@
         <p>&copy; 2026 FARMA PRICEY. Todos los derechos reservados.</p>
     </div>
 </footer>
+
+<script>
+function modificarCantidad(boton, accion) {
+    const controles = boton.closest(".cantidad-controles");
+    const url = controles.dataset.url;
+    const datos = new FormData();
+
+    datos.append("accion", accion);
+
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]');
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrf.value,
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        body: datos
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("No se pudo modificar la cantidad.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.eliminado) {
+            boton.closest(".medicamento").remove();
+            actualizarEstadoLista();
+        } else {
+            controles.querySelector("span").textContent = data.cantidad;
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        alert("No se pudo actualizar la cantidad.");
+    });
+}
+
+function eliminarProducto(boton) {
+    if (!confirm("¿Eliminar este producto de tu lista?")) {
+        return;
+    }
+
+    const url = boton.dataset.url;
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]');
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrf.value,
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("No se pudo eliminar el producto.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        boton.closest(".medicamento").remove();
+        actualizarEstadoLista();
+    })
+    .catch(error => {
+        console.error(error);
+        alert("No se pudo eliminar el producto.");
+    });
+
+function actualizarEstadoLista() {
+    const contenedor = document.getElementById("contenedor-lista");
+    const mensaje = document.getElementById("mensaje-lista-vacia");
+    const comparaciones = document.querySelectorAll(".seccion-comparacion");
+
+    const quedanProductos = contenedor.querySelector(".medicamento");
+
+    if (!quedanProductos) {
+        mensaje.style.display = "block";
+
+        comparaciones.forEach(seccion => {
+            seccion.style.display = "none";
+        });
+    }
+}
+}
+</script>
 
 </body>
 </html>
