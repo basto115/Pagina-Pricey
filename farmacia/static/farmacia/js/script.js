@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let mapa = null;
     let marcadorUsuario = null;
     let marcadoresFarmacias = [];
+    let grupoMarcadores = null;
+
     let ubicacionUsuario = null;
     let controlRuta = null;
 
@@ -185,7 +187,18 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
         return;
     }
 
-    
+    const COLORES_FARMACIAS = {
+        "cruz verde": "#16A34A",
+        "dr simi": "#2563EB",
+        "farmacias ahumada": "#E87924",
+        "salcobrand": "#9333EA"
+    };
+
+    function obtenerColorFarmacia(farmacia) {
+        const cadena = (farmacia.farmacia || "").trim().toLowerCase();
+        return COLORES_FARMACIAS[cadena] || "#64748B";
+    }
+
     // Cargar y ordenar las farmacias según la ubicación del usuario.
     async function cargarFarmacias() {
         try {
@@ -198,9 +211,7 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
             const datos = await respuesta.json();
 
             // Evitar duplicar marcadores si volvemos a cargar.
-            marcadoresFarmacias.forEach(function (marcador) {
-                mapa.removeLayer(marcador);
-            });
+            grupoMarcadores.clearLayers();
             marcadoresFarmacias = [];
 
             const farmaciasOrdenadas = datos.farmacias
@@ -247,10 +258,24 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
             }
 
             farmaciasOrdenadas.forEach(function (farmacia) {
-                const marcador = L.marker([
-                    farmacia.latitud,
-                    farmacia.longitud
-                ]).addTo(mapa);
+                const color = obtenerColorFarmacia(farmacia);
+
+                const iconoFarmacia = L.divIcon({
+                    className: "marcador-farmacia",
+                    html: `
+                        <div class="marcador-farmacia-circulo"
+                            style="background-color: ${color};">
+                        </div>
+                    `,
+                    iconSize: [18, 18],
+                    iconAnchor: [9, 9],
+                    popupAnchor: [0, -10]
+                });
+
+                const marcador = L.marker(
+                    [farmacia.latitud, farmacia.longitud],
+                    { icon: iconoFarmacia }
+                );
 
                 const contenido = document.createElement("div");
                 const nombre = document.createElement("strong");
@@ -391,6 +416,7 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
 
                 contenido.appendChild(botonRuta);
                 marcador.bindPopup(contenido);
+                grupoMarcadores.addLayer(marcador);
                 marcadoresFarmacias.push(marcador);
 
             });
@@ -424,6 +450,19 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(mapa);
+
+        // Crear el grupo de marcadores después de inicializar el mapa.
+        grupoMarcadores = L.markerClusterGroup({
+            maxClusterRadius: 50,
+            disableClusteringAtZoom: 17,
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: true,
+            animate: true
+        });
+        
+        // Agregar el grupo al mapa.
+        mapa.addLayer(grupoMarcadores);
         
         cargarFarmacias();
     } else if (contenedorMapa) {

@@ -45,9 +45,60 @@ class Farmacia(models.Model):
     def __str__(self):
         return self.nombre
     
+class Sucursal(models.Model):
+    farmacia = models.ForeignKey(
+        Farmacia,
+        on_delete=models.SET_NULL,
+        related_name="sucursales",
+        null=True,
+        blank=True
+    )
     
+    nombre = models.CharField(max_length=200)
+    
+    direccion = models.CharField(
+        max_length=300,
+        blank=True
+    )
+    
+    comuna = models.CharField(
+        max_length=100,
+        blank=True
+    )
+    
+    latitud = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True
+    )
 
-
+    longitud = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True
+    )    
+    
+    sitio_web = models.URLField(blank=True)
+    
+    origen = models.CharField(
+        max_length=30,
+        default="manual"
+    )
+    
+    osm_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        unique=True
+    )
+    
+    aprobada = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.nombre
+    
 class Producto(models.Model):
     medicamento = models.ForeignKey(
         Medicamento,

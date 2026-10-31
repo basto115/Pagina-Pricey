@@ -1568,3 +1568,51 @@ button.btn-eliminar:hover {
     background-color: #fee4e2 !important;
     color: #b42318 !important;
 }
+
+/* Marcadores personalizados de farmacias */
+.marcador-farmacia {
+    background: transparent;
+    border: none;
+}
+
+.marcador-farmacia-circulo {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s ease;
+}
+
+.marcador-farmacia-circulo:hover {
+    transform: scale(1.3);
+}
+
+.leyenda-farmacias {
+    background: #FFFFFF;
+    padding: 12px 15px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+    font-size: 13px;
+    line-height: 1.8;
+    color: #24332D;
+}
+
+.leyenda-farmacias strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.leyenda-farmacias div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.leyenda-color {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}

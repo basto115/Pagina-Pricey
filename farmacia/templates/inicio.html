@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+
 </head>
 <body>
 
@@ -174,6 +177,29 @@
         </div>
         <div class="mapa">
             <div id="mapa-farmacias" style="height: 400px; width: 100%;"></div>
+            <div id="leyenda-farmacias" class="leyenda-farmacias">
+                <strong>Farmacias</strong>
+
+                <div>
+                    <span class="leyenda-color" style="background: #16A34A;"></span>
+                    Cruz Verde
+                </div>
+
+                <div>
+                    <span class="leyenda-color" style="background: #2563EB;"></span>
+                    Dr. Simi
+                </div>
+
+                <div>
+                    <span class="leyenda-color" style="background: #E87924;"></span>
+                    Farmacias Ahumada
+                </div>
+
+                <div>
+                    <span class="leyenda-color" style="background: #9333EA;"></span>
+                    Salcobrand
+                </div>
+            </div>
         </div>
     </section>
 </main>
@@ -202,6 +228,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="{% static 'farmacia/js/script.js' %}"></script>
 </body>
 </html>

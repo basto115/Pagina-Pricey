@@ -13,7 +13,7 @@ from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
-from .models import Medicamento, Farmacia, Producto, Precio
+from .models import Medicamento, Farmacia, Producto, Precio, Sucursal
 
 
 def inicio(request):
@@ -170,19 +170,44 @@ def detalle_medicamento(request, medicamento_id):
 
 @require_GET
 def listar_farmacias(request):
-    farmacias = Farmacia.objects.all().order_by("nombre")
+    sucursales = Sucursal.objects.select_related(
+        "farmacia"
+    ).filter(
+        aprobada=True
+    ).order_by("nombre")
+
     datos = [
         {
-            "id": farmacia.id,
-            "nombre": farmacia.nombre,
-            "direccion": farmacia.direccion,
-            "latitud": float(farmacia.latitud) if farmacia.latitud is not None else None,
-            "longitud": float(farmacia.longitud) if farmacia.longitud is not None else None,
-            "sitio_web": farmacia.sitio_web,
+            "id": sucursal.id,
+            "nombre": sucursal.nombre,
+            "direccion": sucursal.direccion,
+            "comuna": sucursal.comuna,
+            "latitud": (
+                float(sucursal.latitud)
+                if sucursal.latitud is not None
+                else None
+            ),
+            "longitud": (
+                float(sucursal.longitud)
+                if sucursal.longitud is not None
+                else None
+            ),
+            "sitio_web": sucursal.sitio_web,
+            "farmacia": (
+                sucursal.farmacia.nombre
+                if sucursal.farmacia
+                else None
+            ),
+            "tiene_precios": sucursal.farmacia_id is not None,
+            "origen": sucursal.origen,
         }
-        for farmacia in farmacias
+        for sucursal in sucursales
+        if sucursal.latitud is not None
+        and sucursal.longitud is not None
     ]
+
     return JsonResponse({"farmacias": datos})
+
 
 
 @require_GET
