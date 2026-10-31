@@ -1616,3 +1616,31 @@ button.btn-eliminar:hover {
     display: inline-block;
     flex-shrink: 0;
 }
+
+.filtro-farmacia {
+    cursor: pointer;
+    border: 2px solid var(--borde);
+    background: #ffffff;
+    color: var(--texto);
+    transition: all 0.2s ease;
+}
+
+.filtro-farmacia:hover {
+    border-color: var(--verde);
+    transform: translateY(-2px);
+}
+
+.filtro-farmacia.activo {
+    border-color: var(--verde);
+    background: #eaf4ee;
+    color: var(--verde-oscuro);
+}
+
+.filtro-farmacia h3 {
+    margin: 0;
+}
+
+.filtro-farmacia:focus-visible {
+    outline: 3px solid var(--verde-lima);
+    outline-offset: 3px;
+}

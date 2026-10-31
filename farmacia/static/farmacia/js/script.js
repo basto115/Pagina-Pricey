@@ -199,6 +199,73 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
         return COLORES_FARMACIAS[cadena] || "#64748B";
     }
 
+    let cadenasSeleccionadas = new Set([
+        "cruz verde",
+        "dr simi",
+        "farmacias ahumada",
+        "salcobrand"
+    ]);
+
+    function normalizarCadena(cadena) {
+        return (cadena || "")
+            .trim()
+            .toLowerCase()
+            .replace(/[.]/g, "")
+            .replace(/\s+/g, " ");
+    }
+
+    function aplicarFiltrosFarmacias(){
+        if (!grupoMarcadores) return;
+
+        // Limpiar los marcadores visibles del mapa.
+        grupoMarcadores.clearLayers();
+
+        // Volver a agregar solamente los marcadores seleccionados.
+        marcadoresFarmacias.forEach(function (marcador) {
+            if (cadenasSeleccionadas.has(marcador.cadenaFarmacia)) {
+                grupoMarcadores.addLayer(marcador);
+            }
+        });
+    }
+
+    function configurarFiltrosFarmacias() {
+        const botones = document.querySelectorAll(".filtro-farmacia");
+
+        botones.forEach(function (boton) {
+            boton.addEventListener("click", function () {
+                const cadena = boton.dataset.cadena;
+
+                if (cadena === "todas") {
+                    cadenasSeleccionadas = new Set([
+                        "cruz verde",
+                        "dr simi",
+                        "farmacias ahumada",
+                        "salcobrand"
+                    ]);
+                } else {
+                    if (cadenasSeleccionadas.has(cadena)) {
+                        cadenasSeleccionadas.delete(cadena);
+                    } else {
+                        cadenasSeleccionadas.add(cadena);
+                    }
+                }
+
+                // Actualizar apariencia de los botones.
+                botones.forEach(function (otroBoton) {
+                    const otraCadena = otroBoton.dataset.cadena;
+
+                    const activo = otraCadena === "todas"
+                        ? cadenasSeleccionadas.size === 4
+                        : cadenasSeleccionadas.has(otraCadena);
+
+                    otroBoton.classList.toggle("activo", activo);
+                    otroBoton.setAttribute("aria-pressed", String(activo));
+                });
+
+                aplicarFiltrosFarmacias();
+            });
+        });
+    }
     // Cargar y ordenar las farmacias según la ubicación del usuario.
     async function cargarFarmacias() {
         try {
@@ -276,6 +343,7 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
                     [farmacia.latitud, farmacia.longitud],
                     { icon: iconoFarmacia }
                 );
+                marcador.cadenaFarmacia = normalizarCadena(farmacia.farmacia);
 
                 const contenido = document.createElement("div");
                 const nombre = document.createElement("strong");
@@ -464,6 +532,8 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
         // Agregar el grupo al mapa.
         mapa.addLayer(grupoMarcadores);
         
+        configurarFiltrosFarmacias();
+
         cargarFarmacias();
     } else if (contenedorMapa) {
         mensajeUbicacion.textContent =
