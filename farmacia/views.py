@@ -754,7 +754,7 @@ def planificar_ruta(request):
     
     #obtener coord del usuario
     lat_usuario = request.GET.get("lat")
-    lon_usuario = request.GET.get
+    lon_usuario = request.GET.get("lon")
 
     if not lat_usuario or not lon_usuario:
         return JsonResponse({
@@ -786,7 +786,7 @@ def planificar_ruta(request):
     for producto in productos:
         for precio in producto.precios.all():
             if precio.farmacia:
-                farmacias_obj[precio.farmacia_id]
+                farmacias_obj[precio.farmacia_id] = precio.farmacia
     
     #buscar sucursales aprobadas de esa farmacias
     sucursales = Sucursal.objects.filter(
@@ -829,7 +829,7 @@ def planificar_ruta(request):
         ]
 
         if sucursales_farmacia:
-            sucursales_cercana = min(
+            sucursal_cercana = min(
                 sucursales_farmacia,
                 key=lambda s: calcular_distancia(
                     lat_usuario,
@@ -839,8 +839,31 @@ def planificar_ruta(request):
                 )
             )
 
+            farmacias[farmacia_id] = {
+                "id": farmacia.id,
+                "nombre": sucursal_cercana.nombre,
+                "cadena": farmacia.nombre,
+                "sucursal_id": sucursal_cercana.id,
+                "direccion": sucursal_cercana.direccion,
+                "comuna": sucursal_cercana.comuna,
+                "latitud": float(sucursal_cercana.latitud),
+                "longitud": float(sucursal_cercana.longitud)
+            }
+        #por si la farmacia no tiene sucursal registrada (no deberia pasar pero uno nunca sabe xd)
+        elif farmacia.latitud is not None and farmacia.longitud is not None:
+            farmacias[farmacia_id] = {
+                "id": farmacia.id,
+                "nombre": farmacia.nombre,
+                "cadena": farmacia.nombre,
+                "sucursal_id": None,
+                "direccion": farmacia.direccion,
+                "comuna": "",
+                "latitud": float(farmacia.latitud),
+                "longitud": float(farmacia.longitud)
+            }
+
     resultado = []
-    farmacias = {}
+
     
     for producto in productos:
         cantidad = lista.get(str(producto.id), 1)
@@ -849,26 +872,23 @@ def planificar_ruta(request):
         for precio in producto.precios.all():
             farmacia = precio.farmacia
             
-            if farmacia.latitud is None or farmacia.longitud is None:
+            if not farmacia or farmacia.id not in farmacias:
                 continue
+
+            datos_farmacia = farmacias[farmacia.id]
             
             datos_precio = {
                 "farmacia_id": farmacia.id,
                 "farmacia": farmacia.nombre,
+                "sucursal": datos_farmacia["nombre"],
                 "precio": float(precio.precio),
-                "latitud": float(farmacia.latitud),
-                "longitud": float(farmacia.longitud)
+                "latitud": datos_farmacia["latitud"],
+                "longitud": datos_farmacia["longitud"]
             }
             
             precios.append(datos_precio)
             
-            farmacias[farmacia.id] = {
-                "id": farmacia.id,
-                "nombre": farmacia.nombre,
-                "latitud": float(farmacia.latitud),
-                "longitud": float(farmacia.longitud)
-            }
-            
+
         resultado.append({
             "producto_id": producto.id,
             "nombre": producto.nombre,

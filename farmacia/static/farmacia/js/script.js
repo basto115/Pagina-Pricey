@@ -96,7 +96,12 @@ async function planificarRutaCompras() {
         "Calculando la mejor ruta para tus compras...";
     
     try {
-        const respuesta = await fetch("/mi-lista/planificar-ruta/");
+        const parametros = new URLSearchParams({
+            lat: ubicacionUsuario.latitud,
+            lon: ubicacionUsuario.longitud
+        })
+
+        const respuesta = await fetch(`/mi-lista/planificar-ruta/?${parametros.toString()}`);
         const datos = await respuesta.json();
 
         if (!respuesta.ok) {
