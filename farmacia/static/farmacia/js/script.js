@@ -95,6 +95,17 @@ async function planificarRutaCompras() {
     mensajeUbicacion.textContent=
         "Calculando la mejor ruta para tus compras...";
     
+    console.log("Ubicación del usuario:", ubicacionUsuario);
+
+    const parametros = new URLSearchParams({
+        lat: ubicacionUsuario.latitud,
+        lon: ubicacionUsuario.longitud
+    });
+
+    const url = `/mi-lista/planificar-ruta/?${parametros.toString()}`;
+    console.log("URL enviada:", url);
+    const respuesta = await fetch(url);
+
     try {
         const parametros = new URLSearchParams({
             lat: ubicacionUsuario.latitud,
@@ -103,6 +114,11 @@ async function planificarRutaCompras() {
 
         const respuesta = await fetch(`/mi-lista/planificar-ruta/?${parametros.toString()}`);
         const datos = await respuesta.json();
+        console.log("Respuesta del endpoint:", datos);
+        console.log(
+            "Detalle completo:",
+            JSON.stringify(datos, null, 2)
+        );
 
         if (!respuesta.ok) {
             throw new Error(

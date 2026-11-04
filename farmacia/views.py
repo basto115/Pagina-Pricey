@@ -745,6 +745,11 @@ def ver_lista(request):
 
 @require_GET
 def planificar_ruta(request):
+    
+    print("GET recibido:", request.GET)
+    print("Latitud recibida:", request.GET.get("lat"))
+    print("Longitud recibida:", request.GET.get("lon"))
+
     lista = request.session.get("lista_medicamentos", {})
     
     if not lista:
