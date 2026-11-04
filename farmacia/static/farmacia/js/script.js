@@ -1,6 +1,6 @@
 
 document.addEventListener("DOMContentLoaded", function () {
-    const botonUbicacion = document.getElementById("btn-ubicacion");
+
     const mensajeUbicacion = document.getElementById("mensaje-ubicacion");
     const contenedorMapa = document.getElementById("mapa-farmacias");
 
@@ -182,8 +182,8 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
         }, 100);
     }
 
-    if (!botonUbicacion || !mensajeUbicacion) {
-        console.error("No se encontró el botón o el mensaje de ubicación.");
+    if (!mensajeUbicacion) {
+        console.error("No se encontró el mensaje de ubicación.");
         return;
     }
 
@@ -369,7 +369,7 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
                 botonRuta.textContent = "Cómo llegar";
                 botonRuta.type = "button";
                 botonRuta.className = "btn-ruta";
-
+                
                 botonRuta.style.marginTop = "8px";
                 botonRuta.style.padding = "7px 12px";
                 botonRuta.style.border = "none";
@@ -534,63 +534,64 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
         
         configurarFiltrosFarmacias();
 
-        cargarFarmacias();
+        obtenerUbicacion();
     } else if (contenedorMapa) {
         mensajeUbicacion.textContent =
             "No se pudo cargar el mapa. Revisa tu conexión a internet.";
     }
 
-    botonUbicacion.addEventListener("click", function () {
-        if (ubicacionUsuario) {
-            mensajeUbicacion.textContent =
-                "Ya tenemos tu ubicación guardada durante esta sesión.";
+    function obtenerUbicacion() {
 
+        //si ya tenemos la ubicacion la reutilizamos
+        if (ubicacionUsuario) {
+
+            mensajeUbicacion.textContent = 
+                "Utilizando tu ubicación guardada durante esta sesión.";
+            
             if (mapa) {
-                mapa.setView([
-                    ubicacionUsuario.latitud,
-                    ubicacionUsuario.longitud
-                ], 15);
+                const latitud = ubicacionUsuario.latitud;
+                const longitud = ubicacionUsuario.longitud;
+
+                mapa.setView([latitud, longitud], 15);
 
                 if (marcadorUsuario) {
-                    marcadorUsuario.setLatLng([
-                        ubicacionUsuario.latitud,
-                        ubicacionUsuario.longitud
-                    ]);
+                    marcadorUsuario.setLatLng([latitud, longitud]);
                 } else {
-                    marcadorUsuario = L.marker([
-                        ubicacionUsuario.latitud,
-                        ubicacionUsuario.longitud
-                    ]).addTo(mapa);
+                    marcadorUsuario = L.marker([latitud, longitud]).addTo(mapa);
                 }
 
-                marcadorUsuario.bindPopup("¡Estás aquí!").openPopup();
+                marcadorUsuario.bindPopup("¡Estás aquí :)!").openPopup();
+
                 cargarFarmacias();
             }
-
-            return;
+            return
         }
-
-
+        //comprobar compatibilidad con navegador
 
         if (!navigator.geolocation) {
-            mensajeUbicacion.textContent =
-                "Tu navegador no admite la geolocalización.";
+            mensajeUbicacion.textContent = 
+                "Tu navegador no admite geolocalización :(.";
+            cargarFarmacias();
             return;
         }
 
         mensajeUbicacion.textContent =
             "Solicitando permiso para conocer tu ubicación...";
-
+        
+        //para pedir ubicación automatica
         navigator.geolocation.getCurrentPosition(
+            
             function (posicion) {
                 const latitud = posicion.coords.latitude;
                 const longitud = posicion.coords.longitude;
+
                 ubicacionUsuario = {
                     latitud: latitud,
                     longitud: longitud
                 };
-                // Guardar para reutilizar en otras páginas durante esta sesión.
-                try {
+
+                //guarda la ubicación
+                try{
                     sessionStorage.setItem(
                         "ubicacionUsuario",
                         JSON.stringify({
@@ -599,42 +600,50 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
                         })
                     );
                 } catch (error) {
-                    console.warn("No se pudo guardar la ubicación.", error);
+                    console.warn(
+                        "No se pudo guardar la ubicación.",
+                        error
+                    );
                 }
 
-                mensajeUbicacion.textContent =
-                    "¡Ubicación obtenida correctamente!";
-
+                mensajeUbicacion.textContent = 
+                    "¡Ubicación obtenida correctamente :)!";
+                
                 if (mapa) {
+
                     mapa.setView([latitud, longitud], 15);
 
                     if (marcadorUsuario) {
                         marcadorUsuario.setLatLng([latitud, longitud]);
                     } else {
-                        marcadorUsuario = L.marker([latitud, longitud])
-                            .addTo(mapa);
+                        marcadorUsuario = L.marker([latitud, longitud]).addTo(mapa);
                     }
 
-                    marcadorUsuario.bindPopup("¡Estás aquí!").openPopup();
+                    marcadorUsuario.bindPopup("¡Estás aquí :)!").openPopup();
+
                     cargarFarmacias();
                 }
 
                 console.log("Ubicación obtenida:", latitud, longitud);
+
             },
+
             function (error) {
                 if (error.code === 1) {
                     mensajeUbicacion.textContent =
-                        "Permiso denegado. Habilita la ubicación en tu navegador.";
+                        "No tenemos permiso para acceder a tu ubicación. Puedes habilitarlo desde tu navegador.";
                 } else if (error.code === 2) {
                     mensajeUbicacion.textContent =
-                        "No pudimos determinar tu ubicación. Inténtalo nuevamente.";
+                        "No pudimos determinar tu ubicación. :(";
                 } else if (error.code === 3) {
                     mensajeUbicacion.textContent =
-                        "La solicitud tardó demasiado. Inténtalo otra vez.";
+                        "La solicitud tardó demasiado. Inténtalo nuevamente.";
                 } else {
                     mensajeUbicacion.textContent =
                         "Ocurrió un error al obtener tu ubicación.";
                 }
+                //hay que mostrar las farmacias aunque no se tenga ubicación
+                cargarFarmacias();
             },
             {
                 enableHighAccuracy: true,
@@ -642,5 +651,6 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
                 maximumAge: 0
             }
         );
-    });
+
+    }
 });
