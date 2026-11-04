@@ -16,6 +16,8 @@ from django.core.exceptions import ImproperlyConfigured
 from .models import Medicamento, Farmacia, Producto, Precio, Sucursal
 from itertools import combinations
 
+from math import radians, sin, cos, sqrt, atan2
+
 def inicio(request):
     busqueda = request.GET.get("buscar", "").strip()
 
@@ -750,6 +752,23 @@ def planificar_ruta(request):
             "error": "Tu lista de productos esta vacía."
         }, status=400)
     
+    #obtener coord del usuario
+    lat_usuario = request.GET.get("lat")
+    lon_usuario = request.GET.get
+
+    if not lat_usuario or not lon_usuario:
+        return JsonResponse({
+            "error": "No se recibió la ubicación del usuario."
+        }, status=400)
+
+    try:
+        lat_usuario = float(lat_usuario)
+        lon_usuario = float(lon_usuario)
+    except (TypeError, ValueError):
+        return JsonResponse({
+            "error": "Las coordenadas del usuario no son válidas."
+        }, status=400)
+
     productos = Producto.objects.filter(
         id__in=lista.keys()
     ).prefetch_related(
@@ -761,6 +780,65 @@ def planificar_ruta(request):
         )
     )
     
+    #obtener farmacia que tienen precios
+    farmacias_obj = {}
+
+    for producto in productos:
+        for precio in producto.precios.all():
+            if precio.farmacia:
+                farmacias_obj[precio.farmacia_id]
+    
+    #buscar sucursales aprobadas de esa farmacias
+    sucursales = Sucursal.objects.filter(
+        farmacia_id__in=farmacias_obj.keys(),
+        aprobada=True,
+        latitud__isnull=False,
+        longitud__isnull=False,
+    )
+
+    #calcular distancia entre dos coords
+    def calcular_distancia(lat1, lon1, lat2, lon2):
+        radio_tierra = 6371
+
+        lat1, lon1, lat2, lon2 = map(
+            radians,
+            [lat1, lon1, lat2, lon2]
+        )
+
+        diferencia_lat = lat2 - lat1
+        diferencia_lon = lon2 - lon1
+
+        a = (
+            sin(diferencia_lat / 2) ** 2
+            + cos(lat1) * cos(lat2)
+            * sin(diferencia_lon / 2) ** 2
+        )
+
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return radio_tierra * c
+    
+    #Seleccionar la sucursal más cercana de cada farmacia
+    farmacias = {}
+
+    for farmacia_id, farmacia in farmacias_obj.items():
+
+        sucursales_farmacia = [
+            sucursal for sucursal in sucursales
+            if sucursal
+        ]
+
+        if sucursales_farmacia:
+            sucursales_cercana = min(
+                sucursales_farmacia,
+                key=lambda s: calcular_distancia(
+                    lat_usuario,
+                    lon_usuario,
+                    float(s.latitud),
+                    float(s.longitud)
+                )
+            )
+
     resultado = []
     farmacias = {}
     
