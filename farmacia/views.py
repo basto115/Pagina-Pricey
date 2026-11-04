@@ -14,7 +14,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
 from .models import Medicamento, Farmacia, Producto, Precio, Sucursal
-
+from itertools import combinations
 
 def inicio(request):
     busqueda = request.GET.get("buscar", "").strip()
@@ -740,4 +740,179 @@ def ver_lista(request):
                       "productos_menor_precio": productos_menor_precio,
                       "productos_sin_precio": productos_sin_precio
                       })
+
+@require_GET
+def planificar_ruta(request):
+    lista = request.session.get("lista_medicamentos", {})
     
+    if not lista:
+        return JsonResponse({
+            "error": "Tu lista de productos esta vacía."
+        }, status=400)
+    
+    productos = Producto.objects.filter(
+        id__in=lista.keys()
+    ).prefetch_related(
+        Prefetch(
+            "precios",
+            queryset=Precio.objects.filter(
+                disponible=True
+            ).select_related("farmacia")
+        )
+    )
+    
+    resultado = []
+    farmacias = {}
+    
+    for producto in productos:
+        cantidad = lista.get(str(producto.id), 1)
+        precios = []
+        
+        for precio in producto.precios.all():
+            farmacia = precio.farmacia
+            
+            if farmacia.latitud is None or farmacia.longitud is None:
+                continue
+            
+            datos_precio = {
+                "farmacia_id": farmacia.id,
+                "farmacia": farmacia.nombre,
+                "precio": float(precio.precio),
+                "latitud": float(farmacia.latitud),
+                "longitud": float(farmacia.longitud)
+            }
+            
+            precios.append(datos_precio)
+            
+            farmacias[farmacia.id] = {
+                "id": farmacia.id,
+                "nombre": farmacia.nombre,
+                "latitud": float(farmacia.latitud),
+                "longitud": float(farmacia.longitud)
+            }
+            
+        resultado.append({
+            "producto_id": producto.id,
+            "nombre": producto.nombre,
+            "cantidad": cantidad,
+            "precios": precios
+        })
+        
+    #evalua TODAS las combinaciones de farmacias
+    ids_farmacias = list(farmacias.keys())
+    alternativas = []
+    
+    for cantidad_farmacias in range(1, len(ids_farmacias) + 1):
+        for combinacion in combinations(
+            ids_farmacias, cantidad_farmacias
+        ):
+            compras = {}
+            total = 0
+            combinacion_valida = True
+        
+            for producto in resultado:
+                opciones = [
+                    precio for precio in producto["precios"]
+                    if precio["farmacia_id"] in combinacion
+                ]
+                
+                if not opciones:
+                    combinacion_valida = False
+                    break
+                
+                mejor_precio = min(
+                    opciones,
+                    key=lambda x: x["precio"]
+                )
+                
+                subtotal = mejor_precio["precio"] * producto["cantidad"]
+                total += subtotal
+                
+                farmacia_id = mejor_precio["farmacia_id"]
+                
+                if farmacia_id not in compras:
+                    compras[farmacia_id] = {
+                        "farmacia": farmacias[farmacia_id],
+                        "productos": [],
+                        "subtotal": 0
+                    }
+                    
+                compras[farmacia_id]["productos"].append({
+                    "producto": producto["nombre"],
+                    "cantidad": producto["cantidad"],
+                    "precio_unitario": mejor_precio["precio"],
+                    "subtotal": subtotal
+                })
+                
+                compras[farmacia_id]["subtotal"] += subtotal
+                
+            if combinacion_valida:
+                alternativas.append({
+                    "total": total,
+                    "compras": list(compras.values()),
+                    "cantidad_farmacias": len(compras)
+                })
+                
+    if not alternativas:
+        return JsonResponse({
+            "error": "No hay suficientes precios disponibles para cubrir todos los productos."
+        }, status=400)
+    
+    #buscar la alternativa más económica de una sola farmacia
+    alternativas.sort(
+        key=lambda x: (x["total"], x["cantidad_farmacias"])
+    )
+    
+    mejor_general = alternativas[0]
+    
+    alternativas_una = [
+        x for x in alternativas
+        if x["cantidad_farmacias"] == 1
+    ]
+    
+    alternativas_varias = [
+        x for x in alternativas
+        if x["cantidad_farmacias"] > 1
+    ]
+    
+    mejor_una = alternativas_una[0] if alternativas_una else None
+    mejor_dividida = alternativas_varias[0] if alternativas_varias else None
+    
+    #aplicar umbral de ahorro de 10% (si el ahorro es menos de 10 entonces ñao ñao)
+    if mejor_una and mejor_dividida:
+        ahorro = (
+            (mejor_una["total"] - mejor_dividida["total"])
+            / mejor_una["total"]
+        ) * 100
+        
+        if ahorro >= 10:
+            recomendacion = mejor_dividida
+            criterio = "dividir_compra"
+        else: 
+            recomendacion = mejor_una
+            criterio = "una_farmacia"
+        
+    elif mejor_una:
+        ahorro = 0
+        recomendacion = mejor_una
+        criterio = "una_farmacia"
+    
+    else:
+        ahorro = 0
+        recomendacion = mejor_general
+        criterio = "varias_farmacias_necesarias"
+    
+    return JsonResponse({
+        "productos": resultado,
+        "recomendacion": {
+            "criterio": criterio,
+            "total": round(recomendacion["total"], 2),
+            "ahorro_porcentual": round(ahorro, 2),
+            "cantidad_farmacias": recomendacion["cantidad_farmacias"],
+            "compras": recomendacion["compras"]
+        },
+        "alternativas": {
+            "una_farmacia": mejor_una,
+            "varias_farmacias": mejor_dividida
+        }
+    })

@@ -38,4 +38,5 @@ urlpatterns = [
     path('mi-lista/modificar/<int:producto_id>/', views.modificar_cantidad_lista, 
          name='modificar_cantidad_lista'),
     path('mi-lista/eliminar/<int:producto_id>/', views.eliminar_de_lista, name='eliminar_de_lista'),
+    path('mi-lista/planificar-ruta/', views.planificar_ruta, name='planificar_ruta'),
 ]

@@ -12,6 +12,16 @@ document.addEventListener("DOMContentLoaded", function () {
     let ubicacionUsuario = null;
     let controlRuta = null;
 
+    const botonPlanificar = document.getElementById(
+        "btn-planificar-ruta"
+    );
+
+    if (botonPlanificar) {
+        botonPlanificar.addEventListener("click", function () {
+            planificarRutaCompras();
+        });
+    }
+    
     // Recuperar la ubicación guardada durante esta sesión.
     try {
         const ubicacionGuardada = sessionStorage.getItem("ubicacionUsuario");
@@ -58,6 +68,186 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
     );
 
     return radioTierra * c;
+}
+
+async function planificarRutaCompras() {
+    if (!ubicacionUsuario) {
+        mensajeUbicacion.textContent =
+            "Primero debes obtener tu ubicación para planificar la ruta.";
+        return;
+    }
+
+    if (!mapa) {
+        mensajeUbicacion.textContent =
+            "El mapa todavía no está disponible.";
+        return;
+    }
+
+    if (
+        typeof L.Routing === "undefined" ||
+        typeof L.Routing.control !== "function"
+    ) {
+        mensajeUbicacion.textContent =
+            "No se pudo cargar el complemento de rutas.";
+        return;
+    }
+
+    mensajeUbicacion.textContent=
+        "Calculando la mejor ruta para tus compras...";
+    
+    try {
+        const respuesta = await fetch("/mi-lista/planificar-ruta/");
+        const datos = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(
+                datos.error || "No se pudo obtener la planificación."
+            );
+        }
+
+        const compras = datos.recomendacion.compras || [];
+
+        // Obtener las farmacias sin duplicados.
+        const farmaciasUnicas = [
+            ...new Map(
+                compras.map(compra => [
+                    compra.farmacia.id,
+                    compra.farmacia
+                ])
+            ).values()
+        ];
+
+        if (farmaciasUnicas.length === 0) {
+            mensajeUbicacion.textContent =
+                "No hay farmacias disponibles para planificar la ruta.";
+            return;
+        }
+
+        // Ordenar las paradas por cercanía desde la ubicación del usuario.
+        const paradasOrdenadas = [];
+        let puntoActual = {
+            latitud: ubicacionUsuario.latitud,
+            longitud: ubicacionUsuario.longitud
+        };
+
+        const pendientes = [...farmaciasUnicas];
+
+        while (pendientes.length > 0) {
+            pendientes.sort((a, b) => {
+                const distanciaA = calcularDistanciaKm(
+                    puntoActual.latitud,
+                    puntoActual.longitud,
+                    a.latitud,
+                    a.longitud
+                );
+
+                const distanciaB = calcularDistanciaKm(
+                    puntoActual.latitud,
+                    puntoActual.longitud,
+                    b.latitud,
+                    b.longitud
+                );
+
+                return distanciaA - distanciaB;
+            });
+
+            const siguiente = pendientes.shift();
+
+            paradasOrdenadas.push(siguiente);
+
+            puntoActual = {
+                latitud: siguiente.latitud,
+                longitud: siguiente.longitud
+            };
+        }
+
+        // Eliminar la ruta anterior.
+        if (controlRuta) {
+            mapa.removeControl(controlRuta);
+            controlRuta = null;
+        }
+
+        // Crear los puntos de la ruta.
+        const puntos = [
+            L.latLng(
+                ubicacionUsuario.latitud,
+                ubicacionUsuario.longitud
+            ),
+            ...paradasOrdenadas.map(farmacia =>
+                L.latLng(
+                    farmacia.latitud,
+                    farmacia.longitud
+                )
+            )
+        ];
+
+        mensajeUbicacion.textContent =
+            "Calculando recorrido por " +
+            paradasOrdenadas.length + " farmacia(s)...";
+
+        const nuevaRuta = L.Routing.control({
+            waypoints: puntos,
+
+            router: L.Routing.osrmv1({
+                serviceUrl:
+                    "https://router.project-osrm.org/route/v1"
+            }),
+
+            addWaypoints: false,
+            draggableWaypoints: false,
+            fitSelectedRoutes: true,
+            show: true,
+            routeWhileDragging: false,
+            language: "es",
+
+            createMarker: function () {
+                return null;
+            }
+        });
+
+        controlRuta = nuevaRuta;
+
+        controlRuta.on("routesfound", function (evento) {
+            if (!evento.routes || evento.routes.length === 0) {
+                mensajeUbicacion.textContent =
+                    "No se encontró una ruta para tus compras.";
+                return;
+            }
+
+            const ruta = evento.routes[0];
+
+            const distanciaKm =
+                ruta.summary.totalDistance / 1000;
+
+            const duracionMinutos =
+                Math.round(ruta.summary.totalTime / 60);
+
+            const nombres = paradasOrdenadas
+                .map((farmacia, indice) =>
+                    (indice + 1) + ". " + farmacia.nombre
+                )
+                .join(" → ");
+            
+            mensajeUbicacion.textContent =
+                "Ruta de compra: " + nombres +
+                ". Distancia: " + distanciaKm.toFixed(2) +
+                " km. Duración estimada: " +
+                duracionMinutos + " minutos.";
+        });
+
+        controlRuta.on("routingerror", function () {
+            mensajeUbicacion.textContent =
+                "No se pudo calcular la ruta. Inténtalo nuevamente.";
+        });
+
+        controlRuta.addTo(mapa);
+    } catch (error) {
+        console.error("Error al planificar la ruta:", error);
+
+        mensajeUbicacion.textContent =
+            error.message || "Ocurrió un error al planificar la ruta.";
+    }
+    
 }
 
     // Mapa de farmacias que aparecen en la lectura de recetas.

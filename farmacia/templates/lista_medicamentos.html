@@ -8,6 +8,11 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Mi lista | FARMA PRICEY</title>
     <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+    
 </head>
 
 <body>
@@ -240,6 +245,28 @@
                     </ul> 
                 {% endif %}
             </div>
+
+            <section class="seccion-ruta-compras">
+                <h2>Ruta de compra</h2>
+
+                <p id="mensaje-ubicacion">
+                    Obtén tu ubicación para planificar tu recorrido.
+                </p>
+
+                <button
+                    type="button"
+                    id="btn-planificar-ruta"
+                    class="btn-ruta"
+                >
+                    Planificar ruta de compra
+                </button>
+
+                <div
+                    id="mapa-farmacias"
+                    class="mapa-farmacias"
+                ></div>
+            </section>
+
         {% endif %}
     </section>
 
@@ -337,6 +364,7 @@ function eliminarProducto(boton) {
         console.error(error);
         alert("No se pudo eliminar el producto.");
     });
+}
 
 function actualizarEstadoLista() {
     const contenedor = document.getElementById("contenedor-lista");
@@ -353,8 +381,12 @@ function actualizarEstadoLista() {
         });
     }
 }
-}
 </script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="{% static 'farmacia/js/script.js' %}"></script>
 
 </body>
 </html>
