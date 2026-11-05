@@ -108,6 +108,10 @@ class Producto(models.Model):
         blank=True
     )
 
+    es_bioequivalente = models.BooleanField(
+        default=False
+    )
+
     nombre = models.CharField(
         max_length=300
     )
