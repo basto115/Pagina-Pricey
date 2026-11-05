@@ -1,4 +1,3 @@
-
 import re
 import time
 import requests
@@ -128,6 +127,22 @@ def obtener_urls_sitemap(url, farmacia, visitados=None, profundidad=0):
             )
 
         elif enlace.startswith(("https://", "http://")):
+
+            if farmacia == "Salcobrand":
+                partes = [
+                    parte
+                    for parte in ruta.split("/")
+                    if parte
+                ]
+
+                # Aceptar solamente páginas individuales
+                # con formato /products/nombre-producto.
+                if (
+                    len(partes) < 2
+                    or partes[0] != "products"
+                ):
+                    continue
+
             resultados.append(enlace)
 
     return list(dict.fromkeys(resultados))
@@ -190,6 +205,13 @@ class Command(BaseCommand):
                     nombre = str(datos.get("nombre") or "").strip()
                     if not nombre:
                         self.stdout.write(f"  Omitido: sin nombre - {url}")
+                        errores += 1
+                        continue
+
+                    if datos.get("precio") is None:
+                        self.stdout.write(
+                            f"  Omitido: sin precio válido - {url}"
+                        )
                         errores += 1
                         continue
 

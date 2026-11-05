@@ -34,11 +34,23 @@ def obtener_producto(url):
                 timeout=60000,
             )
 
-            pagina.locator("h1").first.wait_for(timeout=20000)
             pagina.wait_for_timeout(3000)
 
-            nombre = pagina.locator("h1").first.inner_text().strip()
+            # Comprobar que la página contiene un producto válido.
+            encabezado = pagina.locator("h1").first
+
+            if encabezado.count() == 0 or not encabezado.is_visible():
+                raise ValueError(
+                    "Página sin información válida de producto."
+                )
+
+            nombre = encabezado.inner_text().strip()
             texto = pagina.locator("body").inner_text()
+
+            if not nombre or nombre.lower() == "product":
+                raise ValueError(
+                    "No se encontró el nombre del producto."
+                )
 
             precio = None
             precio_normal = None
@@ -87,14 +99,26 @@ def obtener_producto(url):
                         )
 
             # Comprobar disponibilidad.
-            disponible = bool(
-                re.search(
-                    r"Stock\s+Disponible|Agregar a la bolsa",
-                    texto,
-                    re.IGNORECASE,
-                )
-            )
+            texto_stock = texto.lower()
 
+            if "no disponible" in texto_stock:
+                disponible = False
+
+            elif re.search(
+                r"stock\s+disponible|agregar a la bolsa",
+                texto_stock,
+                re.IGNORECASE,
+            ):
+                disponible = True
+
+            else:
+                disponible = False
+
+            if precio is None or precio <= 0:
+                raise ValueError(
+                    "Producto sin precio válido."
+                )
+                
             return {
                 "nombre": nombre,
                 "principio_activo": "",

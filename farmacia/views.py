@@ -115,6 +115,13 @@ def inicio(request):
             "busqueda": busqueda,
         }
     
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(
+            request,
+            "partials/catalogo.html",
+            contexto,
+        )
+    
     return render(
         request,
         "inicio.html",
@@ -746,8 +753,17 @@ def agregar_a_lista(request, producto_id):
     
     request.session["lista_medicamentos"] = lista
     
-    messages.success(request, f"{producto.nombre} se agregó a tu lista")
+    mensaje = f"{producto.nombre} se agregó a tu lista"
     
+    #si viene de javascript devuelve un json (who's json?)
+    if request.headers.get("X-requested-with") == "XMLHttpRquest":
+        return JsonResponse({
+            "ok": True,
+            "mensaje": mensaje,
+            "cantidad": lista[producto_id]
+        })
+    
+    messages.success(request, mensaje)
     return redirect(request.META.get("HTTP_REFERER", "inicio"))
 
 #agregar o quitar productos
@@ -967,7 +983,7 @@ def planificar_ruta(request):
 
         sucursales_farmacia = [
             sucursal for sucursal in sucursales
-            if sucursal
+            if sucursal.farmacia_id == farmacia_id
         ]
 
         if sucursales_farmacia:
@@ -984,6 +1000,7 @@ def planificar_ruta(request):
             farmacias[farmacia_id] = {
                 "id": farmacia.id,
                 "nombre": sucursal_cercana.nombre,
+                "nombre_sucursal": farmacia.nombre,
                 "cadena": farmacia.nombre,
                 "sucursal_id": sucursal_cercana.id,
                 "direccion": sucursal_cercana.direccion,
@@ -996,6 +1013,7 @@ def planificar_ruta(request):
             farmacias[farmacia_id] = {
                 "id": farmacia.id,
                 "nombre": farmacia.nombre,
+                "nombre_sucursal": farmacia.nombre,
                 "cadena": farmacia.nombre,
                 "sucursal_id": None,
                 "direccion": farmacia.direccion,
@@ -1022,7 +1040,7 @@ def planificar_ruta(request):
             datos_precio = {
                 "farmacia_id": farmacia.id,
                 "farmacia": farmacia.nombre,
-                "sucursal": datos_farmacia["nombre"],
+                "sucursal": datos_farmacia["nombre_sucursal"],
                 "precio": float(precio.precio),
                 "latitud": datos_farmacia["latitud"],
                 "longitud": datos_farmacia["longitud"]

@@ -1,100 +1,220 @@
-import json
 import re
 import requests
 from bs4 import BeautifulSoup
-
+import json
 
 def limpiar_precio(valor):
-    """Convierte un precio chileno a entero."""
-    if valor is None:
-        return None
+    """Convierte precios como '$1.309' en 1309."""
 
-    valor = re.sub(r"[^\d]", "", str(valor))
-    return int(valor) if valor else None
+    valor = str(valor)
+
+    valor = valor.replace("$", "")
+    valor = valor.replace(".", "")
+    valor = valor.replace(" ", "")
+    valor = valor.strip()
+
+    return int(valor)
 
 
 def obtener_producto(url):
-    headers = {"User-Agent": "Mozilla/5.0"}
 
-    respuesta = requests.get(url, headers=headers, timeout=20)
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+
+    respuesta = requests.get(
+        url,
+        headers=headers,
+        timeout=15
+    )
+
+    print(
+        "Código HTTP:",
+        respuesta.status_code
+    )
+
     respuesta.raise_for_status()
 
-    soup = BeautifulSoup(respuesta.text, "html.parser")
+    soup = BeautifulSoup(
+        respuesta.text,
+        "html.parser"
+    )
+
+    texto = soup.get_text(
+        " ",
+        strip=True
+    )
+
+    # -----------------------------
+    # NOMBRE
+    # -----------------------------
+
+    nombre = ""
 
     titulo = soup.find("h1")
-    nombre = titulo.get_text(" ", strip=True) if titulo else ""
 
+    if titulo:
+
+        nombre = titulo.get_text(
+            " ",
+            strip=True
+        )
+
+    if not nombre and soup.title:
+
+        nombre = soup.title.get_text(
+            " ",
+            strip=True
+        )
+
+    # PRECIO Y DATOS ESTRUCTURADOS
     precio = None
     precio_normal = None
     sku = ""
     disponible = False
-    laboratorio = ""
-    principio_activo = ""
-    presentacion = ""
 
-    # Leer los datos estructurados del producto.
+    def buscar_producto_json(datos):
+        if isinstance(datos, list):
+            for elemento in datos:
+                resultado = buscar_producto_json(elemento)
+                if resultado:
+                    return resultado
+
+        elif isinstance(datos, dict):
+            tipo = datos.get("@type")
+
+            if tipo == "Product" or (
+                isinstance(tipo, list) and "Product" in tipo
+            ):
+                ofertas = datos.get("offers", {})
+
+                if isinstance(ofertas, list):
+                    ofertas = ofertas[0] if ofertas else {}
+
+                if isinstance(ofertas, dict) and ofertas.get("price"):
+                    return datos, ofertas
+
+            for valor in datos.values():
+                resultado = buscar_producto_json(valor)
+                if resultado:
+                    return resultado
+
+        return None
+
     for script in soup.find_all(
-        "script", type="application/ld+json"
+        "script",
+        type="application/ld+json"
     ):
         try:
-            datos = json.loads(script.get_text(strip=True))
-        except (json.JSONDecodeError, TypeError):
-            continue
+            contenido = json.loads(
+                script.string or script.get_text()
+            )
 
-        elementos = datos if isinstance(datos, list) else [datos]
+            resultado = buscar_producto_json(contenido)
 
-        for elemento in elementos:
-            if not isinstance(elemento, dict):
-                continue
+            if resultado:
+                producto_json, oferta = resultado
 
-            if elemento.get("@type") != "Product":
-                continue
-
-            nombre = elemento.get("name") or nombre
-            sku = str(elemento.get("sku") or elemento.get("mpn") or "")
-
-            oferta = elemento.get("offers", {})
-            if isinstance(oferta, list):
-                oferta = oferta[0] if oferta else {}
-
-            if isinstance(oferta, dict):
-                precio = limpiar_precio(oferta.get("price"))
-                disponibilidad = str(
-                    oferta.get("availability", "")
-                ).lower()
-
-                disponible = (
-                    disponibilidad.endswith("/instock")
-                    or disponibilidad.endswith("#instock")
+                precio = limpiar_precio(oferta["price"])
+                sku = str(
+                    producto_json.get("sku")
+                    or producto_json.get("mpn")
+                    or ""
                 )
 
-            marca = elemento.get("brand", {})
-            if isinstance(marca, dict):
-                laboratorio = marca.get("name", "")
+                disponibilidad = str(
+                    oferta.get("availability", "")
+                )
 
-            if precio is not None:
+                disponible = (
+                    "instock" in disponibilidad.lower()
+                    and "outofstock" not in disponibilidad.lower()
+                )
+
                 break
 
-        if precio is not None:
+        except (json.JSONDecodeError, ValueError, TypeError):
+            continue
+
+    # -----------------------------
+    # PRINCIPIO ACTIVO
+    # -----------------------------
+
+    principio_activo = ""
+
+    coincidencia_activo = re.search(
+        r"Principio Activo\s*:?\s*"
+        r"([A-Za-zÁÉÍÓÚÑáéíóúñ ]+?)"
+        r"(?:Registro Sanitario|$)",
+        texto,
+        re.IGNORECASE
+    )
+
+    if coincidencia_activo:
+
+        principio_activo = (
+            coincidencia_activo
+            .group(1)
+            .strip()
+        )
+
+    # -----------------------------
+    # DISPONIBILIDAD
+    # -----------------------------
+
+    disponible = False
+
+    palabras_disponibilidad = [
+        "Agregar al carrito",
+        "Agregar al Carrito",
+        "Comprar"
+    ]
+
+    for palabra in palabras_disponibilidad:
+
+        if palabra.lower() in texto.lower():
+
+            disponible = True
             break
 
-    return {
+    # -----------------------------
+    # RESULTADO
+    # -----------------------------
+
+    producto = {
+
         "nombre": nombre,
+
         "principio_activo": principio_activo,
+
         "precio": precio,
+
         "precio_normal": precio_normal,
+
         "disponible": disponible,
+
         "sku": sku,
-        "laboratorio": laboratorio,
-        "presentacion": presentacion,
-        "url": url,
+
+        "laboratorio": "",
+
+        "presentacion": "",
+
+        "url": url
     }
+
+    return producto
 
 
 if __name__ == "__main__":
+
     url = (
         "https://www.farmaciasahumada.cl/"
-        "reflexan-10-mg-x-20-comprimidos-recubiertos-6.html"
+        "paracetamol-500-mg-x-16-comprimidos-84574.html"
     )
 
-    print(obtener_producto(url))
+    producto = obtener_producto(url)
+
+    print("\n--- PRODUCTO EXTRAÍDO ---")
+
+    for clave, valor in producto.items():
+        print(f"{clave}: {valor}")

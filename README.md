@@ -170,3 +170,6 @@ tesseract --list-langs
 python manage.py check
 
 El repositorio contiene el código de integración, pero no incluye el ejecutable de Tesseract ni su instalación completa. Cada integrante debe instalar y configurar esta dependencia en su propio equipo.
+
+pip install playwright
+python -m playwright install chromium
