@@ -1,0 +1,75 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi cuenta | FARMA PRICEY</title>
+    <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
+</head>
+<body>
+
+    <header class="detalle-header">
+        <div class="logo">
+            <a href="{% url 'inicio' %}" class="logo-enlace">
+                <img src="{% static 'farmacia/img/pandaloool.png' %}"
+                     alt="Pandita de FARMA PRICEY"
+                     class="logo-imagen">
+                <span>FARMA PRICEY</span>
+            </a>
+        </div>
+
+        <nav class="detalle-nav">
+            <a href="{% url 'inicio' %}">Inicio</a>
+            <a href="{% url 'inicio' %}#farmacias">Farmacias</a>
+            <a href="{% url 'leer_receta' %}">Leer receta</a>
+            <a href="{% url 'ver_lista' %}">Mi lista</a>
+            <a href="{% url 'mi_cuenta' %}">Mi cuenta</a>
+
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="cuenta-contenedor">
+        <section class="cuenta-tarjeta">
+            <span class="cuenta-etiqueta">PERFIL DE USUARIO</span>
+            <h1>Mi cuenta</h1>
+            <p>Consulta la información de tu cuenta en FARMA PRICEY.</p>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="cuenta-mensaje">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
+            <div class="cuenta-dato">
+                <strong>Nombre</strong>
+                <p>{{ user.first_name|default:"No registrado" }}</p>
+            </div>
+
+            <div class="cuenta-dato">
+                <strong>Apellido</strong>
+                <p>{{ user.last_name|default:"No registrado" }}</p>
+            </div>
+
+            <div class="cuenta-dato">
+                <strong>Correo electrónico</strong>
+                <p>{{ user.email }}</p>
+            </div>
+
+            <a href="{% url 'editar_cuenta' %}" class="cuenta-boton">
+                Editar mis datos
+            </a>
+
+            <a href="{% url 'inicio' %}" class="cuenta-volver">
+                Volver al inicio
+            </a>
+        </section>
+    </main>
+
+</body>
+</html>

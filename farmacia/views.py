@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.core.validators import validate_email
 
 import re
 import unicodedata
@@ -12,6 +13,17 @@ import pytesseract
 from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+
+from django.contrib.auth import (
+    authenticate,
+    login,
+    logout,
+    get_user_model,
+)
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
+from django.contrib.auth.decorators import login_required
 
 from .models import Medicamento, Farmacia, Producto, Precio, Sucursal
 from itertools import combinations
@@ -254,12 +266,137 @@ def api_medicamentos(request):
     )
 
 
+
+@require_http_methods(["GET", "POST"])
+def vista_registro(request):
+    User = get_user_model()
+
+    if request.user.is_authenticated:
+        return redirect("inicio")
+
+    if request.method == "POST":
+        nombre_completo = request.POST.get("nombre_completo", "").strip()
+        correo = request.POST.get("correo", "").strip().lower()
+        contrasena = request.POST.get("contrasena", "")
+        confirmar = request.POST.get("confirmar-contrasena", "")
+
+        partes_nombre = nombre_completo.split()
+
+        if not nombre_completo or not correo or not contrasena or not confirmar:
+            messages.error(request, "Todos los campos son obligatorios.")
+
+        elif len(partes_nombre) < 2:
+            messages.error(
+                request,
+                "Ingresa tu nombre y al menos un apellido."
+            )
+
+        elif len(correo) > 150:
+            messages.error(
+                request,
+                "El correo electrónico no puede superar los 150 caracteres."
+            )
+
+        else:
+            try:
+                validate_email(correo)
+
+                if User.objects.filter(email__iexact=correo).exists():
+                    messages.error(
+                        request,
+                        "Ese correo electrónico ya está registrado."
+                    )
+
+                elif User.objects.filter(username__iexact=correo).exists():
+                    messages.error(
+                        request,
+                        "Ese correo ya está registrado como usuario."
+                    )
+
+                elif contrasena != confirmar:
+                    messages.error(
+                        request,
+                        "Las contraseñas no coinciden."
+                    )
+
+                else:
+                    usuario = User(
+                        username=correo,
+                        email=correo,
+                        first_name=partes_nombre[0],
+                        last_name=" ".join(partes_nombre[1:])
+                    )
+
+                    validate_password(contrasena, user=usuario)
+
+                    usuario = User.objects.create_user(
+                        username=correo,
+                        email=correo,
+                        password=contrasena,
+                        first_name=partes_nombre[0],
+                        last_name=" ".join(partes_nombre[1:])
+                    )
+
+                    messages.success(
+                        request,
+                        "¡Tu cuenta fue creada correctamente! Ya puedes iniciar sesión."
+                    )
+
+                    return redirect("login")
+
+            except ValidationError as errores:
+                for error in errores.messages:
+                    messages.error(request, error)
+
+    return render(request, "registro.html")
+
+
+@require_http_methods(["GET", "POST"])
 def vista_login(request):
+
+    if request.user.is_authenticated:
+        return redirect("inicio")
+
+    if request.method == "POST":
+        correo = request.POST.get("correo", "").strip().lower()
+        contrasena = request.POST.get("contrasena", "")
+
+        User = get_user_model()
+
+        usuario = User.objects.filter(
+            email__iexact=correo
+        ).first()
+
+        if usuario:
+            usuario_autenticado = authenticate(
+                request,
+                username=usuario.username,
+                password=contrasena,
+            )
+
+            if usuario_autenticado is not None:
+                login(request, usuario_autenticado)
+
+                messages.success(
+                    request,
+                    f"¡Bienvenido/a, {usuario.first_name}!"
+                )
+
+                return redirect("inicio")
+
+        messages.error(
+            request,
+            "Correo electrónico o contraseña incorrectos."
+        )
+
     return render(request, "login.html")
 
 
-def vista_resgitro(request):
-    return render(request, "registro.html")
+@require_http_methods(["POST"])
+def cerrar_sesion(request):
+    logout(request)
+    messages.success(request, "Has cerrado sesión correctamente.")
+    return redirect("inicio")
 
 def normalizar_texto(texto):
     texto = unicodedata.normalize("NFD", texto.casefold())
@@ -1019,3 +1156,30 @@ def planificar_ruta(request):
             "varias_farmacias": mejor_dividida
         }
     })
+
+
+@login_required(login_url='login')
+def mi_cuenta(request):
+    return render(request, 'mi_cuenta.html')
+
+
+@login_required(login_url='login')
+@require_http_methods(["GET", "POST"])
+def editar_cuenta(request):
+
+    if request.method == "POST":
+        nombre = request.POST.get("nombre", "").strip()
+        apellido = request.POST.get("apellido", "").strip()
+
+        if not nombre:
+            messages.error(request, "El nombre no puede estar vacío.")
+            return redirect("editar_cuenta")
+
+        request.user.first_name = nombre
+        request.user.last_name = apellido
+        request.user.save()
+
+        messages.success(request, "Tus datos se actualizaron correctamente.")
+        return redirect("mi_cuenta")
+
+    return render(request, 'editar_cuenta.html')

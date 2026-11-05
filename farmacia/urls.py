@@ -6,7 +6,10 @@ from . import views
 urlpatterns = [
     path('', views.inicio, name='inicio'),
     path('login/', views.vista_login, name='login'),
-    path('registro/', views.vista_resgitro, name='registro'),
+    path('registro/', views.vista_registro, name='registro'),
+    path('logout/', views.cerrar_sesion, name='logout'),
+    path('mi-cuenta/', views.mi_cuenta, name='mi_cuenta'),
+    path('mi-cuenta/editar/', views.editar_cuenta, name='editar_cuenta'),
 
     path(
         'medicamento/<int:medicamento_id>/',
@@ -39,4 +42,7 @@ urlpatterns = [
          name='modificar_cantidad_lista'),
     path('mi-lista/eliminar/<int:producto_id>/', views.eliminar_de_lista, name='eliminar_de_lista'),
     path('mi-lista/planificar-ruta/', views.planificar_ruta, name='planificar_ruta'),
+    path('mi-cuenta/', views.mi_cuenta, name='mi_cuenta'),
+    path('mi-cuenta/editar/', views.editar_cuenta, name='editar_cuenta'),
+
 ]

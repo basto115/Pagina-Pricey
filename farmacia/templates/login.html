@@ -23,8 +23,16 @@
 
     <nav>
         <a href="{% url 'inicio' %}">Inicio</a>
-        <a href="#farmacias">Farmacias</a>
-        <a href="{% url 'leer_receta' %}">Leer receta</a>
+    
+        {% if user.is_authenticated %}
+            <a href="{% url 'mi_cuenta' %}">Mi cuenta</a>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        {% else %}
+            <a href="{% url 'registro' %}">Crear cuenta</a>
+        {% endif %}
     </nav>
 
 </header>
@@ -37,8 +45,17 @@
             <p class="auth-descripcion">
                 Inicia sesión para continuar en FARMA PRICEY.
             </p>
+            {% if messages %}
+                <div class="auth-mensajes">
+                    {% for message in messages %}
+                        <p class="auth-mensaje {{ message.tags }}">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
-            <form action="auth-formulario" method="post">
+            <form method="post">
                 {% csrf_token %}
 
                 <div class="auth-campo">

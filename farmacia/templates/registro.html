@@ -22,12 +22,21 @@
         </a>
     </div>
 
+
     <nav>
         <a href="{% url 'inicio' %}">Inicio</a>
-        <a href="#farmacias">Farmacias</a>
-        <a href="{% url 'leer_receta' %}">Leer receta</a>
+    
+        {% if user.is_authenticated %}
+            <a href="{% url 'mi_cuenta' %}">Mi cuenta</a>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Iniciar sesión</a>
+        {% endif %}
     </nav>
-
+    
 </header>
 
 <main>
@@ -39,17 +48,26 @@
                 Regístrate para comenzar a utilizar FARMA PRICEY
             </p>
 
+            {% if messages %}
+                <div class="auth-mensajes">
+                    {% for message in messages %}
+                        <p class="auth-mensaje {{ message.tags }}">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             <form class="auth-formulario" method="post">
                 {% csrf_token %}
 
                 <div class="auth-campo">
-                    <label for="nombre">Nombre de usuario</label>
-                    <input 
+                    <label for="nombre-completo">Nombre completo</label>
+                    <input
                         type="text"
-                        id="nombre"
-                        name="nombre"
-                        placeholder="Elige un nombre de usuario"
-                        autocomplete="username"
+                        id="nombre-completo"
+                        name="nombre_completo"
+                        placeholder="Ej: María González"
                         required
                     >
                 </div>
