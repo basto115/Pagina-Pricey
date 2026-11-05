@@ -97,14 +97,9 @@ async function planificarRutaCompras() {
     
     console.log("Ubicación del usuario:", ubicacionUsuario);
 
-    const parametros = new URLSearchParams({
-        lat: ubicacionUsuario.latitud,
-        lon: ubicacionUsuario.longitud
-    });
 
-    const url = `/mi-lista/planificar-ruta/?${parametros.toString()}`;
-    console.log("URL enviada:", url);
-    const respuesta = await fetch(url);
+
+
 
     try {
         const parametros = new URLSearchParams({
@@ -127,6 +122,10 @@ async function planificarRutaCompras() {
         }
 
         const compras = datos.recomendacion.compras || [];
+        console.log(
+            "Farmacias recomendadas por Django:",
+            compras.map(compra => compra.farmacia)
+        );
 
         // Obtener las farmacias sin duplicados.
         const farmaciasUnicas = [
@@ -181,6 +180,11 @@ async function planificarRutaCompras() {
                 longitud: siguiente.longitud
             };
         }
+
+        console.log(
+            "Paradas que se enviarán al mapa:",
+            paradasOrdenadas
+        );
 
         // Eliminar la ruta anterior.
         if (controlRuta) {
@@ -268,7 +272,7 @@ async function planificarRutaCompras() {
         mensajeUbicacion.textContent =
             error.message || "Ocurrió un error al planificar la ruta.";
     }
-    
+
 }
 
     // Mapa de farmacias que aparecen en la lectura de recetas.

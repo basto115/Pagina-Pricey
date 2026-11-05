@@ -830,7 +830,7 @@ def planificar_ruta(request):
 
         sucursales_farmacia = [
             sucursal for sucursal in sucursales
-            if sucursal
+            if sucursal.farmacia_id == farmacia_id
         ]
 
         if sucursales_farmacia:
@@ -847,6 +847,7 @@ def planificar_ruta(request):
             farmacias[farmacia_id] = {
                 "id": farmacia.id,
                 "nombre": sucursal_cercana.nombre,
+                "nombre_sucursal": farmacia.nombre,
                 "cadena": farmacia.nombre,
                 "sucursal_id": sucursal_cercana.id,
                 "direccion": sucursal_cercana.direccion,
@@ -859,6 +860,7 @@ def planificar_ruta(request):
             farmacias[farmacia_id] = {
                 "id": farmacia.id,
                 "nombre": farmacia.nombre,
+                "nombre_sucursal": farmacia.nombre,
                 "cadena": farmacia.nombre,
                 "sucursal_id": None,
                 "direccion": farmacia.direccion,
@@ -885,7 +887,7 @@ def planificar_ruta(request):
             datos_precio = {
                 "farmacia_id": farmacia.id,
                 "farmacia": farmacia.nombre,
-                "sucursal": datos_farmacia["nombre"],
+                "sucursal": datos_farmacia["nombre_sucursal"],
                 "precio": float(precio.precio),
                 "latitud": datos_farmacia["latitud"],
                 "longitud": datos_farmacia["longitud"]

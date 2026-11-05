@@ -1661,3 +1661,15 @@ button.btn-eliminar:hover {
     margin: 12px 0;
     color: var(--texto-secundario);
 }
+
+.btn-ruta {
+    width: 240px;
+    height: 32px;
+    border: 1px solid var(--verde);
+    border-radius: 8px;
+    background: var(--blanco);
+    color: var(--verde);
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+}
