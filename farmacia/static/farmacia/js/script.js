@@ -869,3 +869,122 @@ async function planificarRutaCompras() {
 
     }
 });
+
+document.addEventListener("submit", async function(event) {
+
+    const formulario = event.target.closest(".form-agregar-lista");
+
+    if (!formulario) return;
+
+    event.preventDefault();
+
+    const boton = formulario.querySelector("button[type='submit']");
+    const mensaje = formulario.querySelector(".mensaje-agregar");
+
+    const textoOriginal = boton.textContent;
+
+    boton.disabled = true;
+    boton.textContent = "Agregando...";
+
+    try {
+        const respuesta = await fetch(formulario.action, {
+            method: "POST",
+            body: new FormData(formulario),
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        });
+
+        const datos = await respuesta.json();
+
+        if (!respuesta.ok || !datos.ok) {
+            throw new Error(datos.mensaje || "No se pudo agregar el producto.");
+        }
+
+        boton.textContent = "✓ Agregado";
+        mensaje.textContent = datos.mensaje;
+
+        setTimeout(() => {
+            boton.textContent = textoOriginal;
+            mensaje.textContent = "";
+            boton.disabled = false;
+        }, 1800);
+
+    } catch (error) {
+        console.error("Error al agregar producto:", error);
+
+        boton.textContent = "Error al agregar";
+        mensaje.textContent = "No se pudo agregar. Intenta nuevamente.";
+
+        setTimeout(() => {
+            boton.textContent = textoOriginal;
+            boton.disabled = false;
+            mensaje.textContent = "";
+        }, 2000);
+    }
+});
+
+// Paginación dinámica del catálogo
+async function cargarCatalogo(url, actualizarHistorial = true) {
+
+    const catalogoActual = document.querySelector("#catalogo");
+
+    if (!catalogoActual) return;
+
+    catalogoActual.setAttribute("aria-busy", "true");
+
+    try {
+        const respuesta = await fetch(url, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        });
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudo cargar el catálogo.");
+        }
+
+        const html = await respuesta.text();
+
+        const documento = new DOMParser().parseFromString(
+            html,
+            "text/html"
+        );
+
+        const nuevoCatalogo = documento.querySelector("#catalogo");
+
+        if (!nuevoCatalogo) {
+            throw new Error("No se encontró el catálogo.");
+        }
+
+        catalogoActual.replaceWith(nuevoCatalogo);
+
+        if (actualizarHistorial) {
+            history.pushState({}, "", url);
+        }
+
+    } catch (error) {
+        console.error("Error al cambiar de página:", error);
+        window.location.href = url;
+
+    }
+}
+
+// Interceptar los clics de la paginación
+document.addEventListener("click", function(event) {
+
+    const enlace = event.target.closest("#catalogo .paginacion a");
+
+    if (!enlace) return;
+
+    event.preventDefault();
+
+    cargarCatalogo(enlace.href);
+});
+
+// Permitir que atrás y adelante del navegador funcionen correctamente
+window.addEventListener("popstate", function() {
+
+    cargarCatalogo(window.location.href, false);
+
+});

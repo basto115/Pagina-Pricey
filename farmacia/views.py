@@ -103,6 +103,13 @@ def inicio(request):
             "busqueda": busqueda,
         }
     
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(
+            request,
+            "partials/catalogo.html",
+            contexto,
+        )
+    
     return render(
         request,
         "inicio.html",
@@ -609,8 +616,17 @@ def agregar_a_lista(request, producto_id):
     
     request.session["lista_medicamentos"] = lista
     
-    messages.success(request, f"{producto.nombre} se agregó a tu lista")
+    mensaje = f"{producto.nombre} se agregó a tu lista"
     
+    #si viene de javascript devuelve un json (who's json?)
+    if request.headers.get("X-requested-with") == "XMLHttpRquest":
+        return JsonResponse({
+            "ok": True,
+            "mensaje": mensaje,
+            "cantidad": lista[producto_id]
+        })
+    
+    messages.success(request, mensaje)
     return redirect(request.META.get("HTTP_REFERER", "inicio"))
 
 #agregar o quitar productos
