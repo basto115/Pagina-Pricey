@@ -24,11 +24,26 @@
         </a>
     </div>
 
-    <nav>
+    <nav class="detalle-nav">
         <a href="{% url 'inicio' %}">Inicio</a>
         <a href="{% url 'inicio' %}#farmacias">Farmacias</a>
+        <a href="{% url 'leer_receta' %}">Leer receta</a>
         <a href="{% url 'ver_lista' %}">Mi lista</a>
-        <a href="{% url 'login' %}">Iniciar sesión</a>
+    
+        {% if user.is_authenticated %}
+            <a href="{% url 'mi_cuenta' %}">
+                Hola, {{ user.first_name|default:user.username }}
+            </a>
+            <a href="{% url 'mi_cuenta' %}">Mi cuenta</a>
+    
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Iniciar sesión</a>
+            <a href="{% url 'registro' %}">Crear cuenta</a>
+        {% endif %}
     </nav>
 </header>
 
