@@ -179,3 +179,22 @@ class Precio(models.Model):
 
     def __str__(self):
         return f"{self.producto} - {self.farmacia}"
+
+
+class ProgresoImportacion(models.Model):
+    farmacia = models.CharField(
+        max_length=100,
+        unique=True
+    )
+
+    ultima_url = models.URLField(
+        max_length=1000,
+        blank=True
+    )
+
+    actualizado_en = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return f"{self.farmacia} - {self.ultima_url}"

@@ -6,6 +6,7 @@ from xml.etree import ElementTree
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from farmacia.models import ProgresoImportacion
 
 from farmacia.procesamento.guardar_productos import guardar_producto
 from farmacia.scraping.ahumada import obtener_producto as obtener_ahumada
@@ -193,9 +194,119 @@ class Command(BaseCommand):
                 )
                 continue
 
-            procesados = guardados = errores = 0
+            progreso = ProgresoImportacion.objects.filter(
+                farmacia=nombre_farmacia
+            ).first()
 
-            for url in urls[:limite]:
+            ultima_url = progreso.ultima_url if progreso else ""
+            inicio = 0
+
+            if ultima_url:
+                try:
+                    inicio = urls.index(ultima_url) + 1
+                except ValueError:
+                    inicio = 0
+
+            if inicio >= len(urls):
+                inicio = 0
+
+            self.stdout.write(
+                f"Continuando desde la URL {inicio + 1} de {len(urls)}"
+            )
+
+            procesados = guardados = errores = 0
+            intentos = 0
+            max_intentos = limite * 5
+
+            for indice in range(inicio, len(urls)):
+
+                if procesados >= limite:
+                    break
+
+                if intentos >= max_intentos:
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"Se alcanzó el máximo de {max_intentos} intentos."
+                        )
+                    )
+                    break
+
+                url = urls[indice]
+                intentos += 1
+
+                try:
+                    datos = SCRAPERS[nombre_farmacia](url)
+
+                    if not isinstance(datos, dict):
+                        raise ValueError(
+                            "El scraper no devolvió un diccionario."
+                        )
+
+                    nombre = str(datos.get("nombre") or "").strip()
+
+                    if not nombre:
+                        self.stdout.write(f"  Omitido: sin nombre - {url}")
+                        errores += 1
+                        continue
+
+                    if datos.get("precio") is None:
+                        self.stdout.write(
+                            f"  Omitido: sin precio válido - {url}"
+                        )
+                        errores += 1
+                        continue
+
+                    datos["nombre"] = nombre
+                    datos["url"] = (
+                        datos.get("url")
+                        or datos.get("url_producto")
+                        or url
+                    )
+
+                    datos["categoria"] = detectar_categoria(
+                        nombre,
+                        datos.get("principio_activo", "")
+                    )
+
+                    self.stdout.write(
+                        f"  {nombre} | categoría={datos['categoria']} "
+                        f"| precio={datos.get('precio')} "
+                        f"| disponible={datos.get('disponible')}"
+                    )
+
+                    procesados += 1
+
+                    if guardar:
+                        with transaction.atomic():
+                            guardar_producto(datos, nombre_farmacia)
+
+                        guardados += 1
+
+                    time.sleep(0.3)
+
+                except Exception as error:
+                    errores += 1
+                    self.stderr.write(
+                        f"  URL omitida: {url}: {error}"
+                    )
+
+                finally:
+                    if guardar:
+                        ProgresoImportacion.objects.update_or_create(
+                            farmacia=nombre_farmacia,
+                            defaults={"ultima_url": url}
+                        )
+
+                if intentos >= max_intentos:
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"Se alcanzó el máximo de {max_intentos} intentos."
+                        )
+                    )
+                    break
+
+                intentos += 1
+
                 try:
                     datos = SCRAPERS[nombre_farmacia](url)
 
@@ -237,7 +348,7 @@ class Command(BaseCommand):
 
                 except Exception as error:
                     errores += 1
-                    self.stderr.write(f"  Error con {url}: {error}")
+                    self.stderr.write(f"  URL omitida: {url}: {error}")
 
             self.stdout.write(
                 f"Resumen {nombre_farmacia}: procesados={procesados}, "
