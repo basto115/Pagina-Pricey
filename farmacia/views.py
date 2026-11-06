@@ -106,13 +106,20 @@ def inicio(request):
 
     #Dejenlo en 6 o a lo mucho 9, la pagina se alarga demasiado si ponen muchos
     
-    paginador = Paginator(productos, 6)
+    paginador = Paginator(productos, 9)
     pagina_obj = paginador.get_page(request.GET.get("pagina"))
+    
+    rango_paginas = paginador.get_elided_page_range(
+        number=pagina_obj.number,
+        on_each_side=2,
+        on_ends=1
+    )
 
     contexto = {
             "productos": pagina_obj,
             "pagina_obj": pagina_obj,
             "busqueda": busqueda,
+            "rango_paginas": rango_paginas
         }
     
     if request.headers.get("x-requested-with") == "XMLHttpRequest":

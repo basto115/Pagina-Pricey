@@ -1895,3 +1895,13 @@ button.btn-eliminar:hover {
     font-weight: 700;
     cursor: pointer;
 }
+
+.pagina-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    padding: 8px 40px;
+    color: var(--texto-secundario);
+    font-weight: 600;
+}

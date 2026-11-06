@@ -94,13 +94,21 @@
                     >&laquo;</a>
                 {% endif %}
 
-                {% for numero in pagina_obj.paginator.page_range %}
-                    <a 
-                    href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ numero }}#catalogo"
-                    class="pagina-numero {% if pagina_obj.number == numero %}pagina-activa{% endif %}"
-                    {% if pagina_obj.number == numero %}aria-current="page"{% endif %}
-                    > {{numero}} </a>
+                {% for numero in rango_paginas %}
 
+                    {% if numero == "..." %}
+
+                        <span class="pagina-ellipsis">...</span>
+
+                    {% else %}
+                        <a 
+                        href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ numero }}#catalogo"
+                        class="pagina-numero {% if pagina_obj.number == numero %}pagina-activa{% endif %}"
+                        {% if pagina_obj.number == numero %}aria-current="page"{% endif %}
+                        > {{numero}} </a>
+
+                    {% endif %}
+                    
                 {% endfor %}
 
                 {% if pagina_obj.has_next %}
