@@ -69,6 +69,7 @@ class Command(BaseCommand):
     help = "Importa y actualiza farmacias desde OpenStreetMap"
 
     COMUNAS = [
+        #primera cobertura general
         "Curacaví",
         "Providencia",
         "Ñuñoa",
@@ -78,6 +79,22 @@ class Command(BaseCommand):
         "Recoleta",
         "Macul",
         "La Reina",
+        
+        #cobertura norte
+        "Independencia",
+        "Conchalí",
+        "Huechuraba",
+        "Quilicura",
+        "Renca",
+        
+        #poniente
+        "Maipú",
+        "Estación Central",
+        
+        #sur
+        "La Florida",
+        "San Miguel",
+        "Puente Alto",
     ]
 
     URL_OVERPASS = "https://overpass-api.de/api/interpreter"
@@ -208,30 +225,26 @@ class Command(BaseCommand):
                 }
 
                 try:
-                    sucursal = Sucursal.objects.filter(
-                        osm_id=osm_id
-                    ).first()
-
-                    if sucursal:
-                        for campo, valor in datos.items():
-                            setattr(sucursal, campo, valor)
-
-                        sucursal.save()
+                    sucursal, creada = Sucursal.objects.update_or_create(
+                        osm_id=osm_id,
+                        defaults={
+                            "nombre": nombre,
+                            "direccion": direccion,
+                            "comuna": comuna,
+                            "latitud": latitud,
+                            "longitud": longitud,
+                            "sitio_web": sitio_web,
+                        },
+                    )
+                    
+                    if creada:
+                        total_nuevas += 1
+                        nuevas_comuna += 1
+                    else:
                         total_actualizadas += 1
                         actualizadas_comuna += 1
 
-                    else:
-                        Sucursal.objects.create(
-                            osm_id=osm_id,
-                            origen="openstreetmap",
-                            aprobada=False,
-                            farmacia=None,
-                            **datos,
-                        )
-
-                        total_nuevas += 1
-                        nuevas_comuna += 1
-
+                    
                 except Exception as error:
                     total_errores += 1
                     
