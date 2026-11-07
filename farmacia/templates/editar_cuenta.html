@@ -79,6 +79,44 @@
                     <small>El correo electrónico no se puede modificar desde esta sección.</small>
                 </div>
 
+                <div class="cuenta-separador">
+                    <h2>Cambiar contraseña</h2>
+                    <p>Completa estos campos solamente si deseas cambiar tu contraseña.</p>
+                </div>
+                
+                <div class="cuenta-campo">
+                    <label for="password_actual">Contraseña actual</label>
+                    <input
+                        type="password"
+                        id="password_actual"
+                        name="password_actual"
+                        placeholder="Ingresa tu contraseña actual"
+                        autocomplete="current-password"
+                    >
+                </div>
+                
+                <div class="cuenta-campo">
+                    <label for="nueva_password">Nueva contraseña</label>
+                    <input
+                        type="password"
+                        id="nueva_password"
+                        name="nueva_password"
+                        placeholder="Ingresa tu nueva contraseña"
+                        autocomplete="new-password"
+                    >
+                </div>
+                
+                <div class="cuenta-campo">
+                    <label for="confirmar_password">Confirmar nueva contraseña</label>
+                    <input
+                        type="password"
+                        id="confirmar_password"
+                        name="confirmar_password"
+                        placeholder="Confirma tu nueva contraseña"
+                        autocomplete="new-password"
+                    >
+                </div>
+
                 <button type="submit" class="cuenta-boton">
                     Guardar cambios
                 </button>
