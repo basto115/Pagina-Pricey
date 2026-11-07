@@ -18,7 +18,8 @@ urlpatterns = [
         'recuperar-contrasena/',
         auth_views.PasswordResetView.as_view(
             template_name='farmacia/password_reset.html',
-            email_template_name='farmacia/password_reset_email.html',
+            email_template_name='farmacia/password_reset_email.txt',
+            html_email_template_name='farmacia/password_reset_email.html',
             subject_template_name='farmacia/password_reset_subject.txt',
             success_url='/recuperar-contrasena/enviado/'
         ),

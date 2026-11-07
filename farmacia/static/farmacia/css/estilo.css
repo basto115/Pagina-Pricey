@@ -1924,3 +1924,167 @@ button.btn-eliminar:hover {
     font-size: 13px;
     margin-bottom: 18px;
 }
+
+
+
+/* =========================
+   RECUPERACIÓN DE CONTRASEÑA
+   ========================= */
+
+   .password-reset-contenedor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 75vh;
+    padding: 45px 20px;
+    background:
+        radial-gradient(
+            circle at 85% 15%,
+            rgba(200, 241, 105, 0.16),
+            transparent 30%
+        ),
+        var(--fondo);
+}
+
+.password-reset-tarjeta {
+    width: 100%;
+    max-width: 480px;
+    padding: 38px;
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 18px;
+    box-shadow: var(--sombra);
+}
+
+.password-reset-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 20px;
+    background: #edf6ef;
+    border-radius: 50%;
+    font-size: 30px;
+}
+
+.password-reset-titulo {
+    margin-bottom: 12px;
+    color: var(--verde-oscuro);
+    font-size: 27px;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.password-reset-descripcion {
+    margin-bottom: 25px;
+    color: var(--texto-secundario);
+    font-size: 14px;
+    line-height: 1.7;
+    text-align: center;
+}
+
+.password-reset-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.password-reset-campo label {
+    color: var(--texto);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.password-reset-campo input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 9px;
+    background: var(--blanco);
+    color: var(--texto);
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.password-reset-campo input:focus {
+    outline: none;
+    border-color: var(--verde);
+    box-shadow: 0 0 0 3px rgba(40, 118, 83, 0.12);
+}
+
+.password-reset-boton {
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 9px;
+    background: var(--verde);
+    color: var(--blanco);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.password-reset-boton:hover {
+    background: var(--verde-oscuro);
+    transform: translateY(-1px);
+}
+
+.password-reset-volver {
+    display: block;
+    margin-top: 22px;
+    color: var(--verde);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+}
+
+.password-reset-volver:hover {
+    text-decoration: underline;
+}
+
+.password-reset-aviso {
+    margin-top: 20px;
+    padding: 13px;
+    background: #edf6ef;
+    border: 1px solid var(--borde);
+    border-radius: 9px;
+    color: var(--texto-secundario);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.password-reset-error {
+    margin-top: 7px;
+    color: #b42318;
+    font-size: 12px;
+}
+
+.password-reset-mensaje {
+    margin-bottom: 18px;
+    padding: 12px;
+    background: #edf6ef;
+    border: 1px solid #cce5d2;
+    border-radius: 9px;
+    color: #237344;
+    font-size: 13px;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .password-reset-contenedor {
+        min-height: 70vh;
+        padding: 30px 16px;
+    }
+
+    .password-reset-tarjeta {
+        padding: 25px 20px;
+    }
+
+    .password-reset-titulo {
+        font-size: 24px;
+    }
+}
