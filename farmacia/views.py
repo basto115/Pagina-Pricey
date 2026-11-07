@@ -10,6 +10,9 @@ import re
 import unicodedata
 import pytesseract
 
+from django.contrib.auth import update_session_auth_hash
+from django.core.exceptions import ValidationError
+
 from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -1196,9 +1199,55 @@ def editar_cuenta(request):
         nombre = request.POST.get("nombre", "").strip()
         apellido = request.POST.get("apellido", "").strip()
 
+        password_actual = request.POST.get("password_actual", "")
+        nueva_password = request.POST.get("nueva_password", "")
+        confirmar_password = request.POST.get("confirmar_password", "")
+
         if not nombre:
             messages.error(request, "El nombre no puede estar vacío.")
-            return redirect("editar_cuenta")
+            return render(request, 'editar_cuenta.html')
+
+        # Comprobar si quiere cambiar la contraseña
+        quiere_cambiar_password = any([
+            password_actual,
+            nueva_password,
+            confirmar_password
+        ])
+
+        if quiere_cambiar_password:
+
+            if not all([
+                password_actual,
+                nueva_password,
+                confirmar_password
+            ]):
+                messages.error(
+                    request,
+                    "Debes completar los tres campos de contraseña."
+                )
+                return render(request, 'editar_cuenta.html')
+
+            if not request.user.check_password(password_actual):
+                messages.error(request, "La contraseña actual es incorrecta.")
+                return render(request, 'editar_cuenta.html')
+
+            if nueva_password != confirmar_password:
+                messages.error(request, "Las nuevas contraseñas no coinciden.")
+                return render(request, 'editar_cuenta.html')
+
+            try:
+                validate_password(nueva_password, user=request.user)
+            except ValidationError as errores:
+                for error in errores:
+                    messages.error(request, error)
+                return render(request, 'editar_cuenta.html')
+
+            request.user.set_password(nueva_password)
+            request.user.save()
+
+
+            # Mantener la sesión iniciada después del cambio
+            update_session_auth_hash(request, request.user)
 
         request.user.first_name = nombre
         request.user.last_name = apellido

@@ -1,5 +1,6 @@
 
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 
@@ -10,6 +11,41 @@ urlpatterns = [
     path('logout/', views.cerrar_sesion, name='logout'),
     path('mi-cuenta/', views.mi_cuenta, name='mi_cuenta'),
     path('mi-cuenta/editar/', views.editar_cuenta, name='editar_cuenta'),
+
+
+    # Recuperación de contraseña
+    path(
+        'recuperar-contrasena/',
+        auth_views.PasswordResetView.as_view(
+            template_name='farmacia/password_reset.html',
+            email_template_name='farmacia/password_reset_email.html',
+            subject_template_name='farmacia/password_reset_subject.txt',
+            success_url='/recuperar-contrasena/enviado/'
+        ),
+        name='password_reset'
+    ),
+    path(
+        'recuperar-contrasena/enviado/',
+        auth_views.PasswordResetDoneView.as_view(
+            template_name='farmacia/password_reset_done.html'
+        ),
+        name='password_reset_done'
+    ),
+    path(
+        'restablecer-contrasena/<uidb64>/<token>/',
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name='farmacia/password_reset_confirm.html',
+            success_url='/restablecer-contrasena/completado/'
+        ),
+        name='password_reset_confirm'
+    ),
+    path(
+        'restablecer-contrasena/completado/',
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name='farmacia/password_reset_complete.html'
+        ),
+        name='password_reset_complete'
+    ),
 
     path(
         'medicamento/<int:medicamento_id>/',
@@ -42,7 +78,5 @@ urlpatterns = [
          name='modificar_cantidad_lista'),
     path('mi-lista/eliminar/<int:producto_id>/', views.eliminar_de_lista, name='eliminar_de_lista'),
     path('mi-lista/planificar-ruta/', views.planificar_ruta, name='planificar_ruta'),
-    path('mi-cuenta/', views.mi_cuenta, name='mi_cuenta'),
-    path('mi-cuenta/editar/', views.editar_cuenta, name='editar_cuenta'),
-
+    
 ]
