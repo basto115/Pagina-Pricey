@@ -988,3 +988,35 @@ window.addEventListener("popstate", function() {
     cargarCatalogo(window.location.href, false);
 
 });
+
+
+// NOTIFICACIONES TEMPORALES FARMA PRICEY
+
+
+function iniciarNotificaciones() {
+    const notificaciones = document.querySelectorAll(".notificacion");
+
+    notificaciones.forEach(function (notificacion) {
+        if (notificacion.dataset.iniciada) return;
+
+        notificacion.dataset.iniciada = "true";
+
+        const cerrar = function () {
+            notificacion.classList.add("ocultar");
+
+            setTimeout(function () {
+                notificacion.remove();
+            }, 300);
+        };
+
+        const botonCerrar = notificacion.querySelector(".notificacion-cerrar");
+
+        if (botonCerrar) {
+            botonCerrar.addEventListener("click", cerrar);
+        }
+
+        setTimeout(cerrar, 3000);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", iniciarNotificaciones);

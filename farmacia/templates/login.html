@@ -22,15 +22,7 @@
             <p class="auth-descripcion">
                 Inicia sesión para continuar en FARMA PRICEY.
             </p>
-            {% if messages %}
-                <div class="auth-mensajes">
-                    {% for message in messages %}
-                        <p class="auth-mensaje {{ message.tags }}">
-                            {{ message }}
-                        </p>
-                    {% endfor %}
-                </div>
-            {% endif %}
+        
 
             <form method="post">
                 {% csrf_token %}
@@ -41,7 +33,7 @@
                         type="email"
                         id="correo"
                         name="correo"
-                        placeholder="correofalso@gmail.com"
+                        placeholder="correo@gmail.com"
                         autocomplete="email"
                         required
                     >

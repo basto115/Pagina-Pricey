@@ -2088,3 +2088,201 @@ button.btn-eliminar:hover {
         font-size: 24px;
     }
 }
+
+/* =========================
+   MENÚ DESPLEGABLE USUARIO
+   ========================= */
+
+
+
+
+
+/* Menú oculto */
+
+
+/* Aparece al pasar el mouse */
+
+
+
+/* Opciones */
+
+/* MENÚ DESPLEGABLE USUARIO */
+
+.usuario-menu {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    overflow: visible;
+}
+
+.usuario-trigger {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 12px;
+    color: var(--verde-oscuro);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: default;
+}
+
+.usuario-flecha {
+    font-size: 17px;
+    transition: transform 0.2s;
+}
+
+/* MENÚ OCULTO */
+
+.usuario-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 99999;
+
+    width: 180px;
+    padding: 8px;
+
+    flex-direction: column;
+    gap: 3px;
+
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    box-shadow: var(--sombra);
+}
+
+/* APARECE AL PASAR EL MOUSE */
+
+.usuario-menu:hover .usuario-dropdown {
+    display: flex;
+}
+
+.usuario-menu:hover .usuario-flecha {
+    transform: rotate(180deg);
+}
+
+/* OPCIONES DEL MENÚ */
+
+.usuario-dropdown a {
+    display: block;
+    padding: 11px 12px;
+    color: var(--texto);
+    font-size: 13px;
+    text-decoration: none;
+    border-radius: 7px;
+}
+
+.usuario-dropdown a:hover {
+    background: #edf6ef;
+    color: var(--verde);
+}
+
+/* CERRAR SESIÓN */
+
+.usuario-dropdown form {
+    display: block;
+    width: 100%;
+    margin: 0;
+}
+
+.usuario-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 11px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    color: #b42318;
+    font-family: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.usuario-dropdown button:hover {
+    background: #fff0ee;
+}
+
+
+/* NOTIFICACIONES TEMPORALES */
+
+.contenedor-notificaciones {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 380px;
+    width: calc(100% - 40px);
+}
+
+.notificacion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 18px;
+    background: #ffffff;
+    border: 1px solid #dce9df;
+    border-left: 5px solid #287653;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+    color: #24332d;
+    animation: aparecer-notificacion 0.35s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.notificacion-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #e7f4e9;
+    color: #287653;
+    font-weight: bold;
+}
+
+.notificacion-texto {
+    flex: 1;
+    font-size: 14px;
+}
+
+.notificacion-cerrar {
+    border: none;
+    background: transparent;
+    color: #718078;
+    font-size: 21px;
+    cursor: pointer;
+}
+
+.notificacion-cerrar:hover {
+    color: #173f35;
+}
+
+.notificacion.ocultar {
+    opacity: 0;
+    transform: translateX(30px);
+}
+
+@keyframes aparecer-notificacion {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .contenedor-notificaciones {
+        right: 12px;
+        bottom: 12px;
+        width: calc(100% - 24px);
+    }
+}

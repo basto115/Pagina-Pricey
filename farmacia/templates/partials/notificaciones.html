@@ -1,0 +1,13 @@
+
+{% if messages %}
+    <div class="contenedor-notificaciones" id="contenedor-notificaciones">
+        {% for message in messages %}
+            <div class="notificacion {{ message.tags }}">
+                <span class="notificacion-icono">✓</span>
+                <span class="notificacion-texto">{{ message }}</span>
+                <button type="button" class="notificacion-cerrar"
+                        onclick="this.parentElement.remove()">×</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
