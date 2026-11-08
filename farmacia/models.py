@@ -170,7 +170,9 @@ class Precio(models.Model):
     )
 
     url_producto = models.URLField(
-        blank=True
+        max_length=1000,
+        blank=True,
+        null=True
     )
 
     fecha_actualizacion = models.DateTimeField(

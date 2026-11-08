@@ -6,9 +6,9 @@ from xml.etree import ElementTree
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from farmacia.models import ProgresoImportacion
+from farmacia.models import ProgresoImportacion, Precio
 
-from farmacia.procesamento.guardar_productos import guardar_producto
+from farmacia.procesamento.guardar_productos import guardar_producto, buscar_producto_compatible, obtener_farmacia, convertir_booleano
 from farmacia.scraping.ahumada import obtener_producto as obtener_ahumada
 from farmacia.scraping.cruz_verde import obtener_producto as obtener_cruz_verde
 from farmacia.scraping.salcobrand import obtener_producto as obtener_salcobrand
@@ -215,6 +215,7 @@ class Command(BaseCommand):
             )
 
             procesados = guardados = errores = 0
+            productos_nuevos = precios_nuevos = precios_actualizados = 0
             intentos = 0
             max_intentos = limite * 5
 
@@ -235,6 +236,7 @@ class Command(BaseCommand):
                 intentos += 1
 
                 try:
+                    print(f"\nURL ANALIZADA: {url}")
                     datos = SCRAPERS[nombre_farmacia](url)
 
                     if not isinstance(datos, dict):
@@ -278,7 +280,38 @@ class Command(BaseCommand):
 
                     if guardar:
                         with transaction.atomic():
-                            guardar_producto(datos, nombre_farmacia)
+                            bioequivalente = (
+                                bool(re.search(r"\(b\)", nombre, flags=re.IGNORECASE))
+                                or convertir_booleano(datos.get("es_bioequivalente", False))
+                            )
+                            
+                            producto_existente = buscar_producto_compatible(
+                                nombre=nombre,
+                                principio_activo=datos.get("principio_activo", ""),
+                                presentacion=datos.get("presentacion", ""),
+                                categoria=datos["categoria"],
+                                es_bioequivalente=bioequivalente,
+                                laboratorio=datos.get("laboratorio", "") or "",
+                            )
+                            
+                            farmacia_obj = obtener_farmacia(nombre_farmacia)
+                            
+                            precio_existente = (
+                                Precio.objects.filter(
+                                    producto=producto_existente,
+                                    farmacia=farmacia_obj
+                                ).exists()
+                                if producto_existente else False
+                            )
+                            
+                            guardar_producto(datos, nombre_farmacia, producto_existente=producto_existente)
+                            
+                            if producto_existente is None:
+                                productos_nuevos += 1
+                            elif precio_existente:
+                                precios_actualizados += 1
+                            else:
+                                precios_nuevos += 1
 
                         guardados += 1
 
@@ -297,62 +330,16 @@ class Command(BaseCommand):
                             defaults={"ultima_url": url}
                         )
 
-                if intentos >= max_intentos:
-                    self.stdout.write(
-                        self.style.WARNING(
-                            f"Se alcanzó el máximo de {max_intentos} intentos."
-                        )
-                    )
-                    break
 
-                intentos += 1
-
-                try:
-                    datos = SCRAPERS[nombre_farmacia](url)
-
-                    if not isinstance(datos, dict):
-                        raise ValueError("El scraper no devolvió un diccionario.")
-
-                    nombre = str(datos.get("nombre") or "").strip()
-                    if not nombre:
-                        self.stdout.write(f"  Omitido: sin nombre - {url}")
-                        errores += 1
-                        continue
-
-                    if datos.get("precio") is None:
-                        self.stdout.write(
-                            f"  Omitido: sin precio válido - {url}"
-                        )
-                        errores += 1
-                        continue
-
-                    datos["nombre"] = nombre
-                    datos["url"] = datos.get("url") or datos.get("url_producto") or url
-                    datos["categoria"] = detectar_categoria(
-                        nombre, datos.get("principio_activo", "")
-                    )
-
-                    self.stdout.write(
-                        f"  {nombre} | categoría={datos['categoria']} "
-                        f"| precio={datos.get('precio')} "
-                        f"| disponible={datos.get('disponible')}"
-                    )
-                    procesados += 1
-
-                    if guardar:
-                        with transaction.atomic():
-                            guardar_producto(datos, nombre_farmacia)
-                        guardados += 1
-
-                    time.sleep(0.3)
-
-                except Exception as error:
-                    errores += 1
-                    self.stderr.write(f"  URL omitida: {url}: {error}")
 
             self.stdout.write(
-                f"Resumen {nombre_farmacia}: procesados={procesados}, "
-                f"guardados={guardados}, errores={errores}"
+                f"Resumen {nombre_farmacia}: "
+                f"procesados={procesados}, "
+                f"guardados={guardados}, "
+                f"productos_nuevos={productos_nuevos}, "
+                f"precios_nuevos={precios_nuevos}, "
+                f"precios_actualizados={precios_actualizados}, "
+                f"errores={errores}"
             )
 
         if not guardar:

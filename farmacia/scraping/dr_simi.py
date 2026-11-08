@@ -63,6 +63,89 @@ def obtener_datos_json_ld(soup):
 
     return None
 
+def extraer_presentacion(nombre):
+    nombre = nombre.lower()
+
+    concentraciones = re.findall(
+        r"\d+(?:[.,]\d+)?\s*(?:mg/ml|mcg/ml|mg|mcg|g)\b",
+        nombre
+    )
+
+    formas = [
+        "comprimidos recubiertos",
+        "comprimidos",
+        "cápsulas blandas",
+        "cápsulas",
+        "capsulas",
+        "jarabe",
+        "suspensión oral",
+        "suspension oral",
+        "solución oral",
+        "solucion oral",
+        "gotas",
+        "crema",
+        "gel",
+        "ampollas",
+        "sobres"
+    ]
+
+    forma = next(
+        (f for f in formas if f in nombre),
+        ""
+    )
+
+    cantidad = re.search(
+        r"\b(\d+)\s*(comprimidos|cápsulas|capsulas|sobres|ampollas|ml)\b",
+        nombre
+    )
+
+    partes = []
+
+    partes.extend(concentraciones)
+
+    if forma and not (
+        cantidad and forma in cantidad.group(2)
+    ):
+        partes.append(forma)
+
+    if cantidad:
+        partes.append(
+            cantidad.group(1) + " " + cantidad.group(2)
+        )
+
+    return " ".join(partes)
+
+
+def extraer_principio_activo(nombre):
+    nombre = nombre.strip()
+
+    coincidencia = re.search(
+        r"\b\d+(?:[.,]\d+)?\s*(?:mg/ml|mcg/ml|mg|mcg|g)\b",
+        nombre,
+        flags=re.IGNORECASE
+    )
+
+    if not coincidencia:
+        return ""
+
+    texto = nombre[:coincidencia.start()].strip()
+    palabras = texto.split()
+
+    if len(palabras) <= 1:
+        return texto
+
+    # Quitar marca comercial inicial y su posible concentración
+    # numérica, por ejemplo: "Alix 2,5".
+    texto = re.sub(
+        r"^[^\s]+\s+\d+(?:[.,]\d+)?\s+",
+        "",
+        texto
+    )
+
+    if texto == nombre[:coincidencia.start()].strip():
+        texto = " ".join(palabras[1:])
+
+    return texto.strip()
 
 def obtener_producto(url):
     """
@@ -208,30 +291,21 @@ def obtener_producto(url):
     disponible = False
 
     if datos_producto:
-
-        offers = datos_producto.get(
-            "offers",
-            {}
-        )
+        offers = datos_producto.get("offers", {})
 
         if isinstance(offers, dict):
+            ofertas_internas = offers.get("offers", [])
 
-            disponibilidad = offers.get(
-                "availability",
-                ""
-            )
+            if isinstance(ofertas_internas, dict):
+                ofertas_internas = [ofertas_internas]
+
+            disponibilidad = offers.get("availability", "")
 
             if "InStock" in disponibilidad:
                 disponible = True
 
-        elif isinstance(offers, list):
-
-            for oferta in offers:
-
-                disponibilidad = oferta.get(
-                    "availability",
-                    ""
-                )
+            for oferta in ofertas_internas:
+                disponibilidad = oferta.get("availability", "")
 
                 if "InStock" in disponibilidad:
                     disponible = True
@@ -257,8 +331,10 @@ def obtener_producto(url):
 
     producto = {
         "nombre": nombre,
-        "principio_activo": "",
+        "principio_activo": extraer_principio_activo(nombre),
         "laboratorio": laboratorio,
+        "presentacion": extraer_presentacion(nombre),
+        "sku": datos_producto.get("sku", "") if datos_producto else "",
         "precio": precio,
         "precio_normal": precio_normal,
         "disponible": disponible,
@@ -440,3 +516,4 @@ if __name__ == "__main__":
     print(
         f"TOTAL PRODUCTOS: {len(productos)}"
     )
+    
