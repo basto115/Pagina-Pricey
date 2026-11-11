@@ -6,8 +6,9 @@ from django.db.models import Count
 from farmacia.models import Producto
 from farmacia.procesamento.guardar_productos import (
     normalizar_texto_producto,
-    extraer_firma_producto
+    extraer_firma_producto,
 )
+
 
 PALABRAS_IGNORADAS = {
     "500", "100", "50", "25", "10",
@@ -15,17 +16,19 @@ PALABRAS_IGNORADAS = {
     "comprimidos", "comprimido",
     "capsulas", "capsula",
     "recubiertos", "recubierto",
-    "tabletas", "tableta"
+    "tabletas", "tableta",
 }
 
-class command(BaseCommand):
+
+class Command(BaseCommand):
     help = "Detecta posibles productos duplicados sin modificar la base de datos."
 
     def handle(self, *args, **options):
         grupos = defaultdict(list)
 
         productos = (
-            Producto.objects.select_related("medicamento")
+            Producto.objects
+            .select_related("medicamento")
             .annotate(cantidad_precios=Count("precios"))
             .only(
                 "id",
@@ -41,7 +44,7 @@ class command(BaseCommand):
 
         total = 0
 
-        self.stdout.write("Analizando productos... \n")
+        self.stdout.write("Analizando productos...\n")
 
         for producto in productos:
             total += 1
@@ -52,8 +55,8 @@ class command(BaseCommand):
                 principio_activo = normalizar_texto_producto(
                     producto.medicamento.principio_activo
                 )
-            
-            #Sin principio activo no se agrupa automaticamente
+
+            # Sin principio activo no agrupamos automáticamente.
             if not principio_activo:
                 continue
 
@@ -64,7 +67,7 @@ class command(BaseCommand):
 
             concentraciones, forma, cantidad = firma
 
-            #evitar candidatos con información insuficiente
+            # Evitar candidatos con información insuficiente.
             if not concentraciones or not forma or not cantidad:
                 continue
 
@@ -99,8 +102,54 @@ class command(BaseCommand):
                 "cantidad_precios": producto.cantidad_precios,
             })
 
-            candidatos = [
-                (clave, productos_grupo)
-                for clave, productos_grupo in grupos.items()
-                if len(productos_grupo) > 1
-            ]
+        candidatos = [
+            (clave, productos_grupo)
+            for clave, productos_grupo in grupos.items()
+            if len(productos_grupo) > 1
+        ]
+
+        self.stdout.write("=" * 65)
+        self.stdout.write("RESULTADO DE DETECCIÓN")
+        self.stdout.write("=" * 65)
+
+        self.stdout.write(f"Productos analizados: {total}")
+        self.stdout.write(f"Grupos candidatos: {len(candidatos)}")
+
+        total_candidatos = sum(
+            len(productos_grupo)
+            for _, productos_grupo in candidatos
+        )
+
+        self.stdout.write(
+            f"Productos involucrados: {total_candidatos}\n"
+        )
+
+        for numero, (clave, productos_grupo) in enumerate(
+            candidatos, start=1
+        ):
+            categoria, activo, firma, bioequivalente, marca = clave
+
+            self.stdout.write("-" * 65)
+            self.stdout.write(f"GRUPO {numero}")
+            self.stdout.write(f"Categoría: {categoria}")
+            self.stdout.write(f"Principio activo: {activo}")
+            self.stdout.write(f"Firma: {firma}")
+            self.stdout.write(f"Marca inicial: {marca}")
+            self.stdout.write(
+                f"Bioequivalente: {'Sí' if bioequivalente else 'No'}"
+            )
+
+            for producto in productos_grupo:
+                self.stdout.write(
+                    f"  ID: {producto['id']} | "
+                    f"{producto['nombre']}"
+                )
+                self.stdout.write(
+                    f"     Laboratorio: {producto['laboratorio'] or 'Sin dato'} | "
+                    f"Precios: {producto['cantidad_precios']}"
+                )
+
+        self.stdout.write("\n" + "=" * 65)
+        self.stdout.write(
+            "Detección finalizada. No se modificó ningún registro."
+        )
