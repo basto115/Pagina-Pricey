@@ -63,7 +63,13 @@
                            class="btn-medicamento">
                             Ver detalles del medicamento
                         </a>
+                    {% else %}
+                        <a href="{% url 'detalle_producto' producto.id %}"
+                            class="btn-medicamento">
+                            Ver detalles
+                        </a>
                     {% endif %}
+
                     <form method="POST"
                         action="{% url 'agregar_a_lista' producto.id %}"
                         class="form-agregar-lista">

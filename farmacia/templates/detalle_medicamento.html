@@ -51,11 +51,37 @@
 
                     <div class="producto-descripcion">
                         <span class="producto-etiqueta">
-                            DETALLES DEL MEDICAMENTO
+                            {% if es_producto_independiente %}
+                                DETALLES DEL MEDICAMENTO
+                            {% else %}
+                                DETALLE DEL MEDICAMENTO
+                            {% endif %}
                         </span>
 
                         <h2>{{ medicamento.nombre }}</h2>
 
+                        {% if es_producto_independiente %}
+                            {% if medicamento.presentacion %}
+                            <p>
+                                <strong>Principio</strong>
+                                <span>{{ medicamento.presentacion }}</span>
+                            </p>
+                        {% endif %}
+
+                        {% if medicamento.laboratorio %}
+                            <p>
+                                <strong>Laboratorio</strong>
+                                <span>{{ medicamento.laboratorio }}</span>
+                            </p>
+                        {% endif %}
+
+                        {% if medicamento.categoria %}
+                            <p>
+                                <strong>Categoría</strong>
+                                <span>{{ medicamento.categoria }}</span>
+                            </p>
+                        {% endif %}
+                    {% else %}
                         {% if medicamento.principio_activo %}
                             <p>
                                 <strong>Principio activo</strong>
@@ -65,17 +91,13 @@
 
                         {% if medicamento.descripcion %}
                             <p class="producto-texto">
-                                {{ medicamento.descripcion }}
-                            </p>
-                        {% else %}
-                            <p class="producto-texto">
-                                Consulta las presentaciones y los precios
-                                disponibles para este medicamento.
+                                consulta las presentaciones y los precios 
+                                disponibles para este medicamento
                             </p>
                         {% endif %}
-                    </div>
-
-                </article>
+                     {% endif %}
+                </div>
+            </article>
 
                 <!-- Presentaciones -->
                 <section class="bloque-presentaciones">
@@ -84,7 +106,7 @@
                         <span class="titulo-decoracion"></span>
                     </div>
 
-                    {% for producto in medicamento.productos.all %}
+                    {% for producto in productos_detalle %}
                         <article class="presentacion-mini">
                             <div class="presentacion-icono" aria-hidden="true">
                                 
@@ -141,7 +163,7 @@
                 </div>
 
                 <!-- Comparación de precios por presentación -->
-                {% for producto in medicamento.productos.all %}
+                {% for producto in productos_detalle %} 
                     <section
                         class="comparacion-producto"
                         id="producto-{{ producto.id }}"

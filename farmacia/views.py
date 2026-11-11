@@ -138,8 +138,6 @@ def inicio(request):
         contexto,
     )
 
-
-
 def detalle_medicamento(request, medicamento_id):
     medicamento = get_object_or_404(
         Medicamento.objects.prefetch_related(
@@ -193,11 +191,61 @@ def detalle_medicamento(request, medicamento_id):
         "detalle_medicamento.html",
         {
             "medicamento": medicamento,
+            "productos_detalle": productos,
             "farmacias_mapa": list(farmacias_mapa.values()),
         },
     )
 
+def detalle_producto(request, producto_id):
+    producto = get_object_or_404(
+        Producto.objects.prefetch_related(
+            Prefetch(
+                "precios",
+                queryset=Precio.objects.select_related(
+                    "farmacia"
+                ).order_by("precio"),
+            )
+        ),
+        id=producto_id,
+    )
 
+    # Preparar los datos para el mapa.
+    farmacias_mapa = {}
+
+    for precio in producto.precios.all():
+        farmacia = precio.farmacia
+
+        if farmacia.latitud is None or farmacia.longitud is None:
+            continue
+
+        if farmacia.id not in farmacias_mapa:
+            farmacias_mapa[farmacia.id] = {
+                "id": farmacia.id,
+                "nombre": farmacia.nombre,
+                "direccion": farmacia.direccion,
+                "latitud": float(farmacia.latitud),
+                "longitud": float(farmacia.longitud),
+                "productos": [],
+            }
+
+        farmacias_mapa[farmacia.id]["productos"].append({
+            "producto_id": producto.id,
+            "producto_nombre": producto.nombre,
+            "precio": str(precio.precio),
+            "disponible": precio.disponible,
+            "url_producto": precio.url_producto,
+        })
+
+    return render(
+        request,
+        "detalle_medicamento.html",
+        {
+            "medicamento": producto,
+            "productos_detalle": [producto],
+            "farmacias_mapa": list(farmacias_mapa.values()),
+            "es_producto_independiente": True,
+        },
+    )
 
 @require_GET
 def listar_farmacias(request):
