@@ -253,11 +253,27 @@ async function planificarRutaCompras() {
                 )
                 .join(" → ");
             
-            mensajeUbicacion.textContent =
+            const resumenRuta =
                 "Ruta de compra: " + nombres +
                 ". Distancia: " + distanciaKm.toFixed(2) +
                 " km. Duración estimada: " +
                 duracionMinutos + " minutos.";
+
+            if (productosSinConfirmar.length > 0) {
+                const detalle = productosSinConfirmar.map(producto =>
+                    producto.nombre + " (" + producto.farmacia + ")"
+                ).join(", ");
+
+                mensajeUbicacion.textContent =
+                    resumenRuta +
+                    " ⚠️ Atención: los siguientes productos tienen precios " +
+                    "registrados, pero su disponibilidad no está confirmada: " +
+                    detalle + ".";
+            } else {    
+                mensajeUbicacion.textContent =
+                    resumenRuta +
+                    " Todos los productos seleccionados tienen disponibilidad confirmada.";
+            }
         });
 
         controlRuta.on("routingerror", function () {

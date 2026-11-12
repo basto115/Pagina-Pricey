@@ -823,17 +823,17 @@ def agregar_a_lista(request, producto_id):
     
     request.session["lista_medicamentos"] = lista
     
-    mensaje = f"{producto.nombre} se agregó a tu lista"
+    #mensaje = f"{producto.nombre} se agregó a tu lista"
     
     #si viene de javascript devuelve un json (who's json?)
-    if request.headers.get("X-requested-with") == "XMLHttpRquest":
+    if request.headers.get("X-requested-with") == "XMLHttpRequest":
         return JsonResponse({
             "ok": True,
-            "mensaje": mensaje,
+            #"mensaje": mensaje,
             "cantidad": lista[producto_id]
         })
     
-    messages.success(request, mensaje)
+    messages.success(request)
     return redirect(request.META.get("HTTP_REFERER", "inicio"))
 
 #agregar o quitar productos
@@ -1002,9 +1002,7 @@ def planificar_ruta(request):
     ).prefetch_related(
         Prefetch(
             "precios",
-            queryset=Precio.objects.filter(
-                disponible=True
-            ).select_related("farmacia")
+            queryset=Precio.objects.filter().select_related("farmacia")
         )
     )
     
@@ -1112,6 +1110,7 @@ def planificar_ruta(request):
                 "farmacia": farmacia.nombre,
                 "sucursal": datos_farmacia["nombre_sucursal"],
                 "precio": float(precio.precio),
+                "disponible": precio.disponible,
                 "latitud": datos_farmacia["latitud"],
                 "longitud": datos_farmacia["longitud"]
             }
@@ -1126,6 +1125,29 @@ def planificar_ruta(request):
             "precios": precios
         })
         
+    # DEBUG: revisar cobertura de productos
+    print("\n========== DEBUG COBERTURA DE PRODUCTOS ==========")
+
+    for producto in resultado:
+        print(f"\nProducto: {producto['nombre']}")
+        print(f"ID: {producto['producto_id']}")
+        print(f"Cantidad de precios válidos: {len(producto['precios'])}")
+
+        for precio in producto["precios"]:
+            print(
+                f"  - {precio['farmacia']}: "
+                f"${precio['precio']}"
+            )
+
+        if not producto["precios"]:
+            print("  !!! PRODUCTO SIN PRECIOS VÁLIDOS !!!")
+
+    print("\nFarmacias disponibles para planificar:")
+    for farmacia_id, farmacia in farmacias.items():
+        print(f"  - {farmacia_id}: {farmacia['cadena']}")
+
+    print("=================================================\n")
+    
     #evalua TODAS las combinaciones de farmacias
     ids_farmacias = list(farmacias.keys())
     alternativas = []
@@ -1137,6 +1159,7 @@ def planificar_ruta(request):
             compras = {}
             total = 0
             combinacion_valida = True
+            precios_sin_confirmar = 0
         
             for producto in resultado:
                 opciones = [
@@ -1150,8 +1173,14 @@ def planificar_ruta(request):
                 
                 mejor_precio = min(
                     opciones,
-                    key=lambda x: x["precio"]
+                    key=lambda x: (
+                        not x["disponible"],
+                        x["precio"]
+                    )
                 )
+                
+                if not mejor_precio["disponible"]:
+                    precios_sin_confirmar += 1
                 
                 subtotal = mejor_precio["precio"] * producto["cantidad"]
                 total += subtotal
@@ -1169,7 +1198,8 @@ def planificar_ruta(request):
                     "producto": producto["nombre"],
                     "cantidad": producto["cantidad"],
                     "precio_unitario": mejor_precio["precio"],
-                    "subtotal": subtotal
+                    "subtotal": subtotal,
+                    "disponible": mejor_precio["disponible"]
                 })
                 
                 compras[farmacia_id]["subtotal"] += subtotal
@@ -1178,7 +1208,8 @@ def planificar_ruta(request):
                 alternativas.append({
                     "total": total,
                     "compras": list(compras.values()),
-                    "cantidad_farmacias": len(compras)
+                    "cantidad_farmacias": len(compras),
+                    "precios_sin_confirmar": precios_sin_confirmar
                 })
                 
     if not alternativas:
@@ -1188,7 +1219,7 @@ def planificar_ruta(request):
     
     #buscar la alternativa más económica de una sola farmacia
     alternativas.sort(
-        key=lambda x: (x["total"], x["cantidad_farmacias"])
+        key=lambda x: (x["precios_sin_confirmar"], x["total"], x["cantidad_farmacias"])
     )
     
     mejor_general = alternativas[0]
@@ -1242,7 +1273,17 @@ def planificar_ruta(request):
         "alternativas": {
             "una_farmacia": mejor_una,
             "varias_farmacias": mejor_dividida
-        }
+        },
+        "precios_sin_disponibilidad_confirmada": [
+            {
+                "producto": producto["nombre"],
+                "farmacia": precio["farmacia"],
+                "precio": precio["precio"]
+            }
+            for producto in resultado
+            for precio in producto["precios"]
+            if not precio["disponible"]
+        ],
     })
 
 
