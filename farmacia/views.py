@@ -36,6 +36,8 @@ from math import radians, sin, cos, sqrt, atan2
 def inicio(request):
     busqueda = request.GET.get("buscar", "").strip()
 
+    categoria_seleccionada = request.GET.get("categoria", "").strip()
+
     productos = Producto.objects.prefetch_related(
         Prefetch(
             "precios",
@@ -105,7 +107,9 @@ def inicio(request):
             )
             
         productos = productos.filter(consulta).distinct()
-                
+        
+        if categoria_seleccionada:
+            productos = productos.filter(categoria=categoria_seleccionada)
 
     #Dejenlo en 6 o a lo mucho 9, la pagina se alarga demasiado si ponen muchos
     
@@ -122,6 +126,14 @@ def inicio(request):
             "productos": pagina_obj,
             "pagina_obj": pagina_obj,
             "busqueda": busqueda,
+            "categoria_seleccionada": categoria_seleccionada,
+            "categorias": Producto.objects.exclude(
+                categoria__isnull=True)
+                .exclude(
+                    categoria=""
+                ).values_list(
+                    "categoria", flat=True
+                ).distinct().order_by("categoria"),
             "rango_paginas": rango_paginas
         }
     

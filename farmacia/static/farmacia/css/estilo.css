@@ -2702,3 +2702,88 @@ main .medicamento .cantidad-controles button.btn-eliminar:hover {
     color: #FFFFFF !important;
     border-color: #F3B6CC !important;
 }
+
+/* =========================
+   FILTROS POR CATEGORÍAS
+   ========================= */
+
+.filtros-categorias {
+    width: 100%;
+    padding: 20px 7% 10px;
+    background-color: var(--fondo);
+}
+
+.categorias-contenedor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.boton-categoria {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 105px;
+    height: 38px;
+    padding: 0 18px;
+
+    border: 1px solid var(--azul);
+    border-radius: 9px;
+
+    background-color: var(--blanco);
+    color: var(--azul-oscuro);
+
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+
+    transition: all 0.2s ease;
+}
+
+.boton-categoria:hover {
+    background-color: var(--azul-claro);
+    border-color: var(--azul-oscuro);
+}
+
+.boton-categoria.seleccionada {
+    background-color: var(--rosa);
+    border-color: var(--rosa);
+    color: var(--azul-oscuro);
+}
+
+.boton-categoria:focus-visible {
+    outline: 3px solid var(--azul);
+    outline-offset: 3px;
+}
+
+/* Adaptación a celulares */
+
+@media (max-width: 600px) {
+    .filtros-categorias {
+        padding: 18px 16px 8px;
+    }
+
+    .categorias-contenedor {
+        gap: 9px;
+    }
+
+    .boton-categoria {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 105px;
+        height: 38px;
+        padding: 0 18px;
+        border: 1px solid var(--azul);
+        border-radius: 9px;
+        background-color: var(--blanco);
+        color: var(--azul-oscuro);
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+    }
+}
