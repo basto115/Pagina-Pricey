@@ -76,12 +76,16 @@ class Command(BaseCommand):
 
             if not tiene_cruz_verde and not tiene_ahumada:
                 continue
-
+            
+            nombre_normalizado = normalizar_texto_producto(producto.nombre)
+            marca = nombre_normalizado.split()[0] if nombre_normalizado else ""
+            
             # No se utiliza la categoría ni la marca como criterio.
             clave = (
                 principio_activo,
                 firma,
                 producto.es_bioequivalente,
+                marca
             )
 
             grupos[clave].append({
@@ -128,7 +132,7 @@ class Command(BaseCommand):
         )
 
         for numero, (clave, grupo) in enumerate(candidatos, start=1):
-            activo, firma, bioequivalente = clave
+            activo, firma, bioequivalente, marca = clave
 
             self.stdout.write("-" * 65)
             self.stdout.write(f"GRUPO {numero}")
@@ -137,6 +141,7 @@ class Command(BaseCommand):
             self.stdout.write(
                 f"Bioequivalente: {'Sí' if bioequivalente else 'No'}"
             )
+            self.stdout.write(f"Marca identificada: {marca}")
 
             for producto in grupo:
                 farmacias = ", ".join(producto["farmacias"])
