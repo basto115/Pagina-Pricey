@@ -143,7 +143,7 @@ def normalizar_texto_producto(texto):
     
     texto = texto.replace("×", "x")
     texto = texto.replace("(b)", "")
-    texto = texto.replace(".", " ")
+    texto = re.sub(r"(?<!\d)\.(?!\d)", " ", texto)
     
     texto = re.sub(r"\s+", " ", texto)
     return texto.strip()
@@ -158,10 +158,15 @@ def extraer_firma_producto(nombre, presentacion=""):
         f"{nombre} {presentacion}"
     )
 
-    # Concentraciones: 500 mg, 100 mg/ml, 1 g, etc.
+    # Concentraciones, incluyendo proporciones como 200 mg/5 ml.
+    patron_concentracion = (
+        r"\d+(?:[.,]\d+)?\s*"
+        r"(?:mg\s*/\s*ml|mcg\s*/\s*ml|mg|mcg|g)\b"
+        r"(?:\s*/\s*\d+(?:[.,]\d+)?\s*ml\b)?"
+    )
+
     concentraciones = re.findall(
-        r"\d+(?:[.,]\d+)?\s*(?:mg\s*/\s*ml|"
-        r"mcg\s*/\s*ml|mg|mcg|g)\b",
+        patron_concentracion,
         texto
     )
 
@@ -182,21 +187,11 @@ def extraer_firma_producto(nombre, presentacion=""):
         "gotas": [
             "gotas", "solucion oral para gotas"
         ],
-        "jarabe": [
-            "jarabe"
-        ],
-        "crema": [
-            "crema"
-        ],
-        "gel": [
-            "gel"
-        ],
-        "solucion": [
-            "solucion oral", "solucion"
-        ],
-        "suspension": [
-            "suspension oral", "suspension"
-        ],
+        "jarabe": ["jarabe"],
+        "crema": ["crema"],
+        "gel": ["gel"],
+        "solucion": ["solucion oral", "solucion"],
+        "suspension": ["suspension oral", "suspension"],
     }
 
     forma = ""
@@ -205,8 +200,8 @@ def extraer_firma_producto(nombre, presentacion=""):
         if any(v in texto for v in variantes):
             forma = nombre_forma
             break
-    
-        # Características especiales de la formulación
+
+    # Características especiales de la formulación
     caracteristicas = {
         "recubrimiento_enterico": [
             "recubrimiento enterico",
@@ -221,28 +216,20 @@ def extraer_firma_producto(nombre, presentacion=""):
         "liberacion_retardada": [
             "liberacion retardada"
         ],
-        "dispersable": [
-            "dispersable",
-            "dispersables"
-        ],
-        "efervescente": [
-            "efervescente",
-            "efervescentes"
-        ]
+        "dispersable": ["dispersable", "dispersables"],
+        "efervescente": ["efervescente", "efervescentes"]
     }
 
     for caracteristica, variantes in caracteristicas.items():
         if any(v in texto for v in variantes):
-            forma = f"{forma}_{caracteristica}" if forma else caracteristica
+            forma = (
+                f"{forma}_{caracteristica}"
+                if forma else caracteristica
+            )
 
-    # Cantidad de unidades: 16 comprimidos, 30 cápsulas, etc.
+    # Cantidad de unidades
     cantidad_unidades = re.search(
-        r"(\d+)\s*(?:comprimidos?|comp|capsulas?|tabletas?)",
-        texto
-    )
-
-    cantidad_ml = re.search(
-        r"(\d+(?:[.,]\d+)?)\s*ml\b",
+        r"(\d+)\s*(?:comprimidos?|comp|capsulas?|tabletas?)\b",
         texto
     )
 
@@ -250,8 +237,26 @@ def extraer_firma_producto(nombre, presentacion=""):
 
     if cantidad_unidades:
         cantidad = cantidad_unidades.group(1) + " unidades"
-    elif cantidad_ml:
-        cantidad = cantidad_ml.group(1).replace(",", ".") + " ml"
+
+    else:
+        # Priorizar el volumen total indicado después de una "x".
+        # Ejemplo: 200 mg/5 ml x 15 ml
+        cantidad_ml = re.search(
+            r"\bx\s*(\d+(?:[.,]\d+)?)\s*ml\b",
+            texto
+        )
+
+        # Si no existe una "x", buscar el primer volumen en ml.
+        if not cantidad_ml:
+            cantidad_ml = re.search(
+                r"(\d+(?:[.,]\d+)?)\s*ml\b",
+                texto
+            )
+
+        if cantidad_ml:
+            cantidad = (
+                cantidad_ml.group(1).replace(",", ".") + " ml"
+            )
 
     return (
         tuple(concentraciones),

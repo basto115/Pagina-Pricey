@@ -1,0 +1,3297 @@
+﻿Analizando catßlogo completo...
+
+======================================================================
+RESUMEN DE HOMOLOGACIONES
+======================================================================
+Productos analizados: 16258
+Grupos candidatos: 157
+Productos involucrados: 401
+
+Coincidencias por farmacias:
+  2 farmacias: 71 grupos
+  3 farmacias: 86 grupos
+  4 farmacias: 0 grupos
+
+Productos participantes por farmacia:
+  Ahumada: 251 productos
+  Salcobrand: 0 productos
+  Dr. Simi: 144 productos
+  Cruz Verde: 146 productos
+
+----------------------------------------------------------------------
+GRUPO 1
+CategorÝa: medicamentos
+Principio activo: etoricoxib
+Firma: (('90mg',), 'comprimidos', '14 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 4504 | Xumer Etoricoxib 90 mg 14 Comprimidos Recubierto
+    Laboratorio: Tecnofarma S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 6129 | Etovitae 90 Etoricoxib 90 mg 14 Comprimidos Recubiertos
+    Laboratorio: GALENICUM
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 7056 | Flogocox Etoricoxib 90 mg 14 Comprimidos
+    Laboratorio: Bago
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 13026 | Arcoxia 90 mg x 14 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14001 | Coxidol 90 mg x 14 Comprimidos Recubiertos
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14119 | Filcos 90 mg x 14 Comprimidos Recubiertos
+    Laboratorio: Raffo S.A
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14234 | ETEROVAL Etoricoxib 90 mg 14 comprimidos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 2
+CategorÝa: medicamentos
+Principio activo: etoricoxib
+Firma: (('120mg',), 'comprimidos', '7 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 4505 | Xumer Etoricoxib 120 mg 7 Comprimidos Recubierto
+    Laboratorio: Tecnofarma S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 5987 | Etox Etoricoxib 120 mg 7 Comprimidos Recubiertos
+    Laboratorio: Itf - Labomed
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 7057 | Flogocox Etoricoxib 120 mg 7 Comprimidos
+    Laboratorio: Bago
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 7729 | Coxtor Etoricoxib 120 mg 7 Comprimidos Recubiertos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 13210 | Coxidol 120 mg x 7 Comprimidos Recubiertos
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13515 | Eteroval Etoricoxib 120 mg 7 comprimidos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14120 | Filcos 120 mg x 7 Comprimidos Recubiertos
+    Laboratorio: Raffo S.A
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 3
+CategorÝa: medicamentos
+Principio activo: eszopiclona
+Firma: (('3mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 2041 | Eszop Eszopiclona 3 mg 30 Comprimidos Recubierto
+    Laboratorio: SILESIA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 11845 | Eszop 3 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 11996 | Noptic 3 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12005 | Plessir 3 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14452 | Eszopiclona 3 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Seven Pharma Chile Spa
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16183 | Eszopiclona 3 mg 30 comprimidos recubiertos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 4
+CategorÝa: medicamentos
+Principio activo: lamotrigina
+Firma: (('100mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3505 | Letico Lamotrigina 100 mg 30 Comprimidos
+    Laboratorio: EUROFARMA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9890 | Lamictal 100 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 10351 | Lafigin 100 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 10517 | Tradox 100 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12213 | Trigilab 100 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 5
+CategorÝa: medicamentos
+Principio activo: rivaroxaban
+Firma: (('10mg',), 'comprimidos', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 6790 | Rivaxored Rivaroxabßn 10 mg 10 comprimidos recubiertos
+    Laboratorio: Dr. Reddy'S
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 6940 | Rivoxa 10 mg 10 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 14648 | Rivoxa 10 mg x 10 Comprimidos Recubiertos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14854 | Rilex (Rivaroxaban 10 Mg) x 10 Comprimidos Recubiertos
+    Laboratorio: Instituto Sanitas S.A
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16135 | Rivaxored rivaroxabßn 10 mg 10 comprimidos recubiertos
+    Laboratorio: DR. REDDYS
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 6
+CategorÝa: medicamentos
+Principio activo: levetiracetam
+Firma: (('1000mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 7305 | Leritac Levetiracetam 1000 mg 30 Comprimidos recubiertos
+    Laboratorio: OPKO
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 11942 | Keppra 1000 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12805 | Levevitae 1000 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13883 | Levetiracetam 1000 mg x 30 Comprimidos Recubiertos SEVEN PHARMA CHILE SPA
+    Laboratorio: Seven Pharma Chile Spa
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16208 | Levetiracetam 1000 mg 30 comprimidos recubiertos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 7
+CategorÝa: medicamentos
+Principio activo: levetiracetam
+Firma: (('500mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 7315 | Leritac Levetiracetam 500 mg 30 Comprimidos recubiertos
+    Laboratorio: OPKO
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10854 | Kopodex 500 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12807 | Levevitae 500 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13884 | Levetiracetam 500 mg x 30 Comprimidos Recubiertos SEVEN PHARMA CHILE SPA
+    Laboratorio: Seven Pharma Chile Spa
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16212 | Levetiracetam 500 mg 30 comprimidos recubiertos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 8
+CategorÝa: medicamentos
+Principio activo: lamotrigina
+Firma: (('50mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 18 | Lamictal 50 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 2293 | Trigilab Lamotrigina 50 mg 30 Comprimidos
+    Laboratorio: INTERPHARMA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10208 | Lafigin 50 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12212 | Trigilab 50 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 9
+CategorÝa: medicamentos
+Principio activo: paracetamol
+Firma: (('100mg/ml',), 'gotas', '15 ml')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 714 | Panadol Ni±os Paracetamol 100 mg / mL Gotas Orales 15 mL
+    Laboratorio: Gsk Consumer Healthcare Chile S.P.A
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 8897 | Paracetamol 100 mg/mL x 15 mL Soluci¾n Oral Para Gotas
+    Laboratorio: TEVA
+    Farmacias: Ahumada, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10021 | Tapsin 100 mg/mL  x 15 mL Soluci¾n Oral Para Gotas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13788 | Gesidol Infantil 100 mg/mL x 15 mL Soluci¾n Oral Para Gotas
+    Laboratorio: Eurofarma Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 10
+CategorÝa: medicamentos
+Principio activo: levonorgestrel
+Firma: (('1.5mg',), 'comprimidos', '1 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 2248 | Escapel-1 Levonorgestrel 1,5 mg 1 Comprimido
+    Laboratorio: GEDEON RICHTER
+    Farmacias: Ahumada, Cruz Verde, Dr. Simi
+    Precios registrados: 3
+
+  ID: 5605 | Cerciora T Levonorgestrel 1,5 mg 1 Comprimido
+    Laboratorio: Exeltis
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 14492 | Gestrokem 1,5 Mg X 1 Comprimido
+    Laboratorio: Ascend
+    Farmacias: Ahumada, Dr. Simi
+    Precios registrados: 2
+
+  ID: 14697 | Momentum Levonorgestrelá1,5 Mg 1 Comp
+    Laboratorio: Deutsche Pharma
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 11
+CategorÝa: medicamentos
+Principio activo: isotretinoina
+Firma: (('10mg',), 'capsulas', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3370 | Oralne Isotretinoina 10 mg 30 Cßpsulas Blandas
+    Laboratorio: DEUTSCHE PHARMA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 8950 | Roacnetan 10 mg x 30 Cßpsulas Blandas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 10968 | Acnotin 10 mg x 30 Cßpsulas Blandas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12314 | Inflader 10 mg 30 Cßpsulas Blandas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 12
+CategorÝa: medicamentos
+Principio activo: topiramato
+Firma: (('50mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 4123 | Topivitae Topiramato 50 mg 28 Comprimidos
+    Laboratorio: Galenicum Health Chi
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 10346 | Topamax 50 mg x 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 11576 | Topictal 50 mg x 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15591 | Topivitae topiramato 50 mg 28 comprimidos recubiertos
+    Laboratorio: GALENICUM
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 13
+CategorÝa: medicamentos
+Principio activo: topiramato
+Firma: (('25mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 4124 | Topivitae Topiramato 25 mg 28 Comprimidos
+    Laboratorio: Galenicum Health Chi
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 10339 | Topamax 25 mg x 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 11587 | Topictal 25 mg x 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16031 | Topivitae topiramato 25 mg 28 comprimidos recubiertos
+    Laboratorio: GALENICUM
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 14
+CategorÝa: medicamentos
+Principio activo: etoricoxib
+Firma: (('60mg',), 'comprimidos', '14 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 4503 | Xumer Etoricoxib 60 mg 14 Comprimidos Recubiertos
+    Laboratorio: Tecnofarma S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 6285 | Trexxia Etoricoxib 60 mg 14 Comprimidos Recubiertos
+    Laboratorio: SYNTHON
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 13209 | Coxidol 60 mg x 14 Comprimidos Recubiertos
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13516 | ETEROVAL Etoricoxib 60 mg 14 comprimidos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 15
+CategorÝa: medicamentos
+Principio activo: telmisartan
+Firma: (('40mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 5145 | Tellmi 40 Telmisartan 40 mg 30 Comprimidos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 5603 | Texinal 40 Telmisartan 40 mg 30 Comprimidos
+    Laboratorio: Ascend
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 5930 | Tensuren Telmisartßn 40 mg 30 Comprimidos
+    Laboratorio: Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15504 | Telgard telmisartßn 40 mg 30 comprimidos
+    Laboratorio: SANITAS
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 16
+CategorÝa: medicamentos
+Principio activo: telmisartan
+Firma: (('80mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 5146 | Tellmi Telmisartan 80 mg 30 Comprimidos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 5604 | Texinal 80 Telmisartßn 80 mg 30 Comprimidos
+    Laboratorio: Ascend
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 5931 | Tensuren Telmisartßn 80 mg 30 Comprimidos
+    Laboratorio: Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15678 | Telgard telmisartßn 80 mg 30 comprimidos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 17
+CategorÝa: medicamentos
+Principio activo: tadalafilo
+Firma: (('20mg',), 'comprimidos', '4 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 6119 | Tadavitae Tadalafilo 20 mg 4 Comprimidos Recubiertos
+    Laboratorio: GALENICUM
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 6404 | Invictus Tadalafilo 20 mg 4 Comprimidos Recubiertos
+    Laboratorio: Deutsche Pharma
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 13457 | Ludium Tadalafilo 20 mg 4 Comprimidos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13864 | Exim 20 mg x 4 Comprimidos Recubiertos
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 18
+CategorÝa: medicamentos
+Principio activo: tadalafilo
+Firma: (('5mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 6399 | Invictus Tadalafilo 5 mg 28 Comprimidos Recubiertos
+    Laboratorio: Deutsche Pharma
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 6638 | Tadavitae Tadalafilo 5 mg 28 Comprimidos Recubiertos
+    Laboratorio: GALENICUM
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 12120 | Cialis 5 mg x 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13988 | Exim 5 mg x 28 Comprimidos Recubiertos
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 19
+CategorÝa: medicamentos
+Principio activo: rivaroxaban
+Firma: (('20mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 6649 | Rivaxored Rivaroxaban 20mg 28 comprimidos recubiertos
+    Laboratorio: Dr. Reddy'S
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 12293 | Xarelto 20 mg 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14858 | Rilex Rivaroxaban 20 mg 28 Comprimidos Recubiertos
+    Laboratorio: Instituto Sanitas S.A
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16143 | Rivaxored rivaroxabßn 20 mg 28 comprimidos recubiertos
+    Laboratorio: DR. REDDYS
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 20
+CategorÝa: medicamentos
+Principio activo: acido folico
+Firma: (('5mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 550 | Folisanin Acido Folico 5 mg 30 Comprimidos
+    Laboratorio: SANITAS
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10140 | Folisanin 5 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12327 | Folacid 5 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 21
+CategorÝa: medicamentos
+Principio activo: clonixinato de lisina
+Firma: (('125mg',), 'comprimidos', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 562 | Colmax Clonixinato De Lisina 125 mg 10 Comprimidos
+    Laboratorio: ANDRËMACO
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 1477 | Clonixinato de Lisina 125 mg 10 Comprimidos
+    Laboratorio: Mintlab Co Sa
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 9280 | Nefersil 125 mg x 10 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 22
+CategorÝa: medicamentos
+Principio activo: risperidona
+Firma: (('1mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 627 | Spiron Risperidona 1 mg 30 Comprimidos Recubierto
+    Laboratorio: ANDRËMACO
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 13030 | Rismia 1 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13140 | Rimox 1 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 23
+CategorÝa: medicamentos
+Principio activo: clonazepam
+Firma: (('2mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1502 | Clonazepam 2 mg 30 Comprimidos
+    Laboratorio: TEVA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9352 | Valpax 2 mg Caja 30 Comp.
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 10086 | Neuryl 2 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 24
+CategorÝa: medicamentos
+Principio activo: clonazepam
+Firma: (('0.5mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1503 | Clonazepam 0,5 mg 30 Comprimidos
+    Laboratorio: TEVA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9351 | Valpax 0.5 mg Caja 30 Comp.
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 10082 | Neuryl 0.5 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 25
+CategorÝa: medicamentos
+Principio activo: gabapentina
+Firma: (('300mg',), 'capsulas', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1565 | Ritmenal Gabapentina 300 mg 30 Cßpsulas
+    Laboratorio: Instituto Sanitas S.A
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 13305 | Gabapentina 300 mg x 30 Cßpsulas ASCEND
+    Laboratorio: Ascend
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15534 | Ritmenal gabapentina 300 mg 30 cßpsulas
+    Laboratorio: SANITAS
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 26
+CategorÝa: medicamentos
+Principio activo: gabapentina
+Firma: (('400mg',), 'capsulas', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1566 | Ritmenal Gabapentina 400 mg 30 Cßpsulas
+    Laboratorio: SANITAS
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10990 | Ritmenal 400 Mg 30 Capsulas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13825 | Gabapentina 400 mg x 30 Cßpsulas ASCEND
+    Laboratorio: Ascend
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 27
+CategorÝa: medicamentos
+Principio activo: desogestrel
+Firma: (('75mcg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 2205 | Lactafem Desogestrel 75 mcg 28 Comprimidos Recubiertos
+    Laboratorio: ANDRËMACO
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 6295 | Aminta Desogestrel 75 mcg 28 Comprimidos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 10888 | Nogesta 75 mcg 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 28
+CategorÝa: medicamentos
+Principio activo: levonorgestrel
+Firma: (('0.75mg',), 'comprimidos', '2 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 2605 | Escapel-2 Levonorgestrel 0,75 mg 2 Comprimidos
+    Laboratorio: GEDEON RICHTER
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 12085 | Escapel-2 0,75 mg x 2 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13075 | Cerciora-T 0,75 mg x 2 Comprimidos
+    Laboratorio: Exeltis
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 29
+CategorÝa: medicamentos
+Principio activo: ibuprofeno
+Firma: (('600mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3411 | Ibuprofeno 600 mg 20 Comprimidos
+    Laboratorio: Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 13439 | Ibuprofeno 600 mg x 20 Comprimidos Recubiertos OPKO CHILE S.A.
+    Laboratorio: Opko Chile S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15868 | Ibuprofeno 600 mg 20 comprimidos recubiertos
+    Laboratorio: OPKO
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 30
+CategorÝa: medicamentos
+Principio activo: dutasterida
+Firma: (('0.5mg',), 'capsulas', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 4565 | Dutasvitae Dutasterida 0,5 mg 30 Cßpsulas Blandas
+    Laboratorio: Galenicum Health Chi
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 10721 | Avodart 0,5 mg x 30 Capsulas Blandas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15985 | Dutasvitae dutasterida 0,5 mg 30 cßpsulas blandas
+    Laboratorio: GALENICUM
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 31
+CategorÝa: medicamentos
+Principio activo: dienogest
+Firma: (('2mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 5194 | Pietra ED Dienogest 2 mg 30 Comprimidos Recubiertos
+    Laboratorio: Eurofarma Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 12306 | Alondra 2 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16209 | Pietra Ed dienogest 2 mg 30 comprimidos recubiertos
+    Laboratorio: EUROFARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 32
+CategorÝa: medicamentos
+Principio activo: valsartan
+Firma: (('160mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 5208 | Valax Valsartan 160 mg 30 Comprimidos Recubiertos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 10895 | Valaplex 160 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15720 | Valsartßn 160 mg 30 comprimidos recubiertos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 33
+CategorÝa: medicamentos
+Principio activo: rivaroxaban
+Firma: (('15mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 6648 | Rivaxored Rivaroxaban 15mg 28 comprimidos recubiertos
+    Laboratorio: Dr. Reddy'S
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 12292 | Xarelto 15 mg 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16147 | Rivaxored rivaroxabßn 15 mg 28 comprimidos recubiertos
+    Laboratorio: DR. REDDYS
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 34
+CategorÝa: medicamentos
+Principio activo: azatioprina
+Firma: (('50mg',), 'comprimidos', '100 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 12 | Imuran 50 mg x 100 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 4315 | Azatioprina 50 mg 100 Comprimidos
+    Laboratorio: EMCURE PHARMA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+----------------------------------------------------------------------
+GRUPO 35
+CategorÝa: medicamentos
+Principio activo: diazepam
+Firma: (('10mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 130 | Diazepam 10 mg 20 Comprimidos
+    Laboratorio: TEVA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 8878 | Diazepam 10 mg Caja 20 Comp. CHILE
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 36
+CategorÝa: medicamentos
+Principio activo: nicergolina
+Firma: (('15mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 136 | Nicergolina 15 mg 30 Comprimidos
+    Laboratorio: TEVA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 8856 | Nicergolina 15 mg x 30 Comprimidos Recubiertos CHILE
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 37
+CategorÝa: medicamentos
+Principio activo: paracetamol
+Firma: (('80mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 137 | Paracetamol Infantil 80 mg 20 Comprimidos
+    Laboratorio: MILAB
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 13797 | Panadol 80 mg x 20 Comprimidos Masticables
+    Laboratorio: Glaxosmithkline Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 38
+CategorÝa: medicamentos
+Principio activo: digoxina
+Firma: (('0.25mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 140 | Digoxina 0,25 mg 30 Comprimidos
+    Laboratorio: TEVA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9348 | Digoxina 0.25 mg x 30 Comprimidos CHILE
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 39
+CategorÝa: medicamentos
+Principio activo: desogestrel
+Firma: (('0.075mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 246 | Arlette 28 Desogestrel 0,075 mg 28 Comprimidos Recubiertos
+    Laboratorio: ABBOTT
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 13293 | Miranda 0,075 mg x 28 Comprimidos Recubiertos
+    Laboratorio: Exeltis
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 40
+CategorÝa: medicamentos
+Principio activo: zopiclona
+Firma: (('7.5mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 527 | Zometic Zopiclona 7,5 mg 30 Comprimidos Recubiertos
+    Laboratorio: CHEMOPHARMA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 14796 | Zopiclona 7.5 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 41
+CategorÝa: medicamentos
+Principio activo: acido folico
+Firma: (('1mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 535 | Folisanin ┴cido F¾lico 1 mg 30 Comprimidos
+    Laboratorio: SANITAS
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 12328 | Folacid 1 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 42
+CategorÝa: medicamentos
+Principio activo: estradiol
+Firma: (('1mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 630 | Cyclobiol Estradiol Micronizado 1 mg 30 Comprimidos
+    Laboratorio: SILESIA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9884 | Primaquin 1 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 43
+CategorÝa: medicamentos
+Principio activo: albendazol
+Firma: (('200mg',), 'comprimidos', '2 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 853 | Vermoil Albendazol 200 mg 2 Comprimidos
+    Laboratorio: FQP
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9011 | Vermoil 200 mg x 2 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 44
+CategorÝa: medicamentos
+Principio activo: risperidona
+Firma: (('3mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1339 | Dagotil 3 Risperidona 3 mg 30 Comprimidos
+    Laboratorio: MEGALABS
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10011 | Dagotilá3 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 45
+CategorÝa: medicamentos
+Principio activo: mebendazol
+Firma: (('100mg',), 'comprimidos', '6 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1439 | Mebendazol 100 mg 6 Comprimidos
+    Laboratorio: Mintlab Co Sa
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 16057 | Mebendazol 100 mg 6 comprimidos masticables
+    Laboratorio: MILAB
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 46
+CategorÝa: medicamentos
+Principio activo: atenolol
+Firma: (('100mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1446 | Atenolol 100 mg 20 Comprimidos
+    Laboratorio: MILAB
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 8982 | Atenolol 100 mg Caja 20 Comp. MINTLAB CO SA
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 47
+CategorÝa: medicamentos
+Principio activo: cefradina
+Firma: (('500mg',), 'capsulas', '8 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1458 | Cefradina 500 mg 8 Cßpsulas
+    Laboratorio: MILAB
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 8884 | Cefradina 500 mg x 8 Cßpsulas MINTLAB CO SA
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 48
+CategorÝa: medicamentos
+Principio activo: ketoconazol
+Firma: (('200mg',), 'comprimidos', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1465 | Ketoconazol 200 mg 10 Comprimidos
+    Laboratorio: MILAB
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 8864 | Ketoconazol 200 mg x 10 Comprimidos MINTLAB CO SA
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 49
+CategorÝa: medicamentos
+Principio activo: amoxicilina
+Firma: (('750mg',), 'comprimidos', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1468 | Amoxicilina 750 mg 10 Comprimidos
+    Laboratorio: Mintlab Co Sa
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15508 | Amoxicilina 750 mg 10 comprimidos
+    Laboratorio: MILAB
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 50
+CategorÝa: medicamentos
+Principio activo: nitrofurantoina
+Firma: (('100mg',), 'capsulas', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1469 | Nitrofurantoina Macrocristales 100 mg 10 Cßpsulas
+    Laboratorio: Mintlab Co Sa
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15813 | NitrofurantoÝna 100 mg 10 cßpsulas
+    Laboratorio: MILAB
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 51
+CategorÝa: medicamentos
+Principio activo: lovastatina
+Firma: (('20mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1481 | Lovastatina 20 mg 28 Comprimidos
+    Laboratorio: TEVA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9951 | Lovastatina 20 mg x 28 Comprimidos CHILE
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 52
+CategorÝa: medicamentos
+Principio activo: claritromicina
+Firma: (('500mg',), 'comprimidos', '14 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1499 | Claritromicina 500 mg Bioequivalente 14 Comprimidos
+    Laboratorio: ANDRËMACO
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9962 | EUROMICINA Claritromicina 500 mg 14 comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 53
+CategorÝa: medicamentos
+Principio activo: melatonina
+Firma: (('3mg',), 'capsulas', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1518 | Melatonina 3 mg 30 Cßpsulas
+    Laboratorio: MDC
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10122 | Melatonina 3 mg Arama Natural Products 30 Cßpsulas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 54
+CategorÝa: medicamentos
+Principio activo: glimepirida
+Firma: (('4mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1715 | Glemaz Glimepirida 4 mg 30 Comprimidos
+    Laboratorio: Bago
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 6598 | Glimekem Glimepirida 4 mg 30 Comprimidos
+    Laboratorio: ASCEND
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+----------------------------------------------------------------------
+GRUPO 55
+CategorÝa: medicamentos
+Principio activo: pregabalina
+Firma: (('150mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 1903 | Neurum Pregabalina 150 mg 30 Comprimidos Ranurados
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 1942 | Pregalex Pregabalina 150 mg 30 Comprimidos
+    Laboratorio: ANDRËMACO
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+----------------------------------------------------------------------
+GRUPO 56
+CategorÝa: medicamentos
+Principio activo: glibenclamida
+Firma: (('5mg',), 'comprimidos', '60 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 2873 | Glibenclamida 5 mg 60 Comprimidos
+    Laboratorio: Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15531 | Glibenclamida 5 mg 60 comprimidos
+    Laboratorio: TEVA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 57
+CategorÝa: medicamentos
+Principio activo: isotretinoina
+Firma: (('20mg',), 'capsulas', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 2881 | Oralne Isotretinoina 20 mg 30 Cßpsulas Blandas
+    Laboratorio: DEUTSCHE PHARMA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10973 | Acnotin 20 mg x 30 Cßpsulas Blandas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 58
+CategorÝa: medicamentos
+Principio activo: prednisona
+Firma: (('5mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 2885 | Prednisona 5 mg 20 Comprimidos
+    Laboratorio: TEVA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9058 | Bersen 5 mg x 20 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 59
+CategorÝa: medicamentos
+Principio activo: carbamazepina
+Firma: (('200mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 2920 | Carbamazepina 200 mg 20 Comprimidos
+    Laboratorio: ANDRËMACO
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 11630 | Tegretal CR 200 mg x 20 Comprimidos Recubiertos de Liberaci¾n Sostenida
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 60
+CategorÝa: medicamentos
+Principio activo: ketoprofeno
+Firma: (('50mg',), 'capsulas', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 2941 | Ketoprofeno 50 mg 20 Cßpsulas
+    Laboratorio: Mintlab Co Sa
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 16126 | Ketoprofeno 50 mg 20 cßpsulas
+    Laboratorio: MILAB
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 61
+CategorÝa: medicamentos
+Principio activo: furosemida
+Firma: (('40mg',), 'comprimidos', '12 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3055 | Furosemida 40 mg 12 Comprimidos
+    Laboratorio: Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15825 | Furosemida 40 mg 12 comprimidos
+    Laboratorio: TEVA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 62
+CategorÝa: medicamentos
+Principio activo: hidroclorotiazida
+Firma: (('50mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3288 | Hidroclorotiazida 50 mg 20 Comprimidos
+    Laboratorio: Opko Chile S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15876 | Hidroclorotiazida 50 mg 20 comprimidos
+    Laboratorio: OPKO
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 63
+CategorÝa: medicamentos
+Principio activo: letrozol
+Firma: (('2.5mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3414 | Letrovitae Letrozol 2,5 mg 30 Comprimidos Recubiertos
+    Laboratorio: GALENICUM
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 12779 | Letrovitae 2.5 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 64
+CategorÝa: medicamentos
+Principio activo: ibuprofeno
+Firma: (('400mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3421 | Ibuprofeno 400 mg 20 Comprimidos
+    Laboratorio: TEVA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 8910 | Ibuprofeno 400 mg x 20 Comprimidos Recubiertos ASCEND
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 65
+CategorÝa: medicamentos
+Principio activo: cilostazol
+Firma: (('100mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3472 | Cilosvitae Cilostazol 100 mg 28 Comprimidos
+    Laboratorio: GALENICUM
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 12818 | Cilosvitae 100 mg x 28 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 66
+CategorÝa: medicamentos
+Principio activo: alopurinol
+Firma: (('100mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3519 | Alopurinol 100 mg 20 Comprimidos
+    Laboratorio: Seven Pharma Chile Spa
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15756 | Alopurinol 100 mg 20 comprimidos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 67
+CategorÝa: medicamentos
+Principio activo: alopurinol
+Firma: (('300mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3520 | Alopurinol 300 mg 20 Comprimidos
+    Laboratorio: Seven Pharma Chile Spa
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15766 | Alopurinol 300 mg 20 comprimidos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 68
+CategorÝa: medicamentos
+Principio activo: azitromicina
+Firma: (('500mg',), 'comprimidos', '3 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3521 | Azitromicina 500 mg 3 Comprimidos Recubiertos
+    Laboratorio: ASCEND
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10309 | Azitromicina 500mg Caja 3 Comp. Recubiertos ASCEND
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 69
+CategorÝa: medicamentos
+Principio activo: aciclovir
+Firma: (('200mg',), 'comprimidos', '24 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3540 | Aciclovir 200 mg 24 Comprimidos GenÚricos
+    Laboratorio: Mintlab Co Sa
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 16256 | Aciclovir 200 mg 24 comprimidos
+    Laboratorio: MILAB
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 70
+CategorÝa: medicamentos
+Principio activo: espironolactona
+Firma: (('25mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3541 | Espironolactona 25 mg 20 Comprimidos
+    Laboratorio: Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15826 | Espironolactona 25 mg 20 comprimidos
+    Laboratorio: ANDRËMACO
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 71
+CategorÝa: medicamentos
+Principio activo: meloxicam
+Firma: (('15mg',), 'comprimidos', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3542 | Meloxicam 15 mg 10 Comprimidos
+    Laboratorio: TEVA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10590 | Meloxicam 15 mg x 10 Comprimidos PASTEUR
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 72
+CategorÝa: medicamentos
+Principio activo: meloxicam
+Firma: (('7.5mg',), 'comprimidos', '15 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3543 | Meloxicam 7,5 mg 15 Comprimidos
+    Laboratorio: PASTEUR
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 10588 | Meloxicam 7.5 mg x 15 Comprimidos PASTEUR
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 73
+CategorÝa: medicamentos
+Principio activo: metotrexato
+Firma: (('2.5mg',), 'comprimidos', '100 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3577 | Metotrexato 2,5 mg Bioequivalente 100 Comprimidos
+    Laboratorio: MILAB
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 13708 | Metotrexato 2.5 mg x 100 Comprimidos MINTLAB CO SA
+    Laboratorio: Mintlab Co Sa
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 74
+CategorÝa: medicamentos
+Principio activo: gemfibrozilo
+Firma: (('300mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3662 | Gemfibrozilo 300 mg 30 Comprimidos
+    Laboratorio: MILAB
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9053 | Gemfibrozilo 300 mg x 30 Comprimidos Recubiertos CHILE
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 75
+CategorÝa: medicamentos
+Principio activo: bilastina
+Firma: (('20mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3706 | Blaxitec Bilastina 20 mg 30 Comprimidos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada, Cruz Verde, Dr. Simi
+    Precios registrados: 3
+
+  ID: 12301 | Bilidren 20 mg 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 76
+CategorÝa: medicamentos
+Principio activo: irbesartan
+Firma: (('150mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 3818 | Irbevitae Irbesartan 150 mg 28 Comprimidos Recubiertos
+    Laboratorio: GALENICUM
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 12826 | Irbevitae 150 mg x 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 77
+CategorÝa: medicamentos
+Principio activo: progesterona
+Firma: (('200mg',), 'capsulas', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 4316 | Gestel Progesterona 200 mg 30 Cßpsulas Blandas
+    Laboratorio: EXELTIS
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 13520 | Progeva 200 mg x 30 Cßpsulas Blandas
+    Laboratorio: Itf - Labomed
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 78
+CategorÝa: medicamentos
+Principio activo: captopril
+Firma: (('25mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 4413 | Captopril 25 mg 30 Comprimidos
+    Laboratorio: Mintlab Co Sa
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15828 | Captopril 25 mg 30 comprimidos
+    Laboratorio: MILAB
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 79
+CategorÝa: medicamentos
+Principio activo: finasterida
+Firma: (('1mg',), 'comprimidos', '90 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 5671 | Finaflux Finasterida 1 mg 90 Comprimidos
+    Laboratorio: ASCEND
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9986 | Apeplus 1 mg 90 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 80
+CategorÝa: medicamentos
+Principio activo: azitromicina
+Firma: (('500mg',), 'comprimidos', '6 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 5672 | Azithral 500 Azitromicina 500 mg 6 Comprimidos Recubiertos
+    Laboratorio: ASCEND
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 11891 | Azimit 500 mg x 6 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 81
+CategorÝa: medicamentos
+Principio activo: aripiprazol
+Firma: (('5mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 5726 | Arizol Aripiprazol 5 mg 28 Comprimidos
+    Laboratorio: Exeltis
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15615 | Arivitae aripiprazol 5 mg 28 comprimidos
+    Laboratorio: GALENICUM
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 82
+CategorÝa: medicamentos
+Principio activo: ezetimiba
+Firma: (('10mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 5845 | Zetirol 10 Ezetimiba 10 mg 28 Comprimidos
+    Laboratorio: Ascend
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15674 | Eztim ezetimiba 10 mg 28 comprimidos
+    Laboratorio: HETERO
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 83
+CategorÝa: medicamentos
+Principio activo: ketoprofeno
+Firma: (('150mg',), 'comprimidos_liberacion_prolongada', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 6037 | Dolostat BI Ketoprofeno 150 mg 10 Comprimidos de Liberacion Prolongada
+    Laboratorio: Eurofarma Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 16226 | Dolostat BI ketoprofeno 150 mg 10 comprimidos de liberaci¾n prolongada
+    Laboratorio: EUROFARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 84
+CategorÝa: medicamentos
+Principio activo: lansoprazol
+Firma: (('30mg',), 'capsulas_recubrimiento_enterico', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 6126 | Lansoprazol 30mg 30 cßpsulas
+    Laboratorio: Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15543 | Lansoprazol 30 mg 30 cßpsulas con microgrßnulos con recubrimiento entÚrico
+    Laboratorio: TEVA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 85
+CategorÝa: medicamentos
+Principio activo: oxcarbazepina
+Firma: (('300mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 6161 | Coxepta 300 Oxcarbazepina 300 mg 30 Comprimidos Recubiertos
+    Laboratorio: ASCEND
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 9950 | Trileptal 300 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 86
+CategorÝa: medicamentos
+Principio activo: gliclazida
+Firma: (('60mg',), 'comprimidos_liberacion_prolongada', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde, Dr. Simi
+
+  ID: 6660 | Glikem Gliclazida 60 mg 30 Comprimidos
+    Laboratorio: Ascend
+    Farmacias: Ahumada, Cruz Verde, Dr. Simi
+    Precios registrados: 3
+
+  ID: 12642 | Diamicron MR 60 mg x 30 Comprimidos Liberaci¾n Prolongada
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 87
+CategorÝa: medicamentos
+Principio activo: fexofenadina clorhidrato
+Firma: (('120mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6944 | Alerxo Fexofenadina Clorhidrato 120 mg 30 Comprimidos Recubiertos
+    Laboratorio: Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 9996 | ALEXIA Fexofenadina clorhidrato 120 mg 30 comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14425 | Zinlergia 120 mg x 30 Comprimidos
+    Laboratorio: Dm Pharma
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14654 | Alfexa 120 mg Caja 30 Comp. Recubiertos
+    Laboratorio: Ascend
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 88
+CategorÝa: medicamentos
+Principio activo: anfebutamona clorhidrato (bupropion)
+Firma: (('150mg',), 'comprimidos_liberacion_prolongada', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 7412 | Numax XL 150 mg 30 Comprimidos Recubiertos De Liberacion Extendida
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 12536 | Butrino 150 mg x 30 Comprimidos Recubiertos De Liberacion Prolongada
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14468 | Numax XL 150 mg 30 Comprimidos Recubiertos de Liberaci¾n Extendida
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14886 | Butrino 150 mg 30 Comprimidos Recubiertos de Liberaci¾n Prolongada
+    Laboratorio: Eurofarma Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 89
+CategorÝa: medicamentos
+Principio activo: prednisona
+Firma: (('20mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 8901 | Cortiprex 20 mg x 20 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 9060 | Bersen 20 mg x 20 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 10507 | Procion 20 mg x 20 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16194 | Prednisona 20 mg 20 comprimidos recubiertos
+    Laboratorio: TEVA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 90
+CategorÝa: medicamentos
+Principio activo: lamotrigina
+Firma: (('100mg',), 'comprimidos_dispersable', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 10812 | Lamictal 100 mg x 30 Comprimidos Dispersables
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 11084 | Meganox 100 mg x 30 Comprimidos Dispersables
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 11811 | Lafigin DT 100 mg x 30 Comprimidos Dispersables
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12962 | Lamotrigina 100 mg 30 Comprimidos Dispersables CHILE
+    Laboratorio: TEVA
+    Farmacias: Ahumada, Dr. Simi
+    Precios registrados: 2
+
+----------------------------------------------------------------------
+GRUPO 91
+CategorÝa: medicamentos
+Principio activo: desloratadina
+Firma: (('5mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 11368 | D-Histaplus 5 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 11825 | Neo Alledryl 5 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14046 | Desloratadina 5 mg x 30 Comprimidos Recubiertos ASCEND
+    Laboratorio: Ascend
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15677 | NeoAlledryl desloratadina 5 mg 30 comprimidos recubiertos
+    Laboratorio: PRATER
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 92
+CategorÝa: medicamentos
+Principio activo: anastrozol
+Firma: (('1mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 14368 | Anasvitae 1mg Caja 30 Comp. Recubiertos
+    Laboratorio: Galenicum Health Chi
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14443 | Anastrozol 1 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Seven Pharma Chile Spa
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15604 | Madelen anastrozol 1 mg 30 comprimidos recubiertos
+    Laboratorio: SYNTHON
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+  ID: 16241 | Anastrozol 1 mg 30 comprimidos recubiertos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 93
+CategorÝa: medicamentos
+Principio activo: cetirizina diclorhidrato
+Firma: (('10mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 5 | Zyrtec 10 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 6107 | Rigotax Cetirizina Diclorhidrato 10 mg 30 Comprimidos
+    Laboratorio: Prater
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 8960 | Remitex 10 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 94
+CategorÝa: medicamentos
+Principio activo: losartan potasico
+Firma: (('100mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 5645 | Losartan Potasico 100 mg 30 Comprimidos
+    Laboratorio: Seven Pharma Chile Spa
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 10605 | Cozaar 100 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 10953 | Losapres 100 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 95
+CategorÝa: medicamentos
+Principio activo: olmesartan medoxomilo
+Firma: (('20mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 5793 | Olmepress Olmesartan Medoxomilo 20 mg 30 Comprimidos
+    Laboratorio: Ascend
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 7325 | Carvas 20 mg 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 14281 | Carvas 20 mg x 30 Comprimidos
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 96
+CategorÝa: medicamentos
+Principio activo: fexofenadina clorhidrato
+Firma: (('180mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6945 | Alerxo Forte Fexofenadina Clorhidrato 180 mg 30 Comprimidos Recubiertos
+    Laboratorio: Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 13975 | Alfexa 180 mg Caja 30 Comp. Recubiertos
+    Laboratorio: Ascend
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14426 | Zinlergia 180 mg x 30 Comprimidos
+    Laboratorio: Dm Pharma
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 97
+CategorÝa: medicamentos
+Principio activo: clotiazepam
+Firma: (('10mg',), 'comprimidos_dispersable', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 7414 | Zubam ODT 10 mg 30 Comprimidos Dispersables
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 12509 | Planiden ODT 10 mg x 30 Comprimidos Dispersables
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 13121 | Zubam ODT 10 mg 30 Comprimidos Dispersables
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 98
+CategorÝa: medicamentos
+Principio activo: carvedilol
+Firma: (('25mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 10000 | Betaplex 25 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 11139 | Carvedilol 25 mg x 30 Comprimidos CHILE
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15752 | Carvedilol 25 mg 30 comprimidos
+    Laboratorio: TEVA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 99
+CategorÝa: medicamentos
+Principio activo: carvedilol
+Firma: (('12.5mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 10014 | Betaplex 12,5 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12481 | Cilokare 12.5 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15758 | Carvedilol 12,5 mg 30 comprimidos
+    Laboratorio: TEVA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 100
+CategorÝa: medicamentos
+Principio activo: lamotrigina
+Firma: (('50mg',), 'comprimidos_dispersable', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 10815 | Lamictal 50 mg x 30 Comprimidos Dispersables
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 11082 | Meganox 50 mg x 30 Comprimidos Dispersables
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12961 | Lamotrigina 50 mg x 30 Comprimidos Dispersables CHILE
+    Laboratorio: TEVA
+    Farmacias: Ahumada, Dr. Simi
+    Precios registrados: 2
+
+----------------------------------------------------------------------
+GRUPO 101
+CategorÝa: medicamentos
+Principio activo: valsartan
+Firma: (('80mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 10893 | Valaplex 80 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 11900 | Veralpres 80 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15703 | Valsartßn 80 mg 30 comprimidos recubiertos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 102
+CategorÝa: medicamentos
+Principio activo: levetiracetam
+Firma: (('100mg/ml',), 'solucion', '300 ml')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 12077 | Keppra 100 mg/ml x 300 ml Soluci¾n Oral
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 14655 | Levetiracetam 100 mg/ml x 300 ml Soluci¾n Oral PISA FARMACEUTICA DE CHILE
+    Laboratorio: Pisa Farmaceutica De Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16170 | Levetiracetam 100 mg/mL soluci¾n oral 300 mL
+    Laboratorio: PISA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 103
+CategorÝa: medicamentos
+Principio activo: celecoxib
+Firma: (('200mg',), 'capsulas', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 12703 | Celedox 200 mg x 30 Cßpsulas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 12888 | Argium 200 mg x 30 Capsulas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15863 | Coxira 200 celecoxib 200 mg 30 cßpsulas
+    Laboratorio: ASCEND
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 104
+CategorÝa: medicamentos
+Principio activo: paracetamol
+Firma: (('120mg', '120mg/5ml'), 'jarabe', '5 ml')
+Bioequivalente: No
+Farmacias participantes: Cruz Verde, Dr. Simi
+
+  ID: 89 | Kitadol Paracetamol 120 mg/5ml Jarabe 60 mL
+    Laboratorio: TEVA
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 16072 | Algiafin paracetamol 120 mg/5 mL jarabe 60 mL
+    Laboratorio: INTERPHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 105
+CategorÝa: medicamentos
+Principio activo: olanzapina
+Firma: (('10mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 188 | Zyprexa Olanzapina 10 mg 30 Comprimidos
+    Laboratorio: Tecnofarma S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 12597 | Amulsin 10 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 106
+CategorÝa: medicamentos
+Principio activo: ciproterona
+Firma: (('0.035mg', '2mg'), 'comprimidos', '21 unidades')
+Bioequivalente: No
+Farmacias participantes: Cruz Verde, Dr. Simi
+
+  ID: 190 | Dixi-35 Ciproterona 2 mg Etinilestradiol 0,035 mg 21 Comprimidos Recubiertos
+    Laboratorio: ABBOTT
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 15961 | Sop ciproterona 2 mg etinilestradiol 0,035 mg 21 comprimidos recubiertos
+    Laboratorio: EUROFARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 107
+CategorÝa: medicamentos
+Principio activo: levotiroxina
+Firma: (('75mcg',), 'comprimidos', '50 unidades')
+Bioequivalente: No
+Farmacias participantes: Cruz Verde, Dr. Simi
+
+  ID: 493 | Eutirox 75 Levotiroxina 75 mcg 50 Comprimidos
+    Laboratorio: MERCK
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 16073 | Levotiroxina 75 mcg 50 comprimidos
+    Laboratorio: ALEMBIC
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 108
+CategorÝa: medicamentos
+Principio activo: levotiroxina
+Firma: (('125mcg',), 'comprimidos', '50 unidades')
+Bioequivalente: No
+Farmacias participantes: Cruz Verde, Dr. Simi
+
+  ID: 494 | Eutirox 125 Levotiroxina 125 mcg 50 Comprimidos
+    Laboratorio: MERCK
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 15847 | Levotiroxina 125 mcg 50 comprimidos
+    Laboratorio: HOSPIFARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 109
+CategorÝa: medicamentos
+Principio activo: levotiroxina
+Firma: (('50mcg',), 'comprimidos', '50 unidades')
+Bioequivalente: No
+Farmacias participantes: Cruz Verde, Dr. Simi
+
+  ID: 496 | Eutirox 50 Levotiroxina 50 mcg 50 Comprimidos
+    Laboratorio: MERCK
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 15860 | Levotiroxina 50 mcg 50 comprimidos
+    Laboratorio: HOSPIFARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 110
+CategorÝa: medicamentos
+Principio activo: levotiroxina
+Firma: (('25mcg',), 'comprimidos', '50 unidades')
+Bioequivalente: No
+Farmacias participantes: Cruz Verde, Dr. Simi
+
+  ID: 508 | Eutirox 25 Levotiroxina 25 mcg 50 Comprimidos
+    Laboratorio: MERCK
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 15633 | Levotiroxina 25 mcg 50 comprimidos
+    Laboratorio: HOSPIFARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 111
+CategorÝa: medicamentos
+Principio activo: loratadina
+Firma: (('5mg', '5mg/5ml'), 'jarabe', '5 ml')
+Bioequivalente: No
+Farmacias participantes: Cruz Verde, Dr. Simi
+
+  ID: 1107 | Alledryl Loratadina 5 mg / 5 mL Jarabe 60 mL
+    Laboratorio: PRATER
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 16077 | Loratadina 5 mg/5 mL jarabe 90 mL
+    Laboratorio: MILAB
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 112
+CategorÝa: medicamentos
+Principio activo: levotiroxina
+Firma: (('100mcg',), 'comprimidos', '50 unidades')
+Bioequivalente: No
+Farmacias participantes: Cruz Verde, Dr. Simi
+
+  ID: 1725 | Eutirox 100 Levotiroxina 100 mcg 50 Comprimidos
+    Laboratorio: MERCK
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 15507 | Levotiroxina 100 mcg 50 comprimidos
+    Laboratorio: HOSPIFARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 113
+CategorÝa: medicamentos
+Principio activo: levocetirizina
+Firma: (('5mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Cruz Verde, Dr. Simi
+
+  ID: 2054 | Levorigotax Levocetirizina 5 mg 30 Comprimidos Recubierto
+    Laboratorio: PRATER
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 16223 | Levocetirizina 5 mg 30 comprimidos recubiertos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 114
+CategorÝa: medicamentos
+Principio activo: acetilsalicilico
+Firma: (('100mg',), 'comprimidos', '100 unidades')
+Bioequivalente: No
+Farmacias participantes: Cruz Verde, Dr. Simi
+
+  ID: 2621 | Acido Acetilsalicilico 100 mg 100 Comprimidos
+    Laboratorio: PASTEUR
+    Farmacias: Cruz Verde, Dr. Simi
+    Precios registrados: 2
+
+  ID: 15885 | ┴cido acetilsalicÝlico 100 mg 100 comprimidos
+    Laboratorio: TEVA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 115
+CategorÝa: medicamentos
+Principio activo: ezetimiba
+Firma: (('10mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 3066 | Ezetrol Ezetimiba 10 mg 30 Comprimidos
+    Laboratorio: Organon Chile S.P.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 13395 | Zient 10 mg x 30 Comprimidos
+    Laboratorio: Organon Chile S.P.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 116
+CategorÝa: medicamentos
+Principio activo: armodafinilo
+Firma: (('150mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 5761 | Nuvigil Armodafinilo 150 mg 30 Comprimidos
+    Laboratorio: Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 12168 | Neoresotyl 150 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 117
+CategorÝa: medicamentos
+Principio activo: bilastina
+Firma: (('10mg',), 'comprimidos_dispersable', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6090 | Bilidren Pedißtrico Bilastina 10 mg 30 Comprimidos bucodispersables (ODT)
+    Laboratorio: Faes Farma Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 7507 | Blaxitec Odt Bilastina 10 mg 30 Comprimidos Bucodispersables
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+----------------------------------------------------------------------
+GRUPO 118
+CategorÝa: medicamentos
+Principio activo: metformina clorhidrato
+Firma: (('750mg',), 'comprimidos_liberacion_prolongada', '60 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6262 | Glucosan XR Metformina Clorhidrato 750 mg 60 Comprimidos Recubiertos de Liberacion Prolongada
+    Laboratorio: Instituto Sanitas S.A
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 12927 | Hipoglucin LP 750 mg 60 Comprimidos de Liberaci¾n Prolongada
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 119
+CategorÝa: medicamentos
+Principio activo: valsartan
+Firma: (('320mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6313 | Valax Valsartßn 320 mg 30 Comprimidos Recubiertos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 11883 | Valaplex 320 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 120
+CategorÝa: medicamentos
+Principio activo: ibuprofeno
+Firma: (('400mg',), 'capsulas', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6346 | Actron Ibuprofeno 400 mg 20 Cßpsulas Blandas
+    Laboratorio: Bayer De Chile S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 11818 | Ibupirac LC 400 mg x 20 Cßpsulas Blandas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 121
+CategorÝa: medicamentos
+Principio activo: olmesartan medoxomilo
+Firma: (('40mg',), 'comprimidos', '40 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6358 | Cardioplus 40 mg 40 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 14154 | Cardioplus 40 mg x 40 Comprimidos Recubiertos
+    Laboratorio: Recalcine S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 122
+CategorÝa: medicamentos
+Principio activo: paracetamol
+Firma: (('500mg',), 'comprimidos', '12 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6444 | Panadol Advance Paracetamol 500 mg 12 Comprimidos
+    Laboratorio: Glaxosmithkline Chile
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 15065 | Bufferin 500Mg X 12 Comprimidos
+    Laboratorio: Genomma Otc
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 123
+CategorÝa: medicamentos
+Principio activo: solifenacina succinato
+Firma: (('5mg',), 'comprimidos', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6463 | Solicend Solifenacina Succinato 5 mg 10 Comprimidos Recubiertos
+    Laboratorio: Ascend
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 12472 | Vesicare 5 mg x 10 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 124
+CategorÝa: medicamentos
+Principio activo: olmesartan medoxomilo
+Firma: (('20mg',), 'comprimidos', '40 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6652 | Cardioplus 20 mg 40 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 14350 | Cardioplus 20 mg x 40 Comprimidos Recubiertos
+    Laboratorio: Recalcine S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 125
+CategorÝa: medicamentos
+Principio activo: telmisartan
+Firma: (('80mg',), 'comprimidos', '40 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6654 | Cordiax 80 mg 40 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 14157 | Cordiax 80 mg 40 Comprimidos
+    Laboratorio: Recalcine S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 126
+CategorÝa: medicamentos
+Principio activo: telmisartan
+Firma: (('40mg',), 'comprimidos', '40 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6655 | Cordiax 40 mg 40 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 14156 | Cordiax 40 mg x 40 Comprimidos
+    Laboratorio: Recalcine S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 127
+CategorÝa: medicamentos
+Principio activo: escitalopram oxalato
+Firma: (('10mg',), 'comprimidos', '40 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6656 | Ipran 10 mg 40 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 14213 | Ipran 10 mg 40 Comprimidos Recubiertos
+    Laboratorio: Recalcine S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 128
+CategorÝa: medicamentos
+Principio activo: escitalopram oxalato
+Firma: (('20mg',), 'comprimidos', '40 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6657 | Ipran 20 mg 40 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 14351 | Ipran 20 mg 40 Comprimidos Recubiertos
+    Laboratorio: Recalcine S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 129
+CategorÝa: medicamentos
+Principio activo: venlafaxina : 150 mg por comprimido recubierto
+Firma: (('150mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6658 | Venlakem Venlafaxina 150 mg 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 15196 | Venlakem Venlafaxina 150 mg 30 Comprimidos Recubiertos
+    Laboratorio: Producto elaborado por Ascend, autorizado por el Instituto de Salud P·blica de Chile.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 130
+CategorÝa: medicamentos
+Principio activo: venlafaxina clorhidrato
+Firma: (('37.5mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6659 | Venlakem Venlafaxina 37,5 mg 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 15195 | Venlakem Venlafaxina 37,5 mg 30 Comprimidos Recubiertos
+    Laboratorio: Ascend
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 131
+CategorÝa: medicamentos
+Principio activo: rivaroxaban
+Firma: (('15mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6697 | Rivoxa Rivaroxabßn 15 mg 30 Comprimidos Recubiertos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 6988 | Xaroban Rivaroxaban 15 mg 30 comprimidos recubiertos
+    Laboratorio: Tecnofarma S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+----------------------------------------------------------------------
+GRUPO 132
+CategorÝa: medicamentos
+Principio activo: rivaroxaban
+Firma: (('20mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 6698 | Rivoxa Rivaroxabßn 20 mg 30 Comprimidos Recubiertos
+    Laboratorio: Saval S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+  ID: 6989 | Xaroban Rivaroxaban 20 mg 30 comprimidos recubiertos
+    Laboratorio: Tecnofarma S.A.
+    Farmacias: Ahumada, Cruz Verde
+    Precios registrados: 2
+
+----------------------------------------------------------------------
+GRUPO 133
+CategorÝa: medicamentos
+Principio activo: anfebutamona clorhidrato (bupropion) : 300 mg por comprimido
+Firma: (('300mg',), 'comprimidos_liberacion_prolongada', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 7318 | Butrino XL 300 mg 30 Comprimidos Recubiertos de Liberaci¾n Prolongada
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 14887 | Butrino XL 300 mg 30 Comprimidos Recubiertos de Liberaci¾n Prolongada
+    Laboratorio: Titular: Eurofarma PaÝs de origen: Internacional
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 134
+CategorÝa: medicamentos
+Principio activo: pramipexol diclorhidrato monohidrato
+Firma: (('1.5mg',), 'comprimidos_liberacion_prolongada', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Cruz Verde
+
+  ID: 7397 | Intaxel ER 1.5 mg 30 Comprimidos Liberacion Prolongada
+    Laboratorio: Sin dato
+    Farmacias: Cruz Verde
+    Precios registrados: 1
+
+  ID: 13977 | Intaxel ER 1.5 mg x 30 Comprimidos Liberaci¾n Prolongada
+    Laboratorio: Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 135
+CategorÝa: medicamentos
+Principio activo: latanoprost
+Firma: (('50mcg/ml',), 'solucion', '2.5 ml')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 9885 | Xalatan 50 mcg/mL x 2,5 mL Soluci¾n Oftßlmica
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15663 | Latanoprost 50 mcg/mL soluci¾n oftßlmica 2,5 mL
+    Laboratorio: OPKO
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 136
+CategorÝa: medicamentos
+Principio activo: paracetamol
+Firma: (('500mg',), 'comprimidos', '24 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 9941 | Kitadol 500 mg x 24 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 11737 | Tapsin Puro Sin Cafeina 500 mg x 24 Comprimidos
+    Laboratorio: MAVER
+    Farmacias: Ahumada, Dr. Simi
+    Precios registrados: 2
+
+----------------------------------------------------------------------
+GRUPO 137
+CategorÝa: medicamentos
+Principio activo: aripiprazol
+Firma: (('15mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 11137 | Azymol 15 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15614 | Irazem aripiprazol 15 mg 30 comprimidos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 138
+CategorÝa: medicamentos
+Principio activo: aripiprazol
+Firma: (('10mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 11200 | Azymol 10 mg x 30 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16027 | Aripiprazol 10 mg 30 comprimidos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 139
+CategorÝa: medicamentos
+Principio activo: ibuprofeno
+Firma: (('600mg',), 'capsulas', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 11365 | Actron 600 mg x 10 Cßpsulas Blandas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15882 | DorAliv ibuprofeno 600 mg 10 cßpsulas blandas
+    Laboratorio: VIVUNT
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 140
+CategorÝa: medicamentos
+Principio activo: orlistat
+Firma: (('120mg',), 'capsulas', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 11788 | Liberat 120 mg x 30 Cßpsulas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15781 | Oradiet orlistat 120 mg 30 cßpsulas
+    Laboratorio: SANITAS
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 141
+CategorÝa: medicamentos
+Principio activo: leflunomida
+Firma: (('20mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 11893 | Artrilab 20 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16169 | Solivo leflunomida 20 mg 30 comprimidos
+    Laboratorio: EMCURE PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 142
+CategorÝa: medicamentos
+Principio activo: vildagliptina
+Firma: (('50mg',), 'comprimidos', '56 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 11950 | Galvus 50 mg 56 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16240 | Vildavitae vildagliptina 50 mg 56 comprimidos
+    Laboratorio: GALENICUM
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 143
+CategorÝa: medicamentos
+Principio activo: clopidogrel
+Firma: (('75mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 12125 | Piclokare 75 mg x 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15709 | Clopivitae clopidogrel 75 mg 28 comprimidos recubiertos
+    Laboratorio: GALENICUM
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 144
+CategorÝa: medicamentos
+Principio activo: bicalutamida
+Firma: (('50mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 12313 | Biolev 50 mg Caja 30 Comp. Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15957 | Bicalutamida 50 mg 30 comprimidos recubiertos
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 145
+CategorÝa: medicamentos
+Principio activo: paracetamol
+Firma: (('1g',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 12372 | Xumadol 1 g 20 Comprimidos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16230 | Dropol paracetamol 1 g 20 comprimidos
+    Laboratorio: PASTEUR
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 146
+CategorÝa: medicamentos
+Principio activo: clotiazepam
+Firma: (('5mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 12405 | Betis 5 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16252 | Clotiazepam 5 mg 30 comprimidos recubiertos
+    Laboratorio: DR. SIMI
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 147
+CategorÝa: medicamentos
+Principio activo: exemestano
+Firma: (('25mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 12778 | Exevitae 25 mg x 30 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15542 | Nodutax exemestano 25 mg 30 comprimidos recubiertos
+    Laboratorio: SYNTHON
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 148
+CategorÝa: medicamentos
+Principio activo: irbesartan
+Firma: (('300mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 12825 | Irbevitae 300 mg x 28 Comprimidos Recubiertos
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15820 | Irkem 300 irbesartßn 300 mg 28 comprimidos recubiertos
+    Laboratorio: ASCEND
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 149
+CategorÝa: medicamentos
+Principio activo: celecoxib
+Firma: (('200mg',), 'capsulas', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 12889 | Argium 200 mg x 10 Cßpsulas
+    Laboratorio: Sin dato
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15861 | Celerium celecoxib 200 mg 10 cßpsulas
+    Laboratorio: SEVEN PHARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 150
+CategorÝa: medicamentos
+Principio activo: aceite de lavanda
+Firma: (('80mg',), 'capsulas', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 13131 | Lasea 80 mg x 28 Cßpsulas Blandas
+    Laboratorio: Megalabs Chile S.A
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16249 | Lasea aceite de lavanda 80 mg 28 cßpsulas blandas
+    Laboratorio: MEGALABS
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 151
+CategorÝa: medicamentos
+Principio activo: aripiprazol
+Firma: (('15mg',), 'comprimidos', '28 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 13354 | Arivitae 15 mg Caja 28 Comp.
+    Laboratorio: Galenicum Health Chi
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15613 | Arivitae aripiprazol 15 mg 28 comprimidos
+    Laboratorio: GALENICUM
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 152
+CategorÝa: medicamentos
+Principio activo: aciclovir
+Firma: (('400mg',), 'comprimidos', '32 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 13703 | Aciclovir 400 mg x 32 Comprimidos SEVEN PHARMA SPA
+    Laboratorio: Seven Pharma Chile Spa
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15753 | Aciclovir 400 mg 32 comprimidos
+    Laboratorio: HETERO
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 153
+CategorÝa: medicamentos
+Principio activo: doxiciclina
+Firma: (('100mg',), 'capsulas', '10 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 14090 | Doxiciclina 100 mg x 10 Cßpsulas OPKO S.A.
+    Laboratorio: Opko Chile S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15775 | Doxiciclina 100 mg 10 cßpsulas
+    Laboratorio: HOSPIFARMA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 154
+CategorÝa: medicamentos
+Principio activo: tiocolchicosido
+Firma: (('8mg',), 'comprimidos', '20 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 14124 | Ebatene 8 mg x 20 Comprimidos
+    Laboratorio: Megalabs Chile S.A
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16227 | Ebatene 8 tiocolchic¾sido 8 mg 20 comprimidos
+    Laboratorio: MEGALABS
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 155
+CategorÝa: medicamentos
+Principio activo: fluconazol
+Firma: (('150mg',), 'capsulas', '2 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 14388 | Fluconazol 150 mg x 2 Cßpsulas OPKO CHILE S.A.
+    Laboratorio: Opko Chile S.A.
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15530 | Fluconazol 150 mg 2 cßpsulas
+    Laboratorio: TEVA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 156
+CategorÝa: medicamentos
+Principio activo: doxazosina
+Firma: (('4mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 14523 | Duomo 4 mg x 30 Comprimidos
+    Laboratorio: Eurofarma Chile
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 15776 | Alfadoxin doxazosina 4 mg 30 comprimidos recubiertos
+    Laboratorio: TEVA
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+----------------------------------------------------------------------
+GRUPO 157
+CategorÝa: medicamentos
+Principio activo: modafinilo
+Firma: (('200mg',), 'comprimidos', '30 unidades')
+Bioequivalente: No
+Farmacias participantes: Ahumada, Dr. Simi
+
+  ID: 14582 | Modavitae 200 mg x 30 Comprimidos
+    Laboratorio: Galenicum Health Chi
+    Farmacias: Ahumada
+    Precios registrados: 1
+
+  ID: 16173 | Modavitae modafinilo 200 mg 30 comprimidos
+    Laboratorio: GALENICUM
+    Farmacias: Dr. Simi
+    Precios registrados: 1
+
+======================================================================
+RESUMEN DE HOMOLOGACIONES
+======================================================================
+Productos analizados: 16258
+Grupos candidatos: 157
+Productos involucrados: 401
+
+Coincidencias por farmacias:
+  2 farmacias: 71 grupos
+  3 farmacias: 86 grupos
+  4 farmacias: 0 grupos
+
+Productos participantes por farmacia:
+
+======================================================================
+Detecci¾n finalizada. No se modific¾ ning·n registro.

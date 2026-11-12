@@ -1,3 +1,4 @@
+
 from collections import defaultdict
 
 from django.core.management.base import BaseCommand
@@ -21,7 +22,7 @@ PALABRAS_IGNORADAS = {
 
 
 class Command(BaseCommand):
-    help = "Detecta posibles productos duplicados sin modificar la base de datos."
+    help = "Detecta posibles homologaciones entre Cruz Verde y Ahumada."
 
     def handle(self, *args, **options):
         grupos = defaultdict(list)
@@ -29,16 +30,8 @@ class Command(BaseCommand):
         productos = (
             Producto.objects
             .select_related("medicamento")
+            .prefetch_related("precios__farmacia")
             .annotate(cantidad_precios=Count("precios"))
-            .only(
-                "id",
-                "nombre",
-                "presentacion",
-                "laboratorio",
-                "categoria",
-                "es_bioequivalente",
-                "medicamento__principio_activo",
-            )
             .iterator(chunk_size=500)
         )
 
@@ -56,7 +49,6 @@ class Command(BaseCommand):
                     producto.medicamento.principio_activo
                 )
 
-            # Sin principio activo no agrupamos automáticamente.
             if not principio_activo:
                 continue
 
@@ -67,7 +59,6 @@ class Command(BaseCommand):
 
             concentraciones, forma, cantidad = firma
 
-            # Evitar candidatos con información insuficiente.
             if not concentraciones or not forma or not cantidad:
                 continue
 
@@ -81,35 +72,72 @@ class Command(BaseCommand):
                 if palabra not in PALABRAS_IGNORADAS
             ]
 
-            if not palabras:
+            marca = palabras[0] if palabras else "Sin identificar"
+
+            nombres_farmacias = [
+                normalizar_texto_producto(precio.farmacia.nombre)
+                for precio in producto.precios.all()
+            ]
+
+            tiene_cruz_verde = any(
+                "cruz verde" in nombre
+                for nombre in nombres_farmacias
+            )
+
+            tiene_ahumada = any(
+                "ahumada" in nombre
+                for nombre in nombres_farmacias
+            )
+
+            if not tiene_cruz_verde and not tiene_ahumada:
                 continue
 
-            marca = palabras[0]
-
+            # La marca ya no forma parte de la clave.
+            # Esto permite encontrar nombres comerciales diferentes.
             clave = (
                 producto.categoria,
                 principio_activo,
                 firma,
                 producto.es_bioequivalente,
-                marca,
             )
 
             grupos[clave].append({
                 "id": producto.id,
                 "nombre": producto.nombre,
+                "marca": marca,
                 "laboratorio": producto.laboratorio,
                 "presentacion": producto.presentacion,
                 "cantidad_precios": producto.cantidad_precios,
+                "farmacias": nombres_farmacias,
+                "tiene_cruz_verde": tiene_cruz_verde,
+                "tiene_ahumada": tiene_ahumada,
             })
 
-        candidatos = [
-            (clave, productos_grupo)
-            for clave, productos_grupo in grupos.items()
-            if len(productos_grupo) > 1
-        ]
+        candidatos = []
 
-        self.stdout.write("=" * 65)
-        self.stdout.write("RESULTADO DE DETECCIÓN")
+        for clave, productos_grupo in grupos.items():
+
+            ids_cruz_verde = {
+                p["id"] for p in productos_grupo
+                if p["tiene_cruz_verde"]
+            }
+
+            ids_ahumada = {
+                p["id"] for p in productos_grupo
+                if p["tiene_ahumada"]
+            }
+
+            # Deben existir productos distintos entre ambas farmacias.
+            if (
+                len(productos_grupo) > 1
+                and ids_cruz_verde
+                and ids_ahumada
+                and ids_cruz_verde != ids_ahumada
+            ):
+                candidatos.append((clave, productos_grupo))
+
+        self.stdout.write("\n" + "=" * 65)
+        self.stdout.write("RESULTADO DE DETECCIÓN CRUZ VERDE - AHUMADA")
         self.stdout.write("=" * 65)
 
         self.stdout.write(f"Productos analizados: {total}")
@@ -127,29 +155,42 @@ class Command(BaseCommand):
         for numero, (clave, productos_grupo) in enumerate(
             candidatos, start=1
         ):
-            categoria, activo, firma, bioequivalente, marca = clave
+            categoria, activo, firma, bioequivalente = clave
 
             self.stdout.write("-" * 65)
             self.stdout.write(f"GRUPO {numero}")
             self.stdout.write(f"Categoría: {categoria}")
             self.stdout.write(f"Principio activo: {activo}")
             self.stdout.write(f"Firma: {firma}")
-            self.stdout.write(f"Marca inicial: {marca}")
             self.stdout.write(
                 f"Bioequivalente: {'Sí' if bioequivalente else 'No'}"
             )
 
             for producto in productos_grupo:
+                farmacias = ", ".join(producto["farmacias"])
+
                 self.stdout.write(
-                    f"  ID: {producto['id']} | "
-                    f"{producto['nombre']}"
+                    f"\n  ID: {producto['id']} | {producto['nombre']}"
                 )
+
                 self.stdout.write(
-                    f"     Laboratorio: {producto['laboratorio'] or 'Sin dato'} | "
-                    f"Precios: {producto['cantidad_precios']}"
+                    f"    Marca identificada: {producto['marca']}"
+                )
+
+                self.stdout.write(
+                    f"    Laboratorio: {producto['laboratorio'] or 'Sin dato'}"
+                )
+
+                self.stdout.write(
+                    f"    Farmacias: {farmacias or 'Sin datos'}"
+                )
+
+                self.stdout.write(
+                    f"    Cantidad de precios: {producto['cantidad_precios']}"
                 )
 
         self.stdout.write("\n" + "=" * 65)
         self.stdout.write(
             "Detección finalizada. No se modificó ningún registro."
         )
+
