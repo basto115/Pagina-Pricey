@@ -2705,6 +2705,7 @@ main .medicamento .cantidad-controles button.btn-eliminar:hover {
 
 #mensaje-ubicacion {
     display: none;
+}
 /* =========================
    FILTROS POR CATEGORÍAS
    ========================= */
@@ -2740,6 +2741,7 @@ main .medicamento .cantidad-controles button.btn-eliminar:hover {
     font-size: 13px;
     font-weight: 700;
     text-decoration: none;
+    text-transform: uppercase;
 
     transition: all 0.2s ease;
 }
