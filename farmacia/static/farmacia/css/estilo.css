@@ -2702,3 +2702,7 @@ main .medicamento .cantidad-controles button.btn-eliminar:hover {
     color: #FFFFFF !important;
     border-color: #F3B6CC !important;
 }
+
+#mensaje-ubicacion {
+    display: none;
+}
