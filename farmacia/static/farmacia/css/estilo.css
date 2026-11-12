@@ -2,17 +2,31 @@
 /* FARMA PRICEY - ESTILOS */
 
 
-   :root {
-    --verde-oscuro: #173f35;
-    --verde: #287653;
-    --verde-lima: #c8f169;
-    --fondo: #f5f7f3;
-    --blanco: #ffffff;
-    --texto: #24332d;
-    --texto-secundario: #718078;
-    --borde: #e2e9e1;
-    --sombra: 0 8px 24px rgba(23, 63, 53, 0.08);
+:root {
+    /* COLORES PRINCIPALES */
+    --azul-oscuro: #355D7A;
+    --azul: #78B9DF;
+    --azul-claro: #DCEFFA;
 
+    /* ACENTOS ROSADOS */
+    --rosa: #F3B6CC;
+    --rosa-claro: #FBE5ED;
+    --rosa-hover: #E99FBA;
+
+    /* COLORES GENERALES */
+    --fondo: #F7F9FC;
+    --blanco: #FFFFFF;
+    --texto: #344454;
+    --texto-secundario: #788997;
+    --borde: #E2EAF1;
+
+    /* EFECTOS */
+    --sombra: 0 8px 24px rgba(53, 93, 122, 0.09);
+
+    /* Compatibilidad con los estilos anteriores */
+    --verde-oscuro: var(--azul-oscuro);
+    --verde: var(--azul);
+    --verde-lima: var(--rosa);
 }
 
 
@@ -2285,4 +2299,367 @@ button.btn-eliminar:hover {
         bottom: 12px;
         width: calc(100% - 24px);
     }
+}
+
+
+
+/*PRUEBA NUEVOS COLORES CHOPPER*/
+
+
+/* =========================================
+   FARMA PRICEY - NUEVA IDENTIDAD CHOPPER
+   ========================================= */
+
+/* ENCABEZADO Y LOGO */
+
+.logo h1,
+.detalle-cabecera h1 {
+    color: var(--azul-oscuro);
+}
+
+.logo-enlace {
+    background-color: var(--azul);
+}
+
+nav a:hover,
+.detalle-volver:hover {
+    color: var(--azul);
+}
+
+/* PORTADA Y BUSCADOR */
+
+.buscador {
+    background:
+        radial-gradient(
+            circle at 85% 15%,
+            rgba(243, 182, 204, 0.28),
+            transparent 35%
+        ),
+        var(--azul-oscuro);
+}
+
+.buscador button {
+    background-color: var(--rosa);
+    color: var(--azul-oscuro);
+}
+
+.buscador button:hover {
+    background-color: var(--rosa-hover);
+}
+
+.buscador input:focus {
+    box-shadow: inset 0 0 0 2px var(--rosa);
+}
+
+/* TÍTULOS */
+
+.populares h2,
+.farmacias h2,
+.medicamento h3,
+.farmacia h3,
+.detalle-cabecera h1,
+.producto-descripcion h2,
+.bloque-titulo h2,
+.comparacion-intro h2,
+.comparacion-producto-titulo h3,
+.comparacion-vacia h3,
+.mapa-detalle-titulo h2,
+.bloque-comparacion h2,
+.bloque-comparacion h3,
+.cuenta-tarjeta h1,
+.cuenta-separador h2,
+.auth-titulo,
+.password-reset-titulo {
+    color: var(--azul-oscuro);
+}
+
+/* TARJETAS DE MEDICAMENTOS */
+
+.medicamento:hover {
+    box-shadow: 0 14px 30px rgba(53, 93, 122, 0.14);
+}
+
+.precio {
+    background-color: #F2F7FB;
+    color: var(--texto-secundario);
+}
+
+.precio strong,
+.precio-valor {
+    color: var(--azul-oscuro);
+}
+
+.imagen-medicamento,
+.producto-imagen,
+.presentacion-icono,
+.farmacia-icono {
+    background-color: var(--azul-claro);
+}
+
+/* BOTONES PRINCIPALES */
+
+.btn-medicamento,
+.farmacia a,
+.farmacia button,
+.precio-boton,
+.auth-boton,
+.cuenta-boton,
+.detalle-nav form button,
+.password-reset-boton {
+    background-color: var(--azul);
+    border-color: var(--azul);
+    color: var(--azul-oscuro);
+}
+
+.btn-medicamento:hover,
+.farmacia a:hover,
+.farmacia button:hover,
+.precio-boton:hover,
+.cuenta-boton:hover,
+.detalle-nav form button:hover,
+.password-reset-boton:hover {
+    background-color: var(--azul-oscuro);
+    border-color: var(--azul-oscuro);
+    color: var(--blanco);
+}
+
+.auth-boton:hover {
+    background-color: var(--azul-oscuro);
+}
+
+/* PRESENTACIONES Y DETALLES */
+
+.producto-etiqueta,
+.presentacion-mini-info a,
+.detalle-volver,
+.cuenta-volver,
+.auth-enlace a,
+.password-reset-volver {
+    color: var(--azul);
+}
+
+.titulo-decoracion {
+    background-color: var(--rosa);
+}
+
+.detalle-consejo,
+.password-reset-aviso {
+    background-color: var(--azul-claro);
+}
+
+.detalle-consejo > span {
+    color: var(--azul-oscuro);
+}
+
+/* COMPARADOR DE PRECIOS */
+
+.precio-badge {
+    background-color: var(--rosa-claro);
+    color: #8C526B;
+}
+
+.farmacia-icono {
+    color: var(--azul-oscuro);
+}
+
+.tarjeta-precio {
+    box-shadow: 0 4px 14px rgba(53, 93, 122, 0.07);
+}
+
+/* MAPAS Y FILTROS */
+
+.mapa-placeholder {
+    background-color: var(--azul-claro);
+    background-image:
+        linear-gradient(
+            35deg,
+            transparent 46%,
+            #C4DFEF 47%,
+            #C4DFEF 50%,
+            transparent 51%
+        ),
+        linear-gradient(
+            -25deg,
+            transparent 46%,
+            #C4DFEF 47%,
+            #C4DFEF 50%,
+            transparent 51%
+        );
+    border-color: #C4DFEF;
+}
+
+.mapa-placeholder p {
+    color: var(--azul-oscuro);
+}
+
+.filtro-farmacia:hover,
+.filtro-farmacia.activo {
+    border-color: var(--azul);
+    background-color: var(--azul-claro);
+    color: var(--azul-oscuro);
+}
+
+.filtro-farmacia:focus-visible {
+    outline-color: var(--rosa);
+}
+
+.btn-ruta {
+    border-color: var(--azul);
+    color: var(--azul-oscuro);
+}
+
+.precio-boton-mapa {
+    color: var(--azul-oscuro);
+    border-color: var(--azul);
+}
+
+/* PAGINACIÓN */
+
+.pagina-numero,
+.pagina-flecha {
+    color: var(--azul-oscuro);
+}
+
+.pagina-numero:hover,
+.pagina-flecha:hover {
+    background-color: var(--rosa-claro);
+    color: var(--azul-oscuro);
+}
+
+.pagina-numero.pagina-activa {
+    background-color: var(--azul);
+    border-color: var(--azul);
+    color: var(--azul-oscuro);
+}
+
+/* LOGIN, REGISTRO Y RECUPERACIÓN */
+
+.auth-contenedor,
+.password-reset-contenedor {
+    background:
+        radial-gradient(
+            circle at 85% 15%,
+            rgba(243, 182, 204, 0.30),
+            transparent 35%
+        ),
+        var(--fondo);
+}
+
+.auth-campo input:focus,
+.password-reset-campo input:focus,
+.cuenta-campo input:focus {
+    border-color: var(--azul);
+    outline-color: var(--rosa);
+    box-shadow: 0 0 0 3px rgba(120, 185, 223, 0.18);
+}
+
+.password-reset-icono {
+    background-color: var(--rosa-claro);
+}
+
+.password-reset-mensaje,
+.cuenta-mensaje {
+    background-color: var(--azul-claro);
+    border-color: #BBD9EC;
+    color: var(--azul-oscuro);
+}
+
+/* MI CUENTA */
+
+.cuenta-etiqueta {
+    background-color: var(--rosa-claro);
+    color: #8C526B;
+}
+
+.cuenta-dato {
+    background-color: #F2F7FB;
+}
+
+.cuenta-dato p {
+    color: var(--azul-oscuro);
+}
+
+.cuenta-campo input:disabled {
+    background-color: #F2F7FB;
+}
+
+/* MENÚ DE USUARIO */
+
+.usuario-trigger {
+    color: var(--azul-oscuro);
+}
+
+.usuario-dropdown a:hover {
+    background-color: var(--azul-claro);
+    color: var(--azul-oscuro);
+}
+
+/* PIE DE PÁGINA */
+
+footer {
+    background-color: var(--azul-oscuro);
+}
+
+.footer-contenido h3,
+.footer-contenido h4 {
+    color: var(--rosa);
+}
+
+.footer-contenido a:hover {
+    color: var(--rosa);
+}
+
+/* NOTIFICACIONES */
+
+.notificacion {
+    border-color: var(--borde);
+    border-left-color: var(--azul);
+    color: var(--texto);
+}
+
+.notificacion-icono {
+    background-color: var(--rosa-claro);
+    color: #8C526B;
+}
+
+.notificacion-cerrar:hover {
+    color: var(--azul-oscuro);
+}
+
+/* LECTURA DE RECETAS */
+
+.receta-contenedor h1,
+.receta-contenedor h2 {
+    color: var(--azul-oscuro);
+}
+
+.receta-texto {
+    background-color: #F2F7FB;
+}
+
+/* NAVEGACIÓN RESPONSIVE */
+
+@media (max-width: 950px) {
+    header nav a {
+        color: var(--texto);
+    }
+}
+
+/* BOTONES PARA AGREGAR PRODUCTOS EN ROSA PASTEL */
+
+.btn-medicamento {
+    background-color: var(--rosa);
+    border-color: var(--rosa);
+    color: var(--azul-oscuro);
+}
+
+.btn-medicamento:hover {
+    background-color: var(--rosa-hover);
+    border-color: var(--rosa-hover);
+    color: var(--azul-oscuro);
+}
+
+/* TÍTULO DE LECTURA DE RECETA */
+.receta-contenedor .buscador h1 {
+    color: #FFFFFF;
 }
