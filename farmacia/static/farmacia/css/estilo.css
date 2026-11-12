@@ -2663,3 +2663,42 @@ footer {
 .receta-contenedor .buscador h1 {
     color: #FFFFFF;
 }
+
+/* BOTÓN LEER RECETA */
+.receta-boton {
+    background-color: var(--azul);
+    color: #FFFFFF;
+    border: 2px solid var(--azul);
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.receta-boton:hover {
+    background-color: var(--azul-oscuro);
+    border-color: var(--azul-oscuro);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(53, 93, 122, 0.2);
+}
+
+/* BOTÓN ELIMINAR - MI LISTA */
+main .medicamento .cantidad-controles button.btn-eliminar {
+    background-color: #FBE5ED !important;
+    color: #C45D83 !important;
+    border: 2px solid #F3B6CC !important;
+    border-radius: 12px !important;
+    padding: 9px 18px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+main .medicamento .cantidad-controles button.btn-eliminar:hover {
+    background-color: #F3B6CC !important;
+    color: #FFFFFF !important;
+    border-color: #F3B6CC !important;
+}
