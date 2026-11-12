@@ -38,6 +38,26 @@
         </form>
     </section>
 
+    <!-- Filtros por categorías -->
+    <section class="filtros-categorias">
+        <div class="categorias-contenedor">
+            <a href="{% url 'inicio' %}{% if busqueda %}?buscar={{ busqueda|urlencode }}{% endif %}"
+               class="boton-categoria {% if not categoria_seleccionada %}seleccionada{% endif %}">
+                TODAS
+            </a>
+            {% for categoria in categorias %}
+                <a href="?categoria={{ categoria|urlencode }}{% if busqueda %}&buscar={{ busqueda|urlencode }}{% endif %}"
+                   class="boton-categoria {% if categoria_seleccionada == categoria %}seleccionada{% endif %}">
+                   {% if categoria == "cuidado_personal" %}
+                        CUIDADO PERSONAL
+                    {% else %}
+                        {{ categoria|cut:"_"|upper }}
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+
     {% include "partials/catalogo.html" %}
 
     <section class="farmacias" id="farmacias">
@@ -46,9 +66,9 @@
             <div class="lista-farmacias">
                 <button type="button"
                         class="farmacia filtro-farmacia activo"
-                        data-cadena="todas"
+                        data-cadena="TODAS"
                         aria-pressed="true">
-                    <h3>Todas</h3>
+                    <h3>TODASs</h3>
                 </button>
 
                 <button type="button"
