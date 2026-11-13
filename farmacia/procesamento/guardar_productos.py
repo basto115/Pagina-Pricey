@@ -3,6 +3,7 @@ import re
 import unicodedata
 
 from django.db import transaction
+from farmacia.procesamento.normalizar import detectar_categoria
 
 from farmacia.models import (
     Medicamento,
@@ -12,6 +13,7 @@ from farmacia.models import (
 )
 
 _BUSQUEDA_NO_REALIZADA = object()
+_INDICE_PRODUCTOS = None
 
 def normalizar_nombre_busqueda(nombre):
     """
@@ -263,6 +265,76 @@ def extraer_firma_producto(nombre, presentacion=""):
         forma,
         cantidad
     )
+
+def obtener_clave_marca(nombre):
+    """Obtiene la primera palabra significativa del nombre."""
+
+    marcas_ignoradas = {
+        "500", "100", "50", "25", "10",
+        "mg", "mcg", "g", "ml",
+        "comprimidos", "comprimido",
+        "capsulas", "capsula",
+        "recubiertos", "recubierto",
+        "tabletas", "tableta"
+    }
+
+    palabras = [
+        palabra
+        for palabra in normalizar_texto_producto(nombre).split()
+        if palabra not in marcas_ignoradas
+    ]
+
+    return palabras[0] if palabras else ""
+
+
+def obtener_indice_productos():
+    """Carga los productos existentes una sola vez."""
+
+    global _INDICE_PRODUCTOS
+
+    if _INDICE_PRODUCTOS is None:
+        indice = {}
+
+        productos = (
+            Producto.objects
+            .select_related("medicamento")
+            .only(
+                "id",
+                "nombre",
+                "presentacion",
+                "laboratorio",
+                "es_bioequivalente",
+                "medicamento__principio_activo",
+            )
+            .iterator(chunk_size=500)
+        )
+
+        for producto in productos:
+            clave = obtener_clave_marca(producto.nombre)
+
+            if clave:
+                indice.setdefault(clave, []).append(producto)
+
+        _INDICE_PRODUCTOS = indice
+
+    return _INDICE_PRODUCTOS
+
+
+def registrar_producto_en_indice(producto):
+    """Agrega productos nuevos al índice durante la importación."""
+
+    if _INDICE_PRODUCTOS is None:
+        return
+
+    clave = obtener_clave_marca(producto.nombre)
+
+    if not clave:
+        return
+
+    candidatos = _INDICE_PRODUCTOS.setdefault(clave, [])
+
+    if not any(p.id == producto.id for p in candidatos):
+        candidatos.append(producto)
     
 def productos_equivalentes(
     existente,
@@ -274,36 +346,14 @@ def productos_equivalentes(
 ):
     """Determina si dos registros representan el mismo producto."""
 
-    # Marca comercial: evitar mezclar productos de marcas diferentes.
-    nombre_existente = normalizar_texto_producto(existente.nombre)
-    nombre_nuevo = normalizar_texto_producto(nombre)
+    # Comprobar marca comercial.
+    clave_existente = obtener_clave_marca(existente.nombre)
+    clave_nueva = obtener_clave_marca(nombre)
 
-    marcas_ignoradas = {
-        "500", "100", "50", "25", "10",
-        "mg", "mcg", "g", "ml",
-        "comprimidos", "comprimido",
-        "capsulas", "capsula",
-        "recubiertos", "recubierto",
-        "tabletas", "tableta"
-    }
-
-    palabras_existente = [
-        p for p in nombre_existente.split()
-        if p not in marcas_ignoradas
-    ]
-
-    palabras_nuevas = [
-        p for p in nombre_nuevo.split()
-        if p not in marcas_ignoradas
-    ]
-
-    if not palabras_existente or not palabras_nuevas:
+    if not clave_existente or clave_existente != clave_nueva:
         return False
 
-    if palabras_existente[0] != palabras_nuevas[0]:
-        return False
-    
-    # Principio activo
+    # Comprobar marca comercial.
     activo_existente = normalizar_texto_producto(
         existente.medicamento.principio_activo
         if existente.medicamento else ""
@@ -316,17 +366,15 @@ def productos_equivalentes(
             return False
 
     elif activo_nuevo:
-        # Si el registro antiguo no tiene principio activo,
-        # comprobar que aparezca explícitamente en su nombre.
-        nombre_existente = normalizar_texto_producto(
-            existente.nombre
-        )
-
         componentes_activo = [
             parte.strip()
             for parte in activo_nuevo.split("-")
             if parte.strip()
         ]
+
+        nombre_existente = normalizar_texto_producto(
+            existente.nombre
+        )
 
         if not all(
             re.search(
@@ -339,47 +387,72 @@ def productos_equivalentes(
 
     elif activo_existente:
         return False
-    
 
-    # Laboratorio: si ambos están informados, deben coincidir.
+    # Comprobar laboratorio cuando ambos están informados.
     lab_existente = normalizar_laboratorio(
         existente.laboratorio
     )
-
     lab_nuevo = normalizar_laboratorio(laboratorio)
 
     if lab_existente and lab_nuevo and lab_existente != lab_nuevo:
         return False
 
-    # Concentración, forma y cantidad
+    # Comprobar bioequivalencia.
+    if existente.es_bioequivalente != es_bioequivalente:
+        return False
+
+    # Productos sin principio activo: coincidencia exacta del nombre
+    # normalizado y de la cantidad cuando ambos la informan.
+    if not activo_existente and not activo_nuevo:
+        nombre_existente = normalizar_texto_producto(
+            existente.nombre
+        )
+        nombre_nuevo = normalizar_texto_producto(nombre)
+
+        if nombre_existente != nombre_nuevo:
+            return False
+
+        firma_existente = extraer_firma_producto(
+            existente.nombre,
+            existente.presentacion
+        )
+        firma_nueva = extraer_firma_producto(
+            nombre,
+            presentacion
+        )
+
+        cantidad_existente = firma_existente[2]
+        cantidad_nueva = firma_nueva[2]
+
+        if (
+            cantidad_existente
+            and cantidad_nueva
+            and cantidad_existente != cantidad_nueva
+        ):
+            return False
+
+        return True
+
+    # Productos con principio activo: mantener validación estricta.
     firma_existente = extraer_firma_producto(
         existente.nombre,
         existente.presentacion
     )
-
     firma_nueva = extraer_firma_producto(
         nombre,
         presentacion
     )
 
-    # No homologar automáticamente si faltan datos
-    # que permitan comparar las características.
     if not firma_existente[0] or not firma_nueva[0]:
         return False
-    
+
     if not firma_existente[1] or not firma_nueva[1]:
         return False
 
     if firma_existente != firma_nueva:
         return False
 
-    # Bioequivalencia: evitar mezclar registros con
-    # indicadores explícitos diferentes.
-    if existente.es_bioequivalente != es_bioequivalente:
-        return False
-
     return True
-
 
 def buscar_producto_compatible(
     nombre,
@@ -389,27 +462,18 @@ def buscar_producto_compatible(
     es_bioequivalente,
     laboratorio="",
 ):
-    """
-    Busca productos equivalentes leyendo únicamente
-    los campos necesarios y procesando por bloques.
-    """
 
-    productos = (
-        Producto.objects
-        .filter(categoria=categoria)
-        .select_related("medicamento")
-        .only(
-            "id",
-            "nombre",
-            "presentacion",
-            "laboratorio",
-            "es_bioequivalente",
-            "medicamento__principio_activo",
-        )
-        .iterator(chunk_size=500)
-    )
+    """Busca productos compatibles usando el índice en memoria."""
 
-    for existente in productos:
+    clave = obtener_clave_marca(nombre)
+
+    if not clave:
+        return None
+
+    indice = obtener_indice_productos()
+    candidatos = indice.get(clave, [])
+
+    for existente in candidatos:
         if productos_equivalentes(
             existente,
             nombre,
@@ -467,19 +531,11 @@ def guardar_producto(datos, nombre_farmacia, producto_existente=_BUSQUEDA_NO_REA
             f"El producto '{nombre}' no tiene un precio válido."
         )
 
-    categoria = str(
-        datos.get("categoria") or "medicamentos"
-    ).strip().lower()
-
-    categorias_validas = {
-        "medicamentos",
-        "cuidado_personal",
-        "cosmeticos",
-        "otros",
-    }
-
-    if categoria not in categorias_validas:
-        categoria = "otros"
+    categoria = detectar_categoria(
+        nombre,
+        datos.get("principio_activo", ""),
+        datos.get("presentacion", ""),
+    )
 
     principio_activo = str(
         datos.get("principio_activo") or ""
@@ -573,6 +629,7 @@ def guardar_producto(datos, nombre_farmacia, producto_existente=_BUSQUEDA_NO_REA
         if cambios:
             producto.save(update_fields=cambios)
 
+    registrar_producto_en_indice(producto)
     valores_precio = {
         "precio": precio_obtenido,
         "disponible": convertir_booleano(

@@ -1,4 +1,5 @@
 import re
+import unicodedata
 
 CATEGORIAS_VALIDAS = {
     "medicamentos",
@@ -6,7 +7,6 @@ CATEGORIAS_VALIDAS = {
     "cosmeticos",
     "otros",
 }
-
 
 def limpiar_texto(texto):
     """Limpia espacios y normaliza texto."""
@@ -97,15 +97,80 @@ def normalizar_url(url):
     return limpiar_texto(url)
 
 
-def normalizar_categoria(categoria):
-    """Valida y normaliza la categoría del producto."""
+def detectar_categoria(nombre, principio_activo="", presentacion=""):
+    texto = f"{nombre} {principio_activo} {presentacion}".lower()
+
+    texto = unicodedata.normalize("NFKD", texto)
+    texto = "".join(
+        c for c in texto
+        if unicodedata.category(c) != "Mn"
+    )
+
+    # Medicamentos: señales farmacéuticas claras.
+    palabras_medicamentos = [
+        "comprimido", "comprimidos",
+        "capsula", "capsulas",
+        "jarabe", "solucion oral",
+        "suspension oral", "inyectable",
+        "antibiotico", "analgesico",
+        "antihistaminico", "colirio",
+        "supositorio", "ovulo",
+        "principio activo",
+    ]
+
+    if limpiar_texto(principio_activo):
+        return "medicamentos"
+
+    if any(p in texto for p in palabras_medicamentos):
+        return "medicamentos"
+
+    # Cosméticos.
+    palabras_cosmeticos = [
+        "maquillaje", "labial", "mascara de pestanas",
+        "base de maquillaje", "delineador", "rubor",
+        "corrector", "serum", "serum facial",
+        "crema facial", "agua micelar",
+        "contorno de ojos", "contorno ojos",
+        "perfume", "antiarrugas", "antiedad",
+        "redensificante", "hidratante facial",
+        "crema de dia", "crema de noche",
+        "crema anti edad", "tratamiento facial",
+        "neovadiol",
+    ]
+
+    if any(p in texto for p in palabras_cosmeticos):
+        return "cosmeticos"
+
+    # Cuidado personal e higiene.
+    palabras_cuidado = [
+        "shampoo", "champu", "acondicionador",
+        "desodorante", "jabon", "pasta dental",
+        "cepillo dental", "toalla higienica",
+        "panal", "panales", "protector solar",
+        "agua termal", "crema corporal",
+        "higiene", "enjuague bucal",
+    ]
+
+    if any(p in texto for p in palabras_cuidado):
+        return "cuidado_personal"
+
+    return "otros"
+
+
+def normalizar_categoria(categoria, nombre="", principio_activo="", presentacion=""):
+    if nombre or principio_activo or presentacion:
+        return detectar_categoria(
+            nombre,
+            principio_activo,
+            presentacion,
+        )
+
     categoria = limpiar_texto(categoria).lower()
 
     if categoria in CATEGORIAS_VALIDAS:
         return categoria
 
-    return "otros" if categoria else "medicamentos"
-
+    return "otros"
 
 def normalizar_producto(producto, farmacia):
     """
@@ -133,7 +198,10 @@ def normalizar_producto(producto, farmacia):
         ),
         "farmacia": farmacia,
         "categoria": normalizar_categoria(
-            producto.get("categoria")
+            producto.get("categoria"),
+            producto.get("nombre", ""),
+            producto.get("principio_activo", ""),
+            producto.get("presentacion", ""),
         ),
         "sku": limpiar_texto(
             producto.get("sku")

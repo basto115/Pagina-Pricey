@@ -5,9 +5,8 @@ from pathlib import Path
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-
+from django.db.models import Count
 from farmacia.models import Producto
-
 
 def normalizar(texto):
     texto = str(texto or "").lower().strip()
@@ -17,227 +16,30 @@ def normalizar(texto):
         if unicodedata.category(caracter) != "Mn"
     )
 
-
 def clasificar_producto(producto):
-    nombre = normalizar(producto.nombre)
-    categoria = normalizar(getattr(producto, "categoria", ""))
-    principio = normalizar(getattr(producto, "principio_activo", ""))
+    cantidad = producto.cantidad_farmacias
 
-    # Categorías propias del proyecto.
-    if categoria in ("medicamentos", "cosmeticos", "cuidado_personal"):
-        return "conservar", "Categoría propia del proyecto"
+    if cantidad >= 2:
+        return "conservar", f"Disponible en {cantidad} farmacias"
 
-    # Principios activos: señal fuerte de medicamento.
-    if principio:
-        return "conservar", "Tiene principio activo"
+    if cantidad == 1:
+        return "eliminar", "Solo aparece en una farmacia; no permite comparar precios"
 
-    # Indicadores de medicamentos y productos farmacéuticos.
-    farmaceuticos = [
-        "crema topica", "crema dermica", "solucion topica",
-        "solucion oftalmica", "unguento", "unguento oftalmico",
-        "solucion otologica", "ovulos", "ampolla",
-        "insulina", "clotrimazol", "aciclovir",
-        "gentamicina", "betametasona", "lidocaina",
-        "ciprofloxacino", "mupirocina", "nistatina",
-        "metronidazol", "timolol", "pilocarpina",
-        "diclofenaco", "ketoconazol", "antazolina",
-        "atropina", "polimixina", "neomicina",
-        "medicamento", "farmaceutico",
-    ]
-
-    if any(palabra in nombre for palabra in farmaceuticos):
-        return "conservar", "Producto farmacéutico"
-
-    # Cosméticos y cuidado personal.
-
-    cuidado = [
-        "crema", "gel", "mascarilla", "tintura",
-        "coloracion", "cepillo", "eau", "enjuague",
-        "esmalte", "espuma", "aceite", "protector",
-        "fotoprotector", "toallas", "toalla",
-        "sombra", "antitranspirante", "mascara",
-        "colonia", "spray", "base", "locion",
-        "limpiador", "repuesto", "estuche",
-        "maquina", "maquina de afeitar",
-        "mamadera", "chupete", "biberon",
-        "ropa interior", "preservativo",
-        "cepillo dental", "hilo dental",
-        "desodorante", "shampoo", "acondicionador",
-        "serum", "labial", "delineador",
-        "rubor", "polvo compacto", "maquillaje",
-        "agua micelar", "removedor", "exfoliante",
-        "hidratante", "antiedad", "antiarrugas",
-        "nuxe", "eucerin", "svr", "nutrisse",
-    ]
-
-    if any(palabra in nombre for palabra in cuidado):
-        return "conservar", "Cosmético o cuidado personal"
-
-
-    # Productos veterinarios y para mascotas.
-    mascotas = [
-        "veterinaria", "veterinario", "para perros",
-        "para gatos", "para perro", "para gato",
-        "alimento perro", "alimento gato",
-        "snack perro", "snack gato",
-        "galleta perro", "galleta gato",
-        "mascotas", "antipulgas perro",
-        "antipulgas gato",
-    ]
-
-    if any(palabra in nombre for palabra in mascotas):
-        return "eliminar", "Producto para mascotas o veterinario"
-
-    # Artículos de hogar y limpieza.
-    hogar = [
-        "detergente", "lavaloza", "lavalozas",
-        "limpiavidrios", "limpia pisos",
-        "limpiador de pisos", "cloro",
-        "desinfectante de superficies",
-        "bolsas de basura", "esponja",
-        "paño de limpieza", "ambientador",
-        "suavizante de ropa",
-    ]
-
-    if any(palabra in nombre for palabra in hogar):
-        return "eliminar", "Artículo de hogar o limpieza"
-
-    # Nutrición, suplementos y productos relacionados con la salud.
-    salud = [
-        "vitamina", "multivitamin", "gomitas",
-        "gummies", "proteina", "protein",
-        "whey", "creatina", "colageno",
-        "suplemento", "magnesio", "omega 3",
-        "omega-3", "probiotico", "prebiotico",
-        "propoleo", "isolate", "aminoacido",
-        "nutricion infantil", "cereal infantil",
-        "alimento infantil", "formula infantil",
-        "complemento alimenticio",
-    ]
-
-    if principio or any(palabra in nombre for palabra in salud):
-        return "conservar", "Medicamento, suplemento o nutrición"
-
-    # Alimentos y bebidas convencionales.
-    alimentos = [
-        "chocolate", "galletas", "galleta",
-        "bombones", "caramelos", "golosinas",
-        "papas fritas", "snack", "bebida gaseosa",
-        "bebida lactea", "agua saborizada",
-        "jugo de fruta", "nectar",
-        "mermelada", "brownie", "queque",
-        "pastel", "barrita de cereal",
-        "barra de cereal", "galletón",
-        "galeton",
-    ]
-
-    if any(palabra in nombre for palabra in alimentos):
-        return "eliminar", "Alimento o bebida convencional"
-
-    # Productos médicos, ortopédicos y de diagnóstico.
-    medicos = [
-        "accu-chek", "parche", "parches",
-        "adhesiva", "adhesivo", "cinta",
-        "venda", "vendas", "suerox",
-        "lente de contacto", "lentes de contacto",
-        "guantes", "guatero", "termometro",
-        "gasa", "gasas", "algodon",
-        "jeringa", "jeringas", "mascarilla quirurgica",
-        "apósito", "aposito", "curita",
-    ]
-
-    if any(palabra in nombre for palabra in medicos):
-        return "conservar", "Producto médico o de diagnóstico"
-
-    # Marcas de cosmética y cuidado personal.
-    marcas_cuidado = [
-        "filorga", "isdinceutics", "infallible",
-        "loreal", "l'oreal", "eucerin",
-        "nuxe", "svr", "lifestyles",
-        "accu-chek",
-    ]
-
-    if any(marca in nombre for marca in marcas_cuidado):
-        return "conservar", "Marca de salud o cuidado personal"
-
+    return "eliminar", "No tiene registros de precios"
     
-    # Medicamentos y productos farmacéuticos reconocibles.
-    medicamentos_extra = [
-        "salbutamol", "albendazol", "povidona",
-        "picosulfato", "pargeverina", "simeticona",
-        "sucralfato", "valeriana", "psyllium",
-        "bicarbonato", "cloruro", "gluconato",
-        "periciazina", "benzocaina", "caolin",
-        "hamamelis", "mentol", "vaselina medicinal",
-        "extracto fluido", "supositorios", "enema",
-        "gotas nasales", "solucion nasal",
-        "solucion para nebulizacion",
-    ]
-
-    if any(palabra in nombre for palabra in medicamentos_extra):
-        return "conservar", "Medicamento o producto farmacéutico"
-
-    # Dispositivos médicos y ortopédicos.
-    dispositivos = [
-        "tiras de glucosa", "tira de glucosa",
-        "aguja hipodermica", "aguja desechable",
-        "aerocamara", "aerocamara",
-        "compresa", "cabestrillo", "rodillera",
-        "muñequera", "munequera", "faja",
-        "baja lenguas", "bajalenguas",
-        "paleta de madera", "tapón para oidos",
-        "tapon para oidos", "optifree",
-        "optifree", "optical", "anillo vaginal",
-    ]
-
-    if any(palabra in nombre for palabra in dispositivos):
-        return "conservar", "Dispositivo o accesorio médico"
-
-    # Nutrición infantil.
-    nutricion_infantil = [
-        "formula lactea", "formula de inicio",
-        "colado", "picado carne",
-        "alimento infantil",
-    ]
-
-    if any(palabra in nombre for palabra in nutricion_infantil):
-        return "conservar", "Nutrición infantil"
-
-    # Cosmética, higiene y accesorios de cuidado personal.
-    cuidado_extra = [
-        "desmaquillante", "after shave",
-        "fragancia", "talco", "emulsion",
-        "emulsionado", "cotonitos",
-        "anillo denticion", "cortauñas",
-        "corta uñas", "pinza de ceja",
-        "lima", "fijador", "proteccion solar",
-        "protección solar", "aloe vera",
-        "esmalte", "tónico", "tonico",
-        "sacapuntas",
-    ]
-
-    if any(palabra in nombre for palabra in cuidado_extra):
-        return "conservar", "Cuidado personal o accesorio"
-
-    # Productos veterinarios.
-    veterinarios_extra = [
-        "drontal", "ursovet", "ronaxan",
-        "puppy", "veterinario", "uso veterinario",
-    ]
-
-    if any(palabra in nombre for palabra in veterinarios_extra):
-        return "eliminar", "Producto veterinario"
-    
-    return "revisar", "No se pudo determinar automáticamente"
-
-
 class Command(BaseCommand):
     help = "Audita y clasifica los productos del catálogo FARMA PRICEY"
 
     def handle(self, *args, **options):
         productos = (
-            Producto.objects
+            Producto.objects    
             .all()
+            .annotate(
+                cantidad_farmacias=Count(
+                    "precios__farmacia",
+                    distinct=True
+                )
+            )
             .prefetch_related("precios__farmacia")
             .order_by("id")
         )
@@ -254,7 +56,8 @@ class Command(BaseCommand):
             campos = [
                 "ID", "Nombre", "Categoria",
                 "Principio activo", "Clasificacion",
-                "Motivo", "Cantidad de precios", "Farmacias",
+                "Motivo", "Cantidad de farmacias",
+                "Cantidad de precios", "Farmacias",
             ]
 
             escritor = csv.DictWriter(archivo, fieldnames=campos)
@@ -283,6 +86,7 @@ class Command(BaseCommand):
                     "Motivo": motivo,
                     "Cantidad de precios": len(precios),
                     "Farmacias": ", ".join(farmacias),
+                    "Cantidad de farmacias": producto.cantidad_farmacias,
                 })
 
         self.stdout.write("")

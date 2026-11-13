@@ -3,6 +3,7 @@ import time
 import requests
 from urllib.parse import urlparse
 from xml.etree import ElementTree
+from farmacia.procesamento.normalizar import detectar_categoria
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -36,45 +37,6 @@ SCRAPERS = {
     "Salcobrand": obtener_salcobrand,
     "Dr. Simi": obtener_dr_simi,
 }
-
-
-def detectar_categoria(nombre, principio_activo=""):
-    texto = f"{nombre} {principio_activo}".lower()
-
-    palabras_cosmeticos = [
-        "maquillaje", "labial", "máscara de pestañas",
-        "mascara de pestanas", "base de maquillaje",
-        "delineador", "rubor", "corrector", "serum",
-        "sérum", "crema facial", "agua micelar",
-        "contorno de ojos", "perfume",
-    ]
-
-    palabras_cuidado = [
-        "shampoo", "champú", "acondicionador", "desodorante",
-        "jabón", "jabon", "pasta dental", "cepillo dental",
-        "toalla higiénica", "pañal", "pañales",
-        "protector solar", "agua termal", "crema corporal",
-        "higiene",
-    ]
-
-    palabras_medicamento = [
-        "comprimido", "comprimidos", "cápsula", "capsula",
-        "jarabe", "solución oral", "solucion oral",
-        "antibiótico", "antibiotico", "analgésico",
-        "analgesico", "mg", "mcg",
-    ]
-
-    if any(p in texto for p in palabras_cosmeticos):
-        return "cosmeticos"
-
-    if any(p in texto for p in palabras_cuidado):
-        return "cuidado_personal"
-
-    if principio_activo or any(p in texto for p in palabras_medicamento):
-        return "medicamentos"
-
-    return "otros"
-
 
 def obtener_urls_sitemap(url, farmacia, visitados=None, profundidad=0):
     if visitados is None:
@@ -278,41 +240,49 @@ class Command(BaseCommand):
 
                     procesados += 1
 
+                    bioequivalente = (
+                        bool(re.search(r"\(b\)", nombre, flags=re.IGNORECASE))
+                        or convertir_booleano(datos.get("es_bioequivalente", False))
+                    )
+
+                    producto_existente = buscar_producto_compatible(
+                        nombre=nombre,
+                        principio_activo=datos.get("principio_activo", ""),
+                        presentacion=datos.get("presentacion", ""),
+                        categoria=datos["categoria"],
+                        es_bioequivalente=bioequivalente,
+                        laboratorio=datos.get("laboratorio", "") or "",
+                    )
+
+                    farmacia_obj = obtener_farmacia(nombre_farmacia)
+
+                    precio_existente = (
+                        Precio.objects.filter(
+                            producto=producto_existente,
+                            farmacia=farmacia_obj
+                        ).exists()
+                        if producto_existente else False
+                    )
+
+                    if producto_existente is None:
+                        productos_nuevos += 1
+                        clasificacion = "PRODUCTO NUEVO"
+                    elif precio_existente:
+                        precios_actualizados += 1
+                        clasificacion = f"YA EXISTE EN {nombre_farmacia}"
+                    else:
+                        precios_nuevos += 1
+                        clasificacion = f"PRODUCTO HOMOLOGADO (ID {producto_existente.id})"
+
+                    self.stdout.write(f"  Clasificación: {clasificacion}")
+
                     if guardar:
                         with transaction.atomic():
-                            bioequivalente = (
-                                bool(re.search(r"\(b\)", nombre, flags=re.IGNORECASE))
-                                or convertir_booleano(datos.get("es_bioequivalente", False))
+                            guardar_producto(
+                                datos,
+                                nombre_farmacia,
+                                producto_existente=producto_existente
                             )
-                            
-                            producto_existente = buscar_producto_compatible(
-                                nombre=nombre,
-                                principio_activo=datos.get("principio_activo", ""),
-                                presentacion=datos.get("presentacion", ""),
-                                categoria=datos["categoria"],
-                                es_bioequivalente=bioequivalente,
-                                laboratorio=datos.get("laboratorio", "") or "",
-                            )
-                            
-                            farmacia_obj = obtener_farmacia(nombre_farmacia)
-                            
-                            precio_existente = (
-                                Precio.objects.filter(
-                                    producto=producto_existente,
-                                    farmacia=farmacia_obj
-                                ).exists()
-                                if producto_existente else False
-                            )
-                            
-                            guardar_producto(datos, nombre_farmacia, producto_existente=producto_existente)
-                            
-                            if producto_existente is None:
-                                productos_nuevos += 1
-                            elif precio_existente:
-                                precios_actualizados += 1
-                            else:
-                                precios_nuevos += 1
-
                         guardados += 1
 
                     time.sleep(0.3)
@@ -329,8 +299,6 @@ class Command(BaseCommand):
                             farmacia=nombre_farmacia,
                             defaults={"ultima_url": url}
                         )
-
-
 
             self.stdout.write(
                 f"Resumen {nombre_farmacia}: "
