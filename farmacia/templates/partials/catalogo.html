@@ -94,7 +94,7 @@
 
                 {% if pagina_obj.has_previous %}
                     <a 
-                        href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ pagina_obj.previous_page_number }}#catalogo"
+                        href="?{% if categoria_seleccionada %}categoria={{ categoria_seleccionada|urlencode }}&{% endif %}{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ pagina_obj.previous_page_number }}#catalogo"
                         class="pagina-flecha"
                         aria-label="Página anterior"
                     >&laquo;</a>
@@ -108,7 +108,7 @@
 
                     {% else %}
                         <a 
-                        href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ numero }}#catalogo"
+                        href="?{% if categoria_seleccionada %}categoria={{ categoria_seleccionada|urlencode }}&{% endif %}{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ numero }}#catalogo"
                         class="pagina-numero {% if pagina_obj.number == numero %}pagina-activa{% endif %}"
                         {% if pagina_obj.number == numero %}aria-current="page"{% endif %}
                         > {{numero}} </a>
@@ -119,7 +119,7 @@
 
                 {% if pagina_obj.has_next %}
                     <a 
-                        href="?{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ pagina_obj.next_page_number }}#catalogo"
+                        href="?{% if categoria_seleccionada %}categoria={{ categoria_seleccionada|urlencode }}&{% endif %}{% if busqueda %}buscar={{ busqueda|urlencode }}&{% endif %}pagina={{ pagina_obj.next_page_number }}#catalogo"
                         class="pagina-flecha"
                         aria-label="Página siguiente"
                     >&raquo;</a>

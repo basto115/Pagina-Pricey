@@ -979,6 +979,8 @@ async function cargarCatalogo(url, actualizarHistorial = true) {
             history.pushState({}, "", url);
         }
 
+        actualizarFiltrosCategoria(url);
+
     } catch (error) {
         console.error("Error al cambiar de página:", error);
         window.location.href = url;
@@ -986,17 +988,44 @@ async function cargarCatalogo(url, actualizarHistorial = true) {
     }
 }
 
-// Interceptar los clics de la paginación
+// Interceptar los clics de filtros y paginación
 document.addEventListener("click", function(event) {
 
-    const enlace = event.target.closest("#catalogo .paginacion a");
+    //detecta el filtro de categorias
+    const filtro = event.target.closest(".filtros-categorias .boton-categoria");
+
+    //detecta paginación
+    const pagina = event.target.closest("#catalogo .paginacion a");
+
+    //si no es ninguno de los dos no hace nada
+    const enlace = filtro || pagina;
 
     if (!enlace) return;
 
     event.preventDefault();
 
+    //carga el catalogo sin recargar la pagina
     cargarCatalogo(enlace.href);
+
 });
+
+//para actualizar el filtro
+function actualizarFiltrosCategoria(url) {
+
+    const parametros = new URL(url, window.location.origin).searchParams;
+    const categoriaActual = parametros.get("categoria") || "";
+
+    document.querySelectorAll(
+        ".filtros-categorias .boton-categoria"
+    ).forEach(boton => {
+
+        const destino = new URL(boton.href, window.location.origin);
+        const categoriaBoton = destino.searchParams.get("categoria") || "";
+
+        boton.classList.toggle(
+            "seleccionada", categoriaBoton == categoriaActual);
+    });
+}
 
 // Permitir que atrás y adelante del navegador funcionen correctamente
 window.addEventListener("popstate", function() {

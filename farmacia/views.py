@@ -108,8 +108,8 @@ def inicio(request):
             
         productos = productos.filter(consulta).distinct()
         
-        if categoria_seleccionada:
-            productos = productos.filter(categoria=categoria_seleccionada)
+    if categoria_seleccionada:
+        productos = productos.filter(categoria=categoria_seleccionada)
 
     #Dejenlo en 6 o a lo mucho 9, la pagina se alarga demasiado si ponen muchos
     
