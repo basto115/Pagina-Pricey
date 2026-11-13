@@ -833,7 +833,7 @@ def agregar_a_lista(request, producto_id):
             "cantidad": lista[producto_id]
         })
     
-    messages.success(request)
+    messages.success(request, f"{producto.nombre} se agregó a tu lista.")
     return redirect(request.META.get("HTTP_REFERER", "inicio"))
 
 #agregar o quitar productos
