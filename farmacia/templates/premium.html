@@ -1,0 +1,154 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium | FARMA PRICEY</title>
+
+    <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}?v=5">
+</head>
+
+<body class="premium-body">
+
+    <!-- ENCABEZADO -->
+    <header class="premium-header">
+
+        <div class="premium-logo">
+            <a href="{% url 'inicio' %}">FARMA PRICEY</a>
+        </div>
+
+        <nav>
+            <a href="{% url 'inicio' %}">Inicio</a>
+            <a href="{% url 'leer_receta' %}">Leer receta</a>
+            <a href="{% url 'ver_lista' %}">Mi lista</a>
+        </nav>
+
+    </header>
+
+
+    <main class="premium-pagina">
+
+        <!-- PRESENTACIÓN -->
+        <section class="premium-portada">
+
+            <span class="premium-etiqueta">
+                FARMA PRICEY PREMIUM
+            </span>
+
+            <h1>
+                Desbloquea más herramientas para tus medicamentos
+            </h1>
+
+            <p class="premium-descripcion">
+                Organiza, identifica y encuentra tus medicamentos
+                con las herramientas exclusivas de FarmaPricey Premium.
+            </p>
+
+        </section>
+
+
+        <!-- AVISO DE ACCESO -->
+        <section class="premium-aviso">
+
+            <span>🔒</span>
+
+            <p>
+                <strong>La lectura de recetas requiere Premium.</strong>
+                Suscríbete para desbloquear esta funcionalidad y
+                aprovechar todos los beneficios del plan.
+            </p>
+
+        </section>
+
+
+        <!-- BENEFICIOS -->
+        <section class="premium-beneficios">
+
+            <article class="premium-beneficio">
+
+                <div class="premium-icono">📄</div>
+
+                <h2>Lectura de recetas</h2>
+
+                <p>
+                    Sube una fotografía de tu receta médica e
+                    identifica los medicamentos indicados para
+                    facilitar su búsqueda y comparar sus precios
+                    entre distintas farmacias.
+                </p>
+
+                <span class="premium-disponible">
+                    Incluido en Premium
+                </span>
+
+            </article>
+
+
+            <article class="premium-beneficio">
+
+                <div class="premium-icono">👨‍👩‍👧</div>
+
+                <h2>Perfiles familiares</h2>
+
+                <p>
+                    Crea perfiles para los integrantes de tu familia
+                    y organiza sus medicamentos mediante listas
+                    independientes desde una misma cuenta.
+                </p>
+
+                <span class="premium-disponible">
+                    Incluido en Premium
+                </span>
+
+            </article>
+
+        </section>
+
+
+        <!-- PLAN Y PRECIO -->
+        <section class="premium-precio">
+
+            <p class="premium-plan">
+                PLAN PREMIUM
+            </p>
+
+            <h2>
+                $2.990 <span>/ mes</span>
+            </h2>
+
+            <p>
+                Todas las herramientas exclusivas de
+                FarmaPricey en un solo plan.
+            </p>
+
+            <button
+                type="button"
+                class="premium-boton-suscribir">
+                Quiero ser Premium
+            </button>
+
+        </section>
+
+
+        <!-- VOLVER -->
+        <a href="{% url 'inicio' %}" class="premium-volver">
+            ← Volver al inicio
+        </a>
+
+    </main>
+
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="premium-footer">
+
+        <p>
+            © 2026 FARMA PRICEY | Comparar para ahorrar 💗
+        </p>
+
+    </footer>
+
+</body>
+</html>

@@ -5,7 +5,8 @@ from .models import (
     Farmacia,
     Producto,
     Precio,
-    Sucursal
+    Sucursal,
+    Suscripcion
 )
 
 
@@ -40,3 +41,22 @@ class SucursalAdmin(admin.ModelAdmin):
     list_editable = ("aprobada",)
 
     ordering = ("comuna", "nombre")
+
+
+@admin.register(Suscripcion)
+class SuscripcionAdmin(admin.ModelAdmin):
+    list_display = (
+        "usuario",
+        "es_premium",
+    )
+
+    list_filter = (
+        "es_premium",
+    )
+
+    search_fields = (
+        "usuario__username",
+        "usuario__email",
+    )
+
+    list_editable = ("es_premium",)

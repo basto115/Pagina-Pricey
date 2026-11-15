@@ -9,6 +9,7 @@ urlpatterns = [
     path('logout/', views.cerrar_sesion, name='logout'),
     path('mi-cuenta/', views.mi_cuenta, name='mi_cuenta'),
     path('mi-cuenta/editar/', views.editar_cuenta, name='editar_cuenta'),
+    path('premium/', views.vista_premium, name='premium'),
 
 
     # Recuperación de contraseña
