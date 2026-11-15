@@ -918,7 +918,7 @@ document.addEventListener("submit", async function(event) {
         }
 
         boton.textContent = "✓ Agregado";
-        mensaje.textContent = datos.mensaje;
+        mostrarNotificacion(datos.mensaje, "success");
 
         setTimeout(() => {
             boton.textContent = textoOriginal;
@@ -1038,6 +1038,7 @@ window.addEventListener("popstate", function() {
 // NOTIFICACIONES TEMPORALES FARMA PRICEY
 
 
+
 function iniciarNotificaciones() {
     const notificaciones = document.querySelectorAll(".notificacion");
 
@@ -1046,13 +1047,16 @@ function iniciarNotificaciones() {
 
         notificacion.dataset.iniciada = "true";
 
-        const cerrar = function () {
+        function cerrar() {
+            if (!notificacion.isConnected) return;
+
             notificacion.classList.add("ocultar");
+            
 
             setTimeout(function () {
                 notificacion.remove();
             }, 300);
-        };
+        }
 
         const botonCerrar = notificacion.querySelector(".notificacion-cerrar");
 
@@ -1065,3 +1069,54 @@ function iniciarNotificaciones() {
 }
 
 document.addEventListener("DOMContentLoaded", iniciarNotificaciones);
+
+
+
+function mostrarNotificacion(texto, tipo = "success") {
+    let contenedor = document.querySelector(".contenedor-notificaciones");
+
+    if (!contenedor) {
+        contenedor = document.createElement("div");
+        contenedor.className = "contenedor-notificaciones";
+        document.body.appendChild(contenedor);
+    }
+
+    const notificacion = document.createElement("div");
+    notificacion.className = `notificacion ${tipo}`;
+
+    const icono = document.createElement("span");
+    icono.className = "notificacion-icono";
+    icono.textContent = "✓";
+
+    const mensaje = document.createElement("span");
+    mensaje.className = "notificacion-texto";
+    mensaje.textContent = texto;
+
+    const cerrar = document.createElement("button");
+    cerrar.className = "notificacion-cerrar";
+    cerrar.type = "button";
+    cerrar.textContent = "×";
+    cerrar.setAttribute("aria-label", "Cerrar notificación");
+
+    notificacion.append(icono, mensaje, cerrar);
+    contenedor.appendChild(notificacion);
+
+    let temporizador;
+
+    function cerrarNotificacion() {
+        clearTimeout(temporizador);
+        notificacion.classList.add("ocultar");
+
+        setTimeout(() => {
+            notificacion.remove();
+
+            if (contenedor.children.length === 0) {
+                contenedor.remove();
+            }
+        }, 300);
+    }
+
+    cerrar.addEventListener("click", cerrarNotificacion);
+
+    temporizador = setTimeout(cerrarNotificacion, 3000);
+}
