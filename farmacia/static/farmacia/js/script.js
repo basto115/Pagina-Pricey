@@ -839,6 +839,11 @@ async function planificarRutaCompras() {
 
                 mensajeUbicacion.textContent = 
                     "¡Ubicación obtenida correctamente :)!";
+
+                mostrarNotificacion(
+                    "¡Ubicación obtenida correctamente! Ahora podemos mostrarte las farmacias cercanas.",
+                    "success"
+                );
                 
                 if (mapa) {
 
