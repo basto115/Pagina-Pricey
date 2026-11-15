@@ -150,21 +150,22 @@ def normalizar_texto_producto(texto):
     texto = re.sub(r"\s+", " ", texto)
     return texto.strip()
 
+
 def extraer_firma_producto(nombre, presentacion=""):
     """
     Extrae características comparables:
-    concentración, forma farmacéutica y cantidad.
+    concentración, forma farmacéutica, características especiales y cantidad.
     """
 
     texto = normalizar_texto_producto(
         f"{nombre} {presentacion}"
     )
 
-    # Concentraciones, incluyendo proporciones como 200 mg/5 ml.
+    # Concentraciones, incluyendo proporciones como 500 mg/5 ml.
     patron_concentracion = (
         r"\d+(?:[.,]\d+)?\s*"
-        r"(?:mg\s*/\s*ml|mcg\s*/\s*ml|mg|mcg|g)\b"
-        r"(?:\s*/\s*\d+(?:[.,]\d+)?\s*ml\b)?"
+        r"(?:mg|mcg|g)"
+        r"(?:\s*/\s*\d+(?:[.,]\d+)?\s*ml)?\b"
     )
 
     concentraciones = re.findall(
@@ -177,61 +178,78 @@ def extraer_firma_producto(nombre, presentacion=""):
         for c in concentraciones
     ))
 
-    # Formas farmacéuticas
+    # Formas farmacéuticas.
     formas = {
-        "comprimidos": [
-            "comprimido", "comprimidos", "comp ad",
-            "comp", "tableta", "tabletas"
-        ],
-        "capsulas": [
-            "capsula", "capsulas"
-        ],
-        "gotas": [
-            "gotas", "solucion oral para gotas"
-        ],
+        "comprimidos": ["comprimido", "comprimidos", "tableta", "tabletas"],
+        "capsulas": ["capsula", "capsulas"],
+        "gotas": ["gotas"],
         "jarabe": ["jarabe"],
         "crema": ["crema"],
+        "unguento": ["unguento", "pomada"],
         "gel": ["gel"],
-        "solucion": ["solucion oral", "solucion"],
-        "suspension": ["suspension oral", "suspension"],
+        "suspension": ["suspension"],
+        "solucion": ["solucion"],
+        "polvo": ["polvo"],
+        "ampollas": ["ampolla", "ampollas"],
+        "supositorios": ["supositorio", "supositorios"],
     }
 
     forma = ""
 
     for nombre_forma, variantes in formas.items():
-        if any(v in texto for v in variantes):
+        if any(
+            re.search(rf"\b{re.escape(v)}\b", texto)
+            for v in variantes
+        ):
             forma = nombre_forma
             break
 
-    # Características especiales de la formulación
+    # Características especiales de la formulación.
     caracteristicas = {
-        "recubrimiento_enterico": [
-            "recubrimiento enterico",
-            "recubiertos entericos",
-            "cubierta enterica"
-        ],
+        "xr": [r"\bxr\b"],
         "liberacion_prolongada": [
-            "liberacion prolongada",
-            "liberacion extendida",
-            "accion prolongada"
+            r"\bliberacion prolongada\b",
+            r"\bliberacion extendida\b",
+            r"\baccion prolongada\b",
         ],
         "liberacion_retardada": [
-            "liberacion retardada"
+            r"\bliberacion retardada\b"
         ],
-        "dispersable": ["dispersable", "dispersables"],
-        "efervescente": ["efervescente", "efervescentes"]
+        "recubierto": [
+            r"\brecubierto(?:s)?\b",
+        ],
+        "ranurado": [
+            r"\branurado(?:s)?\b",
+        ],
+        "enterico": [
+            r"\brecubrimiento enterico\b",
+            r"\brecubiertos entericos\b",
+            r"\bcubierta enterica\b",
+        ],
+        "dispersable": [
+            r"\bdispersable(?:s)?\b",
+        ],
+        "efervescente": [
+            r"\befervescente(?:s)?\b",
+        ],
+                "polvo_para_suspension": [
+            r"\bpolvo\s+para\s+suspension\b",
+        ],
+        "plus": [
+            r"\bplus\b",
+        ],
     }
 
-    for caracteristica, variantes in caracteristicas.items():
-        if any(v in texto for v in variantes):
-            forma = (
-                f"{forma}_{caracteristica}"
-                if forma else caracteristica
-            )
+    caracteristicas_detectadas = []
 
-    # Cantidad de unidades
+    for caracteristica, patrones in caracteristicas.items():
+        if any(re.search(patron, texto) for patron in patrones):
+            caracteristicas_detectadas.append(caracteristica)
+
+    # Cantidad de unidades.
     cantidad_unidades = re.search(
-        r"(\d+)\s*(?:comprimidos?|comp|capsulas?|tabletas?)\b",
+        r"\b(\d+)\s*(?:comprimidos?|comp|capsulas?|tabletas?|"
+        r"ampollas?|supositorios?)\b",
         texto
     )
 
@@ -242,18 +260,26 @@ def extraer_firma_producto(nombre, presentacion=""):
 
     else:
         # Priorizar el volumen total indicado después de una "x".
-        # Ejemplo: 200 mg/5 ml x 15 ml
         cantidad_ml = re.search(
             r"\bx\s*(\d+(?:[.,]\d+)?)\s*ml\b",
             texto
         )
 
-        # Si no existe una "x", buscar el primer volumen en ml.
         if not cantidad_ml:
-            cantidad_ml = re.search(
+            volumenes = list(re.finditer(
                 r"(\d+(?:[.,]\d+)?)\s*ml\b",
                 texto
-            )
+            ))
+
+            for coincidencia in volumenes:
+                inicio = coincidencia.start()
+                prefijo = texto[max(0, inicio - 12):inicio]
+
+                if re.search(r"/\s*$", prefijo):
+                    continue
+
+                cantidad_ml = coincidencia
+                break
 
         if cantidad_ml:
             cantidad = (
@@ -263,29 +289,57 @@ def extraer_firma_producto(nombre, presentacion=""):
     return (
         tuple(concentraciones),
         forma,
+        tuple(caracteristicas_detectadas),
         cantidad
     )
 
 def obtener_clave_marca(nombre):
-    """Obtiene la primera palabra significativa del nombre."""
+    """Obtiene palabras identificadoras del producto."""
 
-    marcas_ignoradas = {
+    texto = normalizar_texto_producto(nombre)
+    palabras_ignoradas = {
         "500", "100", "50", "25", "10",
-        "mg", "mcg", "g", "ml",
+        "mg", "mcg", "g", "gr", "ml",
         "comprimidos", "comprimido",
         "capsulas", "capsula",
         "recubiertos", "recubierto",
-        "tabletas", "tableta"
+        "tabletas", "tableta",
+        "pasta", "dental", "con", "de", "del",
+        "para", "y", "el", "la", "en", "fluor",
+        "pomo",
+        "desodorante", "roll", "on",
+        "serum", "facial",
+        "gel", "crema", "limpiador",
+        "hidratante", "protector", "solar",
+        "shampoo", "acondicionador",
+        "labial", "balsamo", "locion",
+        "jabon", "spray", "micelar",
     }
 
-    palabras = [
+    claves = [
         palabra
-        for palabra in normalizar_texto_producto(nombre).split()
-        if palabra not in marcas_ignoradas
+        for palabra in texto.split()
+        if palabra not in palabras_ignoradas
+        and len(palabra) >= 3
+        and not re.fullmatch(
+            r"\d+(?:[.,]\d+)?(?:mg|mcg|g|gr|kg|ml|l|ui)",
+            palabra
+        )
+        and not palabra.isdigit()
     ]
 
-    return palabras[0] if palabras else ""
+    # Clave especial para la presentación Caristop 5000 de 51 g.
+    numeros = re.findall(r"\d+", texto)
 
+    if (
+        "5000" in numeros
+        and "51" in numeros
+        and "pasta" in texto.split()
+        and "dental" in texto.split()
+    ):
+        claves.append("__pasta_dental_5000_51g__")
+
+    return claves
 
 def obtener_indice_productos():
     """Carga los productos existentes una sola vez."""
@@ -304,21 +358,21 @@ def obtener_indice_productos():
                 "presentacion",
                 "laboratorio",
                 "es_bioequivalente",
+                "categoria",
                 "medicamento__principio_activo",
             )
             .iterator(chunk_size=500)
         )
 
         for producto in productos:
-            clave = obtener_clave_marca(producto.nombre)
+            claves = obtener_clave_marca(producto.nombre)
 
-            if clave:
+            for clave in claves:
                 indice.setdefault(clave, []).append(producto)
 
         _INDICE_PRODUCTOS = indice
 
     return _INDICE_PRODUCTOS
-
 
 def registrar_producto_en_indice(producto):
     """Agrega productos nuevos al índice durante la importación."""
@@ -326,34 +380,137 @@ def registrar_producto_en_indice(producto):
     if _INDICE_PRODUCTOS is None:
         return
 
-    clave = obtener_clave_marca(producto.nombre)
+    claves = obtener_clave_marca(producto.nombre)
 
-    if not clave:
-        return
+    for clave in claves:
+        candidatos = _INDICE_PRODUCTOS.setdefault(clave, [])
 
-    candidatos = _INDICE_PRODUCTOS.setdefault(clave, [])
+        if not any(p.id == producto.id for p in candidatos):
+            candidatos.append(producto)
 
-    if not any(p.id == producto.id for p in candidatos):
-        candidatos.append(producto)
-    
 def productos_equivalentes(
     existente,
     nombre,
     principio_activo,
     presentacion,
     laboratorio,
-    es_bioequivalente
+    es_bioequivalente,
+    categoria,
 ):
     """Determina si dos registros representan el mismo producto."""
 
-    # Comprobar marca comercial.
-    clave_existente = obtener_clave_marca(existente.nombre)
-    clave_nueva = obtener_clave_marca(nombre)
+    claves_existente = set(obtener_clave_marca(existente.nombre))
+    claves_nuevas = set(obtener_clave_marca(nombre))
 
-    if not clave_existente or clave_existente != clave_nueva:
+    
+    if categoria != "medicamentos":
+        if existente.categoria != categoria:
+            return False
+
+        nombre_existente = normalizar_texto_producto(
+            f"{existente.nombre} {existente.presentacion}"
+        )
+        nombre_nuevo = normalizar_texto_producto(
+            f"{nombre} {presentacion}"
+        )
+
+        # Excepción controlada para Caristop 5000 de 51 g.
+        if (
+            "5000" in nombre_existente.split()
+            and "5000" in nombre_nuevo.split()
+        ):
+            return (
+                "pasta" in nombre_existente.split()
+                and "dental" in nombre_existente.split()
+                and "pasta" in nombre_nuevo.split()
+                and "dental" in nombre_nuevo.split()
+                and "51" in re.findall(r"\d+", nombre_existente)
+                and "51" in re.findall(r"\d+", nombre_nuevo)
+            )
+
+        # Las cantidades y medidas deben coincidir.
+        numeros_existente = re.findall(
+            r"\d+(?:[.,]\d+)?", nombre_existente
+        )
+        numeros_nuevos = re.findall(
+            r"\d+(?:[.,]\d+)?", nombre_nuevo
+        )
+
+        if numeros_existente != numeros_nuevos:
+            return False
+
+        palabras_ignoradas = {
+            "con", "sin", "de", "del", "para", "y",
+            "el", "la", "en", "un", "una",
+            "pasta", "dental", "fluor", "crema",
+            "producto", "pomo", "unidad", "unidades",
+            "pack", "ml", "gr", "g", "mg",
+            "desodorante", "roll", "on",
+            "serum", "facial", "gel", "limpiador",
+            "hidratante", "protector", "solar",
+            "shampoo", "acondicionador", "labial",
+            "balsamo", "locion", "jabon", "spray",
+            "micelar", "enjuague", "bucal",
+            "barra", "liquido", "liquida",
+        }
+
+        palabras_existentes = {
+            palabra
+            for palabra in re.findall(
+                r"[a-z]+(?:-[a-z]+)*", nombre_existente
+            )
+            if palabra not in palabras_ignoradas
+            and len(palabra) >= 3
+        }
+
+        palabras_nuevas = {
+            palabra
+            for palabra in re.findall(
+                r"[a-z]+(?:-[a-z]+)*", nombre_nuevo
+            )
+            if palabra not in palabras_ignoradas
+            and len(palabra) >= 3
+        }
+
+        # Deben compartir al menos dos identificadores distintivos.
+        if len(palabras_existentes & palabras_nuevas) < 2:
+            return False
+
+        # Evitar mezclar variantes, tonos y aromas.
+        variantes = {
+            "sensitive", "sensibilidad",
+            "bi-fluorada", "bifluorada",
+            "infantil", "junior", "kids",
+            "whitening", "blanqueadora",
+            "anticaries", "ortodontic",
+            "claro", "clara", "medio", "media",
+            "oscuro", "oscura", "light", "medium",
+            "dark", "menta", "vainilla", "coco",
+            "fresa", "frutilla", "manzana",
+            "argan", "karite", "retinol",
+        }
+
+        variantes_existentes = palabras_existentes & variantes
+        variantes_nuevas = palabras_nuevas & variantes
+
+        if variantes_existentes != variantes_nuevas:
+            return False
+
+        return True
+
+    # Medicamentos: mantener las validaciones estrictas.
+    claves_existente_marca = {
+        palabra for palabra in claves_existente
+        if not palabra.isdigit()
+    }
+    claves_nuevas_marca = {
+        palabra for palabra in claves_nuevas
+        if not palabra.isdigit()
+    }
+
+    if not claves_existente_marca & claves_nuevas_marca:
         return False
 
-    # Comprobar marca comercial.
     activo_existente = normalizar_texto_producto(
         existente.medicamento.principio_activo
         if existente.medicamento else ""
@@ -377,10 +534,7 @@ def productos_equivalentes(
         )
 
         if not all(
-            re.search(
-                rf"\b{re.escape(parte)}\b",
-                nombre_existente
-            )
+            re.search(rf"\b{re.escape(parte)}\b", nombre_existente)
             for parte in componentes_activo
         ):
             return False
@@ -388,56 +542,14 @@ def productos_equivalentes(
     elif activo_existente:
         return False
 
-    # Comprobar laboratorio cuando ambos están informados.
-    lab_existente = normalizar_laboratorio(
-        existente.laboratorio
-    )
-    lab_nuevo = normalizar_laboratorio(laboratorio)
-
-    if lab_existente and lab_nuevo and lab_existente != lab_nuevo:
-        return False
-
-    # Comprobar bioequivalencia.
     if existente.es_bioequivalente != es_bioequivalente:
         return False
 
-    # Productos sin principio activo: coincidencia exacta del nombre
-    # normalizado y de la cantidad cuando ambos la informan.
-    if not activo_existente and not activo_nuevo:
-        nombre_existente = normalizar_texto_producto(
-            existente.nombre
-        )
-        nombre_nuevo = normalizar_texto_producto(nombre)
-
-        if nombre_existente != nombre_nuevo:
-            return False
-
-        firma_existente = extraer_firma_producto(
-            existente.nombre,
-            existente.presentacion
-        )
-        firma_nueva = extraer_firma_producto(
-            nombre,
-            presentacion
-        )
-
-        cantidad_existente = firma_existente[2]
-        cantidad_nueva = firma_nueva[2]
-
-        if (
-            cantidad_existente
-            and cantidad_nueva
-            and cantidad_existente != cantidad_nueva
-        ):
-            return False
-
-        return True
-
-    # Productos con principio activo: mantener validación estricta.
     firma_existente = extraer_firma_producto(
         existente.nombre,
         existente.presentacion
     )
+
     firma_nueva = extraer_firma_producto(
         nombre,
         presentacion
@@ -462,18 +574,23 @@ def buscar_producto_compatible(
     es_bioequivalente,
     laboratorio="",
 ):
-
     """Busca productos compatibles usando el índice en memoria."""
 
-    clave = obtener_clave_marca(nombre)
+    claves = obtener_clave_marca(nombre)
 
-    if not clave:
+    if not claves:
         return None
 
     indice = obtener_indice_productos()
-    candidatos = indice.get(clave, [])
+    candidatos = {}
 
-    for existente in candidatos:
+    for clave in claves:
+        for producto in indice.get(clave, []):
+            candidatos[producto.id] = producto
+
+    compatibles = []
+
+    for existente in candidatos.values():
         if productos_equivalentes(
             existente,
             nombre,
@@ -481,10 +598,14 @@ def buscar_producto_compatible(
             presentacion,
             laboratorio,
             es_bioequivalente,
+            categoria,
         ):
-            return existente
+            compatibles.append(existente)
 
-    return None
+    if not compatibles:
+        return None
+
+    return compatibles[0]
 
 def obtener_farmacia(nombre_farmacia):
     """

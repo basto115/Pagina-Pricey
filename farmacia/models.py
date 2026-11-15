@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class Medicamento(models.Model):
     nombre = models.CharField(max_length=200)
@@ -200,3 +201,16 @@ class ProgresoImportacion(models.Model):
 
     def __str__(self):
         return f"{self.farmacia} - {self.ultima_url}"
+
+class Suscripcion(models.Model):
+    usuario = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="suscripcion"
+    )
+
+    es_premium = models.BooleanField(default=False)
+
+    def __str__(self):
+        plan = "Premium" if self.es_premium else "Gratis"
+        return f"{self.usuario.username} - {plan}"

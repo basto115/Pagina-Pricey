@@ -17,6 +17,7 @@ from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
+
 from django.contrib.auth import (
     authenticate,
     login,
@@ -28,7 +29,7 @@ from django.core.exceptions import ValidationError
 
 from django.contrib.auth.decorators import login_required
 
-from .models import Medicamento, Farmacia, Producto, Precio, Sucursal
+from .models import Medicamento, Farmacia, Producto, Precio, Sucursal, Suscripcion
 from itertools import combinations
 
 from math import radians, sin, cos, sqrt, atan2
@@ -469,6 +470,10 @@ def vista_registro(request):
                         first_name=partes_nombre[0],
                         last_name=" ".join(partes_nombre[1:])
                     )
+                    Suscripcion.objects.create(
+                        usuario=usuario,
+                        es_premium=False
+                    )
 
                     messages.success(
                         request,
@@ -547,6 +552,12 @@ def extraer_concentraciones(texto):
 
 @require_http_methods(["GET", "POST"])
 def leer_receta(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    if not hasattr(request.user, "suscripcion") or not request.user.suscripcion.es_premium:
+        return redirect("premium")
+
     contexto = {
         "resultados": [],
         "texto_reconocido": "",
@@ -1376,3 +1387,6 @@ def editar_cuenta(request):
         return redirect("mi_cuenta")
 
     return render(request, 'editar_cuenta.html')
+
+def vista_premium(request):
+    return render(request, "premium.html")
