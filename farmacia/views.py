@@ -169,29 +169,22 @@ def detalle_medicamento(request, medicamento_id):
         id=medicamento_id,
     )
 
-    # Preparar los datos que necesita el mapa.
-    farmacias_mapa = {}
     productos = list(medicamento.productos.all())
+    
+    # obtener farmacias que tienen precios para tal medicamento
+    farmacias_ids = set()
+    productos_por_farmacia = {}
 
     for producto in productos:
         for precio in producto.precios.all():
-            farmacia = precio.farmacia
-
-            # Sin coordenadas no podemos situar la farmacia en el mapa.
-            if farmacia.latitud is None or farmacia.longitud is None:
+            farmacia_id = precio.farmacia_id
+            
+            if not farmacia_id:
                 continue
-
-            if farmacia.id not in farmacias_mapa:
-                farmacias_mapa[farmacia.id] = {
-                    "id": farmacia.id,
-                    "nombre": farmacia.nombre,
-                    "direccion": farmacia.direccion,
-                    "latitud": float(farmacia.latitud),
-                    "longitud": float(farmacia.longitud),
-                    "productos": [],
-                }
-
-            farmacias_mapa[farmacia.id]["productos"].append({
+            
+            farmacias_ids.add(farmacia_id)
+            
+            productos_por_farmacia.setdefault(farmacia_id, []).append({
                 "producto_id": producto.id,
                 "producto_nombre": producto.nombre,
                 "precio": str(precio.precio),
@@ -199,13 +192,46 @@ def detalle_medicamento(request, medicamento_id):
                 "url_producto": precio.url_producto,
             })
 
+    # obtener sucursaler aprobadas
+    sucursales = Sucursal.objects.select_related(
+        "farmacia"
+    ).filter(
+        aprobada=True,
+        farmacia_id__in=farmacias_ids,
+        latitud__isnull=False,
+        longitud__isnull=False,
+    ).order_by("nombre")
+    
+    farmacias_mapa = [
+        {
+            "id": sucursal.id,
+            "farmacia_id": sucursal.farmacia_id,
+            "nombre": sucursal.nombre,
+            "direccion": sucursal.direccion,
+            "comuna": sucursal.comuna,
+            "latitud": float(sucursal.latitud),
+            "longitud": float(sucursal.longitud),
+            "sitio_web": sucursal.sitio_web,
+            "farmacia": (
+                sucursal.farmacia.nombre
+                if sucursal.farmacia else None
+            ),
+            "tiene_precios": sucursal.farmacia_id is not None,
+            "origen": sucursal.origen,
+            "productos": productos_por_farmacia.get(
+                sucursal.farmacia_id, []
+            ),
+        }
+        for sucursal in sucursales 
+    ]
+
     return render(
         request,
         "detalle_medicamento.html",
         {
             "medicamento": medicamento,
             "productos_detalle": productos,
-            "farmacias_mapa": list(farmacias_mapa.values()),
+            "farmacias_mapa": farmacias_mapa,
         },
     )
 
@@ -222,40 +248,70 @@ def detalle_producto(request, producto_id):
         id=producto_id,
     )
 
-    # Preparar los datos para el mapa.
-    farmacias_mapa = {}
+    # Obtener las farmacias que tienen precios para este producto.
+    farmacias_ids = set()
+    productos_por_farmacia = {}
 
     for precio in producto.precios.all():
-        farmacia = precio.farmacia
+        farmacia_id = precio.farmacia_id
 
-        if farmacia.latitud is None or farmacia.longitud is None:
+        if not farmacia_id:
             continue
-
-        if farmacia.id not in farmacias_mapa:
-            farmacias_mapa[farmacia.id] = {
-                "id": farmacia.id,
-                "nombre": farmacia.nombre,
-                "direccion": farmacia.direccion,
-                "latitud": float(farmacia.latitud),
-                "longitud": float(farmacia.longitud),
-                "productos": [],
-            }
-
-        farmacias_mapa[farmacia.id]["productos"].append({
+        
+        farmacias_ids.add(farmacia_id)
+        
+        productos_por_farmacia.setdefault(farmacia_id, []).append({
             "producto_id": producto.id,
             "producto_nombre": producto.nombre,
             "precio": str(precio.precio),
             "disponible": precio.disponible,
             "url_producto": precio.url_producto,
         })
+        
+     # Obtener las sucursales aprobadas con coordenadas.
+    sucursales = Sucursal.objects.select_related(
+        "farmacia"
+    ).filter(
+        aprobada=True,
+        farmacia_id__in=farmacias_ids,
+        latitud__isnull=False,
+        longitud__isnull=False,
+    ).order_by("nombre")
 
+    farmacias_mapa = [
+        {
+            "id": sucursal.id,
+            "farmacia_id": sucursal.farmacia_id,
+            "nombre": sucursal.nombre,
+            "direccion": sucursal.direccion,
+            "comuna": sucursal.comuna,
+            "latitud": float(sucursal.latitud),
+            "longitud": float(sucursal.longitud),
+            "sitio_web": sucursal.sitio_web,
+            "farmacia": (
+                sucursal.farmacia.nombre
+                if sucursal.farmacia else None
+            ),
+            "tiene_precios": sucursal.farmacia_id is not None,
+            "origen": sucursal.origen,
+            "productos": productos_por_farmacia.get(
+                sucursal.farmacia_id, []
+            ),
+        }
+        for sucursal in sucursales
+    ]
+    
+    print("FARMACIAS IDS:", farmacias_ids)
+    print("TOTAL SUCURSALES:", len(farmacias_mapa))
+    print("PRIMERAS SUCURSALES:", farmacias_mapa[:5])
+    
     return render(
         request,
         "detalle_medicamento.html",
         {
             "medicamento": producto,
             "productos_detalle": [producto],
-            "farmacias_mapa": list(farmacias_mapa.values()),
+            "farmacias_mapa": farmacias_mapa,
             "es_producto_independiente": True,
         },
     )
