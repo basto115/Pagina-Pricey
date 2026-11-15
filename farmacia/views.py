@@ -879,17 +879,17 @@ def agregar_a_lista(request, producto_id):
     
     request.session["lista_medicamentos"] = lista
     
-    #mensaje = f"{producto.nombre} se agregó a tu lista"
+    mensaje = f"{producto.nombre} se agregó a tu lista"
     
     #si viene de javascript devuelve un json (who's json?)
-    if request.headers.get("X-requested-with") == "XMLHttpRequest":
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         return JsonResponse({
             "ok": True,
-            #"mensaje": mensaje,
+            "mensaje": mensaje,
             "cantidad": lista[producto_id]
         })
     
-    messages.success(request, f"{producto.nombre} se agregó a tu lista.")
+    messages.success(request, mensaje)
     return redirect(request.META.get("HTTP_REFERER", "inicio"))
 
 #agregar o quitar productos
