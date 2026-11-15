@@ -17,6 +17,8 @@
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/
     >
     <link rel="icon" type="image/png" href="{% static 'farmacia/img/pandaloool.png' %}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 </head>
 <body>
 
@@ -311,7 +313,8 @@
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
     {{ farmacias_mapa|json_script:"farmacias-mapa-data" }}
 
@@ -341,28 +344,99 @@
         }).addTo(mapa);
         ;
 
-        const marcadores = {};
+        // Colores iguales a los del mapa general.
+        const COLORES_FARMACIAS = {
+            "cruz verde": "#16A34A",
+            "dr simi": "#2563EB",
+            "farmacias ahumada": "#E87924",
+            "salcobrand": "#9333EA"
+        };
+
+        function normalizarCadena(cadena) {
+            return (cadena || "")
+                .trim()
+                .toLowerCase()
+                .replace(/[.]/g, "")
+                .replace(/\s+/g, " ");
+        }
+
+        function obtenerColorFarmacia(farmacia) {
+            const cadena = normalizarCadena(farmacia.farmacia);
+            return COLORES_FARMACIAS[cadena] || "#64748B";
+        }
+
+        const marcadoresPorFarmacia = {};
         const puntos = [];
+
+        if (typeof L.markerClusterGroup !== "function") {
+            console.error("Leaflet MarkerCluster no está cargado.");
+            if (estado) {
+                estado.textContent = "No se pudo cargar el agrupamiento de marcadores.";
+            }
+            return;
+        }
+
+        const grupoMarcadoresDetalle = L.markerClusterGroup({
+            maxClusterRadius: 50,
+            disableClusteringAtZoom: 17,
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: true,
+            animate: true
+        });
+
+        mapa.addLayer(grupoMarcadoresDetalle);
 
         farmacias.forEach(function (farmacia) {
             const lat = Number(farmacia.latitud);
             const lng = Number(farmacia.longitud);
 
-            if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            if (
+                !Number.isFinite(lat) || 
+                !Number.isFinite(lng) ||
+                lat < -90 || lat > 90 ||
+                lng < -180 || lng > 180
+                ) {
                 return;
             }
 
-            const marcador = L.marker([lat, lng]).addTo(mapa);
+            const color = obtenerColorFarmacia(farmacia);
+
+            const iconoFarmacia = L.divIcon({
+                className: "marcador-farmacia",
+                html: `
+                    <div class="marcador-farmacia-circulo"
+                        style="background-color: ${color};">
+                    </div>
+                `,
+                iconSize: [18, 18],
+                iconAnchor: [9, 9],
+                popupAnchor: [0, -10]
+            });
+
+            const marcador = L.marker([lat, lng], { icon: iconoFarmacia });
 
             const popup = document.createElement("div");
             const titulo = document.createElement("strong");
             titulo.textContent = farmacia.nombre;
             popup.appendChild(titulo);
 
+            if (farmacia.farmacia) {
+                const cadena = document.createElement("p");
+                cadena.textContent = farmacia.farmacia;
+                popup.appendChild(cadena);
+            }
+
             if (farmacia.direccion) {
                 const direccion = document.createElement("p");
                 direccion.textContent = farmacia.direccion;
                 popup.appendChild(direccion);
+            }
+
+            if (farmacia.comuna) {
+                const textoComuna = document.createElement("p");
+                textoComuna.textContent = farmacia.comuna;
+                popup.appendChild(textoComuna);
             }
 
             (farmacia.productos || []).forEach(function (producto) {
@@ -383,7 +457,15 @@
             });
 
             marcador.bindPopup(popup);
-            marcadores[String(farmacia.id)] = marcador;
+
+            const farmaciaId = String(farmacia.farmacia_id);
+
+            if (!marcadoresPorFarmacia[farmaciaId]) {
+                marcadoresPorFarmacia[farmaciaId] = [];
+            }
+
+            marcadoresPorFarmacia[farmaciaId].push(marcador);
+            grupoMarcadoresDetalle.addLayer(marcador);
             puntos.push([lat, lng]);
         });
 
@@ -405,18 +487,33 @@
             }
         }
 
+        //botones para localizar las farmacias
         document.querySelectorAll(".precio-boton-mapa").forEach(function (boton) {
             boton.addEventListener("click", function () {
-                const marcador = marcadores[String(boton.dataset.farmaciaId)];
+                const farmaciaId = String(boton.dataset.farmaciaId);
+                const marcadores = marcadoresPorFarmacia[farmaciaId];
 
-                if (marcador) {
-                    mapa.setView(marcador.getLatLng(), 16);
-                    marcador.openPopup();
+                if (marcadores && marcadores.length) {
+                    const ubicaciones = marcadores.map(function (marcador) {
+                        return marcador.getLatLng();
+                    });
+
+                    if (ubicaciones.length === 1) {
+                        mapa.setView(ubicaciones[0], 16);
+                    } else {
+                        mapa.fitBounds(ubicaciones, {
+                            padding: [35, 35],
+                            
+                        });
+                    }
+                    
+                    marcadores[0].openPopup();
 
                     contenedor.scrollIntoView({
                         behavior: "smooth",
                         block: "center"
                     });
+                    
                 } else if (estado) {
                     estado.textContent =
                         "Esta farmacia no tiene coordenadas registradas.";
@@ -461,4 +558,3 @@
     
 </body>
 </html>
-```
