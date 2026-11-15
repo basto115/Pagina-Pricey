@@ -34,19 +34,6 @@
 
                     <h3>{{ item.producto.nombre }}</h3>
 
-                    {% if item.producto.presentacion %}
-                        <p>
-                            <strong>Presentación:</strong>
-                            {{ item.producto.presentacion }}
-                        </p>
-                    {% endif %}
-
-                    {% if item.producto.laboratorio %}
-                        <p>
-                            <strong>Laboratorio:</strong>
-                            {{ item.producto.laboratorio }}
-                        </p>
-                    {% endif %}
 
                     <div class="cantidad-controles"
                         data-url="{% url 'modificar_cantidad_lista' item.producto.id %}">

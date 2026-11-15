@@ -1,7 +1,6 @@
-
 import re
 from playwright.sync_api import sync_playwright
-
+from farmacia.scraping.dr_simi import extraer_principio_activo
 
 def limpiar_precio(valor):
     """Convierte un precio chileno en un número entero."""
@@ -121,7 +120,7 @@ def obtener_producto(url):
                 
             return {
                 "nombre": nombre,
-                "principio_activo": "",
+                "principio_activo": extraer_principio_activo(nombre),
                 "precio": precio,
                 "precio_normal": precio_normal,
                 "disponible": disponible,

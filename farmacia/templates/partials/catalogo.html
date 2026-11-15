@@ -17,13 +17,6 @@
                         {{ producto.get_categoria_display|default:producto.categoria }}
                     </p>
 
-                    {% if producto.presentacion %}
-                        <p>Presentación: {{ producto.presentacion }}</p>
-                    {% endif %}
-
-                    {% if producto.laboratorio %}
-                        <p>Laboratorio: {{ producto.laboratorio }}</p>
-                    {% endif %}
 
                     <h4>Precios por farmacia</h4>
 

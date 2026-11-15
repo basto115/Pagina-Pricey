@@ -1,6 +1,5 @@
-
-from collections import defaultdict
-
+﻿from collections import defaultdict
+import re
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -10,15 +9,52 @@ from farmacia.procesamento.guardar_productos import (
     extraer_firma_producto,
 )
 
+IDS_REVISION_MANUAL = {
+    1460, 15872,       # Metamizol
+    1518, 10122,       # Melatonina
+    3577, 13708,       # Metotrexato
+    11139, 15752,      # Carvedilol
+}
+
+
+def caracteristicas_adicionales(producto, precios):
+    textos = [
+        producto.nombre or "",
+        producto.presentacion or "",
+    ]
+
+    textos.extend(
+        precio.url_producto or ""
+        for precio in precios
+    )
+
+    texto = normalizar_texto_producto(" ".join(textos))
+
+    patrones = {
+        "masticable": r"\bmasticables?\b",
+        "macrocristales": r"\bmacrocristales?\b",
+        "capsula_blanda": r"\bcapsulas? blandas?\b|\bsoftgel\b",
+        "enterico": (
+            r"\benteric[oa]s?\b|"
+            r"\brecubrimiento enterico\b|"
+            r"\bmicrogranulos entericos\b"
+        ),
+    }
+
+    return tuple(sorted(
+        nombre
+        for nombre, patron in patrones.items()
+        if re.search(patron, texto)
+    ))
 
 class Command(BaseCommand):
-    help = "Homologa productos duplicados entre las cuatro farmacias."
+    help = "Analiza productos equivalentes entre farmacias."
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--confirmar",
             action="store_true",
-            help="Confirma y ejecuta la homologación."
+            help="Ejecuta la homologacion de los grupos revisados.",
         )
 
     def handle(self, *args, **options):
@@ -34,17 +70,18 @@ class Command(BaseCommand):
         )
 
         total = 0
-
         self.stdout.write("Analizando productos...")
 
         for producto in productos:
             total += 1
 
-            if not producto.medicamento:
+            if producto.id in IDS_REVISION_MANUAL:
                 continue
 
+            if not producto.medicamento:
+                continue
             activo = normalizar_texto_producto(
-                producto.medicamento.principio_activo
+                producto.medicamento.principio_activo or ""
             )
 
             if not activo:
@@ -52,68 +89,44 @@ class Command(BaseCommand):
 
             firma = extraer_firma_producto(
                 producto.nombre,
-                producto.presentacion
+                producto.presentacion or "",
             )
 
-            concentraciones, forma, cantidad = firma
+            concentraciones, forma, caracteristicas, cantidad = firma
 
+            # Se exige una firma suficiente para evitar coincidencias debiles.
             if not concentraciones or not forma or not cantidad:
                 continue
 
             nombre = normalizar_texto_producto(producto.nombre)
-            marca = nombre.split()[0] if nombre else ""
-            
-            laboratorio = normalizar_texto_producto(
-                producto.laboratorio or ""
-            )
 
-            # Los genéricos deben tener laboratorio identificado.
-            if marca == activo and not laboratorio:
+            if not nombre:
                 continue
 
-            laboratorio_clave = laboratorio if marca == activo else ""
-            
-            texto_detalle = normalizar_texto_producto(
-                f"{producto.nombre} {producto.presentacion or ''}"
-            )
-            
-
-            formulaciones = (
-                "masticable" if "masticable" in texto_detalle else "",
-                "efervescente" if "efervescente" in texto_detalle else "",
-                "dispersable" if "dispersable" in texto_detalle else "",
-                "liberacion_prolongada" if any(
-                    palabra in texto_detalle
-                    for palabra in ("liberacion prolongada", "liberacion extendida")
-                ) else "",
-                "liberacion_retardada" if "liberacion retardada" in texto_detalle else "",
-                "capsula_blanda" if "capsula blanda" in texto_detalle else "",
-                "recubrimiento_enterico" if (
-                    "recubrimiento enterico" in texto_detalle
-                    or "recubierto enterico" in texto_detalle
-                ) else "",
-                "recubierto" if "recubiert" in texto_detalle else "",
-                "bioequivalente" if "bioequivalente" in texto_detalle else "",
-                "capsula_blanda" if (
-                    "capsula" in texto_detalle and "bland" in texto_detalle
-                ) else "",
-            )
-
-            if not marca:
-                continue
+            # Los genericos se agrupan aunque tengan laboratorios distintos.
+            # Las marcas comerciales solo se agrupan con la misma primera palabra.
+            if nombre == activo or nombre.startswith(activo + " "):
+                identidad = "generico"
+            else:
+                identidad = "marca:" + nombre.split()[0]
 
             precios = list(producto.precios.all())
 
             if not precios:
                 continue
 
+            adicionales = caracteristicas_adicionales(
+                producto,
+                precios,
+            )
+
+            # La firma ya contiene concentracion, forma, caracteristicas y cantidad.
             clave = (
-                marca,
+                identidad,
                 activo,
                 firma,
-                producto.es_bioequivalente,
-                formulaciones,
-                laboratorio_clave,
+                adicionales,
+                bool(producto.es_bioequivalente),
             )
 
             grupos[clave].append({
@@ -132,8 +145,6 @@ class Command(BaseCommand):
             if len(elementos) < 2:
                 continue
 
-            # No fusionar si dos productos tienen precios
-            # de la misma farmacia.
             farmacias_vistas = set()
             conflicto = False
 
@@ -144,14 +155,12 @@ class Command(BaseCommand):
 
                 farmacias_vistas.update(elemento["farmacias"])
 
-            if conflicto:
-                continue
+            if not conflicto:
+                candidatos.append((clave, elementos))
 
-            candidatos.append((clave, elementos))
-
-        self.stdout.write("\n" + "=" * 60)
-        self.stdout.write("HOMOLOGACIÓN GENERAL DE PRODUCTOS")
-        self.stdout.write("=" * 60)
+        self.stdout.write("\n" + "=" * 65)
+        self.stdout.write("SIMULACION DE HOMOLOGACION DE PRODUCTOS")
+        self.stdout.write("=" * 65)
         self.stdout.write(f"Productos analizados: {total}")
         self.stdout.write(f"Grupos candidatos: {len(candidatos)}")
 
@@ -162,12 +171,14 @@ class Command(BaseCommand):
         self.stdout.write(f"Productos involucrados: {total_productos}")
 
         for numero, (clave, elementos) in enumerate(candidatos, start=1):
-            marca, activo, firma, bioequivalente, formulaciones, laboratorio_clave  = clave
+            identidad, activo, firma, adicionales, bioequivalente = clave
 
-            self.stdout.write("-" * 60)
-            self.stdout.write(f"GRUPO {numero}: {marca}")
+            self.stdout.write("-" * 65)
+            self.stdout.write(f"GRUPO {numero}: {identidad}")
             self.stdout.write(f"Principio activo: {activo}")
             self.stdout.write(f"Firma: {firma}")
+            self.stdout.write(f"Características adicionales: {adicionales}")
+            self.stdout.write(f"Bioequivalente: {bioequivalente}")
 
             for elemento in elementos:
                 producto = elemento["producto"]
@@ -175,17 +186,16 @@ class Command(BaseCommand):
 
                 self.stdout.write(
                     f"ID {producto.id}: {producto.nombre} "
-                    f"| Farmacias ID: {farmacias}"
+                    f"| Laboratorio: {producto.laboratorio or 'Sin dato'} "
+                    f"| Farmacias: {farmacias}"
                 )
 
         if not options["confirmar"]:
             self.stdout.write(
-                self.style.WARNING(
-                    "\nSimulación terminada. No se modificó la base de datos."
-                )
+                "\nSIMULACION TERMINADA. No se modifico la base de datos."
             )
             self.stdout.write(
-                "Usa --confirmar para ejecutar la homologación."
+                "No ejecutar --confirmar hasta revisar los grupos."
             )
             return
 
@@ -193,68 +203,64 @@ class Command(BaseCommand):
         omitidos = 0
 
         for clave, elementos in candidatos:
+            fusionados_grupo = 0
+
             try:
                 with transaction.atomic():
-                    # Conservar como principal el producto
-                    # que ya tenga más precios registrados.
-                    elementos_ordenados = sorted(
+                    ordenados = sorted(
                         elementos,
-                        key=lambda e: (
-                            -len(e["farmacias"]),
-                            -bool(e["producto"].laboratorio),
-                            -bool(e["producto"].presentacion),
-                            -bool(e["producto"].sku),
-                            -len(e["producto"].nombre),
-                            e["producto"].id,
-                        )
+                        key=lambda elemento: (
+                            -len(elemento["farmacias"]),
+                            -bool(elemento["producto"].laboratorio),
+                            -bool(elemento["producto"].presentacion),
+                            -bool(elemento["producto"].sku),
+                            -len(elemento["producto"].nombre),
+                            elemento["producto"].id,
+                        ),
                     )
 
                     principal = Producto.objects.select_for_update().get(
-                        pk=elementos_ordenados[0]["producto"].pk
+                        pk=ordenados[0]["producto"].pk
                     )
 
-                    duplicados = elementos_ordenados[1:]
-
-                    for elemento in duplicados:
+                    for elemento in ordenados[1:]:
                         duplicado = Producto.objects.select_for_update().get(
                             pk=elemento["producto"].pk
                         )
 
                         precios = list(duplicado.precios.all())
 
-                        # Verificación final antes de transferir.
                         for precio in precios:
                             if principal.precios.filter(
                                 farmacia_id=precio.farmacia_id
                             ).exists():
                                 raise ValueError(
-                                    f"Conflicto de farmacia en {principal.nombre}"
+                                    f"Conflicto de farmacia para {principal.nombre}"
                                 )
 
                         for precio in precios:
                             precio.producto = principal
                             precio.save(update_fields=["producto"])
 
-                        nombre = duplicado.nombre
+                        id_duplicado = duplicado.pk 
                         duplicado.delete()
+                        fusionados_grupo += 1
 
                         self.stdout.write(
                             self.style.SUCCESS(
-                                f"Fusionado: {nombre} -> {principal.nombre}"
+                                f"Fusionado ID {id_duplicado} -> ID {principal.pk}"
                             )
                         )
-
-                    homologados += len(duplicados)
+            
+                        homologados += fusionados_grupo
 
             except Exception as error:
                 omitidos += len(elementos) - 1
                 self.stdout.write(
-                    self.style.ERROR(
-                        f"Grupo omitido: {error}"
-                    )
+                    self.style.ERROR(f"Grupo omitido: {error}")
                 )
 
-        self.stdout.write("\n" + "=" * 60)
+        self.stdout.write("\n" + "=" * 65)
         self.stdout.write(f"Productos fusionados: {homologados}")
         self.stdout.write(f"Productos omitidos: {omitidos}")
         self.stdout.write("Proceso finalizado.")

@@ -5,6 +5,52 @@ import unicodedata
 from django.db import transaction
 from farmacia.procesamento.normalizar import detectar_categoria
 
+def extraer_principio_activo(nombre):
+    """Identifica principios activos conocidos dentro del nombre."""
+
+    import re
+    import unicodedata
+
+    def normalizar(texto):
+        texto = unicodedata.normalize("NFKD", str(texto).lower())
+        texto = texto.encode("ascii", "ignore").decode()
+        return re.sub(r"[^a-z0-9]+", " ", texto).strip()
+
+    activos = Medicamento.objects.exclude(
+        principio_activo=""
+    ).exclude(
+        principio_activo__isnull=True
+    ).values_list("principio_activo", flat=True)
+
+    texto = " " + normalizar(nombre) + " "
+    encontrados = {}
+
+    for activo in activos:
+        clave = normalizar(activo)
+
+        if len(clave) > 5 and clave != "hidroxido":
+            if " " + clave + " " in texto:
+                encontrados[clave] = activo.strip()
+
+    if not encontrados:
+        return ""
+
+    claves = list(encontrados)
+
+    # Priorizar coincidencias más específicas.
+    mejores = [
+        clave for clave in claves
+        if all(
+            otra == clave or (" " + otra + " ") in (" " + clave + " ")
+            for otra in claves
+        )
+    ]
+
+    if len(mejores) == 1:
+        return encontrados[mejores[0]]
+
+    return ""
+
 from farmacia.models import (
     Medicamento,
     Farmacia,
@@ -661,6 +707,9 @@ def guardar_producto(datos, nombre_farmacia, producto_existente=_BUSQUEDA_NO_REA
     principio_activo = str(
         datos.get("principio_activo") or ""
     ).strip()
+
+    if not principio_activo:
+        principio_activo = extraer_principio_activo(nombre)
 
     presentacion = str(
         datos.get("presentacion") or ""
