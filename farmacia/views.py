@@ -643,136 +643,88 @@ def leer_receta(request):
             "productos__precios__farmacia"
         ).all()
     )
-    
+
+    indice_medicamentos = []
+
+    for medicamento in medicamentos:
+
+        nombre = normalizar_texto(medicamento.nombre)
+
+        principio = normalizar_texto(
+            medicamento.principio_activo or ""
+        )
+
+        productos = [
+            normalizar_texto(producto.nombre)
+            for producto in medicamento.productos.all()
+        ]
+
+        nombres = [nombre, principio] + productos
+
+        palabras_clave = {
+            n.split()[0]
+            for n in nombres
+            if n
+        }
+
+        indice_medicamentos.append({
+            "medicamento": medicamento,
+            "nombre": nombre,
+            "principio": principio,
+            "productos": productos,
+            "nombres": nombres,
+            "palabras_clave": palabras_clave,
+        })
+
     candidatos = {}
 
     print("OCR NORMALIZADO:", repr(texto_normalizado))
-
-    for medicamento in medicamentos:
-        print(
-            "MEDICAMENTO BD:",
-            repr(medicamento.nombre),
-            "->",
-            repr(normalizar_texto(medicamento.nombre))
-        )
     
-    #buscar el nombre completo del medicamento 
-    for medicamento in medicamentos:
-        nombre = normalizar_texto(medicamento.nombre)
+
+    # Buscar coincidencias por nombre comercial o producto.
+    for item in indice_medicamentos:
+
+        medicamento = item["medicamento"]
         
-        productos = list(medicamento.productos.all())
-        nombres_productos = [
-            normalizar_texto(producto.nombre)
-            for producto in productos
-        ]
-        
+        # Buscar el nombre completo del medicamento
         nombre_encontrado = (
-            bool(nombre) and nombre in texto_normalizado
-        ) or any(
+            bool(item["nombre"])
+            and item["nombre"] in texto_normalizado
+        )
+
+         # Buscar nombres completos de productos asociados
+        producto_encontrado = any(
             nombre_producto
             and nombre_producto in texto_normalizado
-            for nombre_producto in nombres_productos
+            for nombre_producto in item["productos"]
         )
+        
 
-        palabras_nombre = nombre.split()
+        if nombre_encontrado or producto_encontrado:
 
-        if not nombre_encontrado and palabras_nombre:
-            nombre_base = palabras_nombre[0]
-
-            concentraciones = extraer_concentraciones(texto_normalizado)
-
-            if (
-                nombre_base in texto_normalizado
-                and any(
-                    concentracion in nombre
-                    for concentracion in concentraciones
-                )
-            ):
-                nombre_encontrado = True
-            
-        if nombre_encontrado:
             candidatos[medicamento.id] = {
                 "medicamento": medicamento,
                 "tipo": "Nombre reconocido",
                 "confirmacion": False,
             }
-        
-            #busca por principio activo
-                
-        concentraciones = extraer_concentraciones(texto_normalizado)
-
-        principios = {
-            normalizar_texto(m.principio_activo)
-            for m in medicamentos
-            if m.principio_activo
-        }
 
 
-            
-        for principio in principios:
-                if not principio:
-                    continue
-
-                if not re.search(
-                    rf"(?<!\w){re.escape(principio)}(?!\w)",
-                    texto_normalizado
-                ):
-                    continue
-                
-                grupo = [
-                    m for m in medicamentos
-                    if (
-                        principio in normalizar_texto(m.nombre)
-                        or normalizar_texto(m.principio_activo or "") == principio
-                    )
-                ]
-                
-                #no volver a agregar medicamentos encontrados por nombre
-                pendientes = [
-                    m for m in grupo
-                    if m.id not in candidatos
-                ]
-                
-                if concentraciones:
-                    por_concentracion = [
-                        m for m in pendientes
-                        if any(
-                            concentracion in normalizar_texto(m.nombre)
-                            or any(
-                                concentracion in normalizar_texto(p.nombre)
-                                for p in m.productos.all()
-                            )
-                            for concentracion in concentraciones
-                        )
-                    ]
-                    
-                    pendientes = por_concentracion
-                        
-
-                 
-        for medicamento in pendientes:
-                candidatos[medicamento.id] = {
-                    "medicamento": medicamento,
-                    "tipo": (
-                        "Principio activo y concentración"
-                        if concentraciones
-                        else "Coincidencia por principio activo"
-                    ),
-                    "confirmacion": True,
-                }
 
     #adjunta el precio 
     
     for candidato in candidatos.values():
         medicamento = candidato["medicamento"]
 
-        precios = Precio.objects.filter(
-            producto__medicamento=medicamento
-        ).select_related(
-            "producto", "farmacia"
-        ).order_by("precio")
+        precios = [
+            precio
+            for producto in medicamento.productos.all()
+            for precio in producto.precios.all()
+        ]
 
-        candidato["precios"] = list(precios)
+        candidato["precios"] = sorted(
+            precios,
+            key=lambda p: p.precio
+        )
 
     print("TEXTO OCR:", texto)
     print("CANDIDATOS:", [
@@ -780,50 +732,37 @@ def leer_receta(request):
         for c in candidatos.values()
     ])
 
-    #mostrar medicamentos no encontrados
+    # Mostrar medicamentos no encontrados.
     no_encontrados = []
 
     for linea in lineas_receta:
+
         concentraciones_linea = extraer_concentraciones(linea)
 
         if not concentraciones_linea:
             continue
 
         coincidencia = False
+        palabras_linea = set(linea.split())
 
-        for medicamento in medicamentos:
-            nombre = normalizar_texto(medicamento.nombre)
-            principio = normalizar_texto(medicamento.principio_activo or "")
-            nombres = [nombre, principio]
+        for item in indice_medicamentos:
 
-            nombres.extend(
-                normalizar_texto(producto.nombre)
-                for producto in medicamento.productos.all()
-            )
-
-            palabras_clave = [
-                n.split()[0]
-                for n in nombres
-                if n
-            ]
-
-            nombre_en_linea = any(
-                palabra in linea.split()
-                for palabra in palabras_clave
+            nombre_en_linea = bool(
+                item["palabras_clave"] & palabras_linea
             )
 
             concentracion_en_catalogo = any(
                 concentracion in nombre
-                for nombre in nombres
+                for nombre in item["nombres"]
                 for concentracion in concentraciones_linea
             )
 
             if nombre_en_linea and concentracion_en_catalogo:
                 coincidencia = True
                 break
+
         if not coincidencia and linea not in no_encontrados:
             no_encontrados.append(linea)
-    
 
     contexto["no_encontrados"] = no_encontrados
 
@@ -832,29 +771,18 @@ def leer_receta(request):
     
 
     # Preparar las farmacias para el mapa de la receta.
-    farmacias_mapa = {}
+    productos_por_farmacia = {}
 
     for resultado in contexto["resultados"]:
         medicamento = resultado["medicamento"]
 
         for precio in resultado["precios"]:
-            farmacia = precio.farmacia
+            farmacia_id = precio.farmacia_id
 
-            # Omitir farmacias sin coordenadas.
-            if farmacia.latitud is None or farmacia.longitud is None:
-                continue
+            if farmacia_id not in productos_por_farmacia:
+                productos_por_farmacia[farmacia_id] = []
 
-            if farmacia.id not in farmacias_mapa:
-                farmacias_mapa[farmacia.id] = {
-                    "id": farmacia.id,
-                    "nombre": farmacia.nombre,
-                    "direccion": farmacia.direccion,
-                    "latitud": float(farmacia.latitud),
-                    "longitud": float(farmacia.longitud),
-                    "productos": [],
-                }
-
-            farmacias_mapa[farmacia.id]["productos"].append({
+            productos_por_farmacia[farmacia_id].append({
                 "medicamento": medicamento.nombre,
                 "producto": precio.producto.nombre,
                 "precio": str(precio.precio),
@@ -862,7 +790,41 @@ def leer_receta(request):
                 "url_producto": precio.url_producto,
             })
 
+    # Obtener las sucursales aprobadas de esas cadenas.
+    farmacias_ids = list(productos_por_farmacia.keys())
+
+    sucursales = Sucursal.objects.filter(
+        farmacia_id__in=farmacias_ids,
+        aprobada=True,
+        latitud__isnull=False,
+        longitud__isnull=False
+    ).select_related("farmacia")
+
+    farmacias_mapa = {}
+
+    for sucursal in sucursales:
+        farmacia = sucursal.farmacia
+
+        farmacias_mapa[sucursal.id] = {
+            "id": sucursal.id,
+            "nombre": farmacia.nombre,
+            "sucursal": sucursal.nombre,
+            "cadena": farmacia.nombre,
+            "direccion": sucursal.direccion,
+            "latitud": float(sucursal.latitud),
+            "longitud": float(sucursal.longitud),
+            "productos": productos_por_farmacia.get(
+                farmacia.id, []
+            ),
+        }
     contexto["farmacias_mapa"] = list(farmacias_mapa.values())
+    
+    print("OCR FINALIZADO")
+    print("MEDICAMENTOS CARGADOS:", len(medicamentos))
+    print("INDICE PREPARADO:", len(indice_medicamentos))
+    print("CANDIDATOS:", len(candidatos))
+    print("NO ENCONTRADOS:", len(no_encontrados))
+    print("FARMACIAS MAPA:", len(contexto["farmacias_mapa"]))
 
     return render(request, "leer_receta.html", contexto)
 

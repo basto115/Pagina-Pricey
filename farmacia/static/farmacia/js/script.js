@@ -304,7 +304,10 @@ async function planificarRutaCompras() {
             try {
                 farmaciasReceta = JSON.parse(elementoDatos.textContent);
             } catch (error) {
-                console.error("No se pudieron leer los datos de las farmacias.", error);
+                console.error(
+                    "No se pudieron leer los datos de las farmacias.",
+                    error
+                );
             }
         }
 
@@ -315,7 +318,39 @@ async function planificarRutaCompras() {
             maxZoom: 19
         }).addTo(mapaReceta);
 
+        // Colores de las cadenas de farmacias.
+        const COLORES_FARMACIAS_RECETA = {
+            "cruz verde": "#16A34A",
+            "dr simi": "#2563EB",
+            "farmacias ahumada": "#E87924",
+            "salcobrand": "#9333EA"
+        };
+
+        function normalizarCadenaReceta(cadena) {
+            return (cadena || "")
+                .trim()
+                .toLowerCase()
+                .replace(/[.]/g, "")
+                .replace(/\s+/g, " ");
+        }
+
+        function obtenerColorFarmaciaReceta(farmacia) {
+            const cadena = normalizarCadenaReceta(
+                farmacia.cadena || farmacia.farmacia || farmacia.nombre
+            );
+
+            return COLORES_FARMACIAS_RECETA[cadena] || "#64748B";
+        }
+
         const puntosReceta = [];
+
+        // Grupo de marcadores con clústeres.
+        const grupoFarmaciasReceta = L.markerClusterGroup({
+            showCoverageOnHover: false,
+            maxClusterRadius: 50,
+            spiderfyOnMaxZoom: true,
+            zoomToBoundsOnClick: true
+        });
 
         farmaciasReceta.forEach(function (farmacia) {
             const latitud = Number(farmacia.latitud);
@@ -330,14 +365,42 @@ async function planificarRutaCompras() {
                 return;
             }
 
-            const contenido = document.createElement("div");
-            const nombre = document.createElement("strong");
+            const color = obtenerColorFarmaciaReceta(farmacia);
 
-            nombre.textContent = farmacia.nombre;
+            // Crear marcador personalizado según la cadena.
+            const iconoFarmacia = L.divIcon({
+                className: "marcador-farmacia",
+                html: `
+                    <div class="marcador-farmacia-circulo"
+                        style="background-color: ${color};">
+                    </div>
+                `,
+                iconSize: [18, 18],
+                iconAnchor: [9, 9],
+                popupAnchor: [0, -10]
+            });
+
+            const marcador = L.marker(
+                [latitud, longitud],
+                { icon: iconoFarmacia }
+            );
+
+            // Preparar información del popup.
+            const contenido = document.createElement("div");
+
+            const nombre = document.createElement("strong");
+            nombre.textContent =
+                farmacia.sucursal || farmacia.nombre || "Farmacia";
             contenido.appendChild(nombre);
 
+            const cadena = document.createElement("p");
+            cadena.textContent =
+                farmacia.cadena || farmacia.farmacia || farmacia.nombre;
+            contenido.appendChild(cadena);
+
             const direccion = document.createElement("p");
-            direccion.textContent = farmacia.direccion || "Dirección no disponible";
+            direccion.textContent =
+                farmacia.direccion || "Dirección no disponible";
             contenido.appendChild(direccion);
 
             (farmacia.productos || []).forEach(function (producto) {
@@ -357,14 +420,16 @@ async function planificarRutaCompras() {
                 contenido.appendChild(detalle);
             });
 
-            L.marker([latitud, longitud])
-                .addTo(mapaReceta)
-                .bindPopup(contenido);
+            marcador.bindPopup(contenido);
 
+            grupoFarmaciasReceta.addLayer(marcador);
             puntosReceta.push([latitud, longitud]);
         });
 
-        // Mostrar también la ubicación guardada desde Inicio, si existe.
+        // Agregar marcadores al mapa.
+        mapaReceta.addLayer(grupoFarmaciasReceta);
+
+        // Mostrar ubicación guardada del usuario, si existe.
         try {
             const guardada = sessionStorage.getItem("ubicacionUsuario");
 
@@ -384,15 +449,21 @@ async function planificarRutaCompras() {
                         color: "#2563eb",
                         fillColor: "#3b82f6",
                         fillOpacity: 1
-                    }).addTo(mapaReceta).bindPopup("Tu ubicación");
+                    })
+                    .addTo(mapaReceta)
+                    .bindPopup("Tu ubicación");
 
                     puntosReceta.push([latitud, longitud]);
                 }
             }
         } catch (error) {
-            console.warn("No se pudo recuperar la ubicación guardada.", error);
+            console.warn(
+                "No se pudo recuperar la ubicación guardada.",
+                error
+            );
         }
 
+        // Ajustar el mapa a las ubicaciones disponibles.
         if (puntosReceta.length > 0) {
             mapaReceta.fitBounds(puntosReceta, {
                 padding: [25, 25],
@@ -407,6 +478,11 @@ async function planificarRutaCompras() {
                 ? "Selecciona un marcador para consultar los precios."
                 : "No hay farmacias con coordenadas para los medicamentos reconocidos.";
         }
+
+        console.log(
+            "Sucursales mostradas en el mapa de recetas:",
+            grupoFarmaciasReceta.getLayers().length
+        );
 
         setTimeout(function () {
             mapaReceta.invalidateSize();
