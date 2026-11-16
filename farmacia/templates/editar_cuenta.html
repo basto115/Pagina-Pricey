@@ -67,35 +67,71 @@
                 
                 <div class="cuenta-campo">
                     <label for="password_actual">Contraseña actual</label>
-                    <input
-                        type="password"
-                        id="password_actual"
-                        name="password_actual"
-                        placeholder="Ingresa tu contraseña actual"
-                        autocomplete="current-password"
-                    >
+                    <div class="auth-password-contenedor">
+                        <input
+                            type="password"
+                            id="password_actual"
+                            name="password_actual"
+                            placeholder="Ingresa tu contraseña actual"
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="auth-ver-password"
+                                data-target="password_actual"
+                                aria-label="Mostrar contraseña">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="cuenta-campo">
                     <label for="nueva_password">Nueva contraseña</label>
-                    <input
-                        type="password"
-                        id="nueva_password"
-                        name="nueva_password"
-                        placeholder="Ingresa tu nueva contraseña"
-                        autocomplete="new-password"
-                    >
+                    <div class="auth-password-contenedor">
+                        <input
+                            type="password"
+                            id="nueva_password"
+                            name="nueva_password"
+                            placeholder="Ingresa tu nueva contraseña"
+                            autocomplete="new-password"
+                        >
+                        <button type="button" class="auth-ver-password"
+                                data-target="nueva_password"
+                                aria-label="Mostrar contraseña">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="cuenta-campo">
                     <label for="confirmar_password">Confirmar nueva contraseña</label>
-                    <input
-                        type="password"
-                        id="confirmar_password"
-                        name="confirmar_password"
-                        placeholder="Confirma tu nueva contraseña"
-                        autocomplete="new-password"
-                    >
+                    <div class="auth-password-contenedor">
+                        <input
+                            type="password"
+                            id="confirmar_password"
+                            name="confirmar_password"
+                            placeholder="Confirma tu nueva contraseña"
+                            autocomplete="new-password"
+                        >
+                        <button type="button" class="auth-ver-password"
+                                data-target="confirmar_password"
+                                aria-label="Mostrar contraseña">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="cuenta-boton">
@@ -108,6 +144,41 @@
             </form>
         </section>
     </main>
+
+
+    <script>
+    document.querySelectorAll(".auth-ver-password").forEach(boton => {
+        boton.addEventListener("click", function () {
+            const input = document.getElementById(this.dataset.target);
+
+            if (input.type === "password") {
+                input.type = "text";
+                this.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3l18 18"/>
+                        <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                        <path d="M9.9 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3 3.8"/>
+                        <path d="M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7c1.1 0 2.1-.2 3-.5"/>
+                    </svg>
+                `;
+                this.setAttribute("aria-label", "Ocultar contraseña");
+            } else {
+                input.type = "password";
+                this.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                `;
+                this.setAttribute("aria-label", "Mostrar contraseña");
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

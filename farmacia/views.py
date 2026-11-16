@@ -501,11 +501,14 @@ def vista_registro(request):
         "correo": correo
     })
 
+
 @require_http_methods(["GET", "POST"])
 def vista_login(request):
 
     if request.user.is_authenticated:
         return redirect("inicio")
+
+    correo = ""
 
     if request.method == "POST":
         correo = request.POST.get("correo", "").strip().lower()
@@ -539,8 +542,10 @@ def vista_login(request):
             "Correo electrónico o contraseña incorrectos."
         )
 
-    return render(request, "login.html")
-
+    return render(request, "login.html", {
+        "correo": correo,
+        "ocultar_notificaciones_globales": True
+    })
 
 @require_http_methods(["POST"])
 def cerrar_sesion(request):

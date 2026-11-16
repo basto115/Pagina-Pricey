@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
@@ -8,96 +9,180 @@
     <link rel="stylesheet" href="{% static 'farmacia/css/estilo.css' %}">
     <link rel="icon" type="image/png" href="{% static 'farmacia/img/pandaloool.png' %}">
 </head>
+
 <body>
-    
 
     {% include "partials/navbar.html" %}
 
+    <main>
+        <section class="auth-contenedor">
+            <div class="auth-tarjeta">
 
-<main>
-    <section class="auth-contenedor">
-        <div class="auth-tarjeta">
-            <h1 class="auth-titulo">¡Bienvenido!</h1>
+                <h1 class="auth-titulo">¡Bienvenido!</h1>
 
-            <p class="auth-descripcion">
-                Inicia sesión para continuar en FARMA PRICEY.
-            </p>
-        
+                <p class="auth-descripcion">
+                    Inicia sesión para continuar en FARMA PRICEY.
+                </p>
 
-            <form method="post">
-                {% csrf_token %}
+                <form method="post">
+                    {% csrf_token %}
 
-                <div class="auth-campo">
-                    <label for="correo">Correo electronico</label>
-                    <input 
-                        type="email"
-                        id="correo"
-                        name="correo"
-                        placeholder="correo@gmail.com"
-                        autocomplete="email"
-                        required
-                    >
-                </div>
+                    {% if messages %}
+                        <div class="auth-mensajes">
+                            {% for message in messages %}
+                                <div class="auth-mensaje {{ message.tags }}">
+                                    <span>{{ message }}</span>
+                                    <button type="button"
+                                            class="auth-mensaje-cerrar"
+                                            aria-label="Cerrar">
+                                        &times;
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
-                <div class="auth-campo">
-                    <label for="contrasena">Contraseña</label>
-                    <input 
-                        type="password"
-                        id="contrasena"
-                        name="contrasena"
-                        placeholder="Ingrese su contraseña"
-                        autocomplete="current-password"
-                        required
-                    >
-                </div>
-                
-                <a href="{% url 'password_reset' %}">
-                    ¿Olvidaste tu contraseña?
-                </a>
+                    <div class="auth-campo">
+                        <label for="correo">Correo electrónico</label>
+                        <input
+                            type="email"
+                            id="correo"
+                            name="correo"
+                            placeholder="correo@gmail.com"
+                            autocomplete="email"
+                            value="{{ correo }}"
+                            required
+                        >
+                    </div>
 
-                <button type="submit" class="auth-boton">
-                    Iniciar sesión
-                </button>
-            </form>
+                    <div class="auth-campo">
+                        <label for="contrasena">Contraseña</label>
 
-            <p class="auth-enlace"> 
-                ¿Todavia no tienes una cuenta?
-                <a href="{% url 'registro' %}">Regístrate aquí</a>
-            </p>
+                        <div class="auth-password-contenedor">
+                            <input
+                                type="password"
+                                id="contrasena"
+                                name="contrasena"
+                                placeholder="Ingrese su contraseña"
+                                autocomplete="current-password"
+                                required
+                            >
 
-            <p class="auth-enlace"> 
-                <a href="{% url 'inicio' %}">Volver al inicio</a>
-            </p>
+                            <button
+                                type="button"
+                                class="auth-ver-password"
+                                data-target="contrasena"
+                                aria-label="Mostrar contraseña"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="20" height="20"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="2"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'password_reset' %}">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+
+                    <button type="submit" class="auth-boton">
+                        Iniciar sesión
+                    </button>
+
+                </form>
+
+                <p class="auth-enlace">
+                    ¿Todavía no tienes una cuenta?
+                    <a href="{% url 'registro' %}">Regístrate aquí</a>
+                </p>
+
+                <p class="auth-enlace">
+                    <a href="{% url 'inicio' %}">Volver al inicio</a>
+                </p>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-contenido">
+            <div>
+                <h3>FARMA PRICEY</h3>
+                <p>Compara precios de medicamentos de forma sencilla.</p>
+            </div>
+
+            <div>
+                <h4>Enlaces</h4>
+                <a href="{% url 'inicio' %}">Inicio</a>
+                <a href="#medicamentos">Medicamentos</a>
+                <a href="#farmacias">Farmacias</a>
+            </div>
+
+            <div>
+                <h4>Contacto</h4>
+                <p>farmapricey.soporte@gmail.com</p>
+            </div>
         </div>
 
-    </section>
-</main>
-
-<footer>
-    <div class="footer-contenido">
-        <div>
-            <h3>FARMA PRICEY</h3>
-            <p>Compara precios de medicamentos de forma sencilla.</p>
+        <div class="footer-bottom">
+            <p>&copy; 2026 FARMA PRICEY. Todos los derechos reservados.</p>
         </div>
+    </footer>
 
-        <div>
-            <h4>Enlaces</h4>
-            <a href="{% url 'inicio' %}">Inicio</a>
-            <a href="#medicamentos">Medicamentos</a>
-            <a href="#farmacias">Farmacias</a>
-        </div>
+    <script>
+        // Mostrar y ocultar contraseña
+        document.querySelectorAll(".auth-ver-password").forEach(boton => {
+            boton.addEventListener("click", function () {
+                const input = document.getElementById(this.dataset.target);
 
-        <div>
-            <h4>Contacto</h4>
-            <p>farmapricey.soporte@gmail.com</p>
-        </div>
-    </div>
+                if (input.type === "password") {
+                    input.type = "text";
+                    this.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 3l18 18"/>
+                            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                            <path d="M9.9 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3 3.8"/>
+                            <path d="M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7c1.1 0 2.1-.2 3-.5"/>
+                        </svg>
+                    `;
+                    this.setAttribute("aria-label", "Ocultar contraseña");
+                } else {
+                    input.type = "password";
+                    this.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    `;
+                    this.setAttribute("aria-label", "Mostrar contraseña");
+                }
+            });
+        });
 
-    <div class="footer-bottom">
-        <p>&copy; 2026 FARMA PRICEY. Todos los derechos reservados.</p>
-    </div>
-</footer>
+        // Cerrar notificaciones
+        document.querySelectorAll(".auth-mensaje-cerrar").forEach(boton => {
+            boton.addEventListener("click", function () {
+                const mensaje = this.closest(".auth-mensaje");
+                mensaje.style.opacity = "0";
+
+                setTimeout(() => {
+                    mensaje.remove();
+                }, 300);
+            });
+        });
+    </script>
 
 </body>
-
 </html>

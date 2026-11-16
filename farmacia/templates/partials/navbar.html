@@ -53,6 +53,6 @@
 
 </header>
 
-{% if request.resolver_match.url_name != 'registro' %}
+{% if not ocultar_notificaciones_globales %}
     {% include "partials/notificaciones.html" %}
 {% endif %}
