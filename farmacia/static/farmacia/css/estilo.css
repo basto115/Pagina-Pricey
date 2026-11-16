@@ -3145,3 +3145,36 @@ main .medicamento .cantidad-controles button.btn-eliminar:hover {
 .auth-mensaje-cerrar {
     color: inherit;
 }
+
+
+.auth-mensajes {
+    margin-bottom: 15px;
+}
+
+.auth-mensaje {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.auth-mensaje-contenido p {
+    margin: 0 0 4px;
+}
+
+.auth-mensaje-contenido p:last-child {
+    margin-bottom: 0;
+}
+
+.auth-mensaje-cerrar {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    color: inherit;
+    flex-shrink: 0;
+}

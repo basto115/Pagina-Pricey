@@ -1332,11 +1332,11 @@ def planificar_ruta(request):
         ],
     })
 
-
 @login_required(login_url='login')
 def mi_cuenta(request):
-    return render(request, 'mi_cuenta.html')
-
+    return render(request, 'mi_cuenta.html', {
+        "ocultar_notificaciones_globales": True
+    })
 
 @login_required(login_url='login')
 @require_http_methods(["GET", "POST"])
@@ -1352,58 +1352,72 @@ def editar_cuenta(request):
 
         if not nombre:
             messages.error(request, "El nombre no puede estar vacío.")
-            return render(request, 'editar_cuenta.html')
 
-        # Comprobar si quiere cambiar la contraseña
-        quiere_cambiar_password = any([
-            password_actual,
-            nueva_password,
-            confirmar_password
-        ])
-
-        if quiere_cambiar_password:
-
-            if not all([
+        else:
+            quiere_cambiar_password = any([
                 password_actual,
                 nueva_password,
                 confirmar_password
-            ]):
-                messages.error(
-                    request,
-                    "Debes completar los tres campos de contraseña."
-                )
-                return render(request, 'editar_cuenta.html')
+            ])
 
-            if not request.user.check_password(password_actual):
-                messages.error(request, "La contraseña actual es incorrecta.")
-                return render(request, 'editar_cuenta.html')
+            if quiere_cambiar_password:
 
-            if nueva_password != confirmar_password:
-                messages.error(request, "Las nuevas contraseñas no coinciden.")
-                return render(request, 'editar_cuenta.html')
+                if not all([
+                    password_actual,
+                    nueva_password,
+                    confirmar_password
+                ]):
+                    messages.error(
+                        request,
+                        "Debes completar los tres campos de contraseña."
+                    )
 
-            try:
-                validate_password(nueva_password, user=request.user)
-            except ValidationError as errores:
-                for error in errores:
-                    messages.error(request, error)
-                return render(request, 'editar_cuenta.html')
+                elif not request.user.check_password(password_actual):
+                    messages.error(
+                        request,
+                        "La contraseña actual es incorrecta."
+                    )
 
-            request.user.set_password(nueva_password)
-            request.user.save()
+                elif nueva_password != confirmar_password:
+                    messages.error(
+                        request,
+                        "Las nuevas contraseñas no coinciden."
+                    )
 
+                else:
+                    try:
+                        validate_password(nueva_password, user=request.user)
 
-            # Mantener la sesión iniciada después del cambio
-            update_session_auth_hash(request, request.user)
+                        request.user.set_password(nueva_password)
+                        request.user.save()
 
-        request.user.first_name = nombre
-        request.user.last_name = apellido
-        request.user.save()
+                        update_session_auth_hash(request, request.user)
 
-        messages.success(request, "Tus datos se actualizaron correctamente.")
-        return redirect("mi_cuenta")
+                    except ValidationError as errores:
+                        for error in errores:
+                            messages.error(request, error)
 
-    return render(request, 'editar_cuenta.html')
+            if not messages.get_messages(request):
+                request.user.first_name = nombre
+                request.user.last_name = apellido
+                request.user.save()
+
+                if quiere_cambiar_password:
+                    messages.success(
+                        request,
+                        "¡Tus datos y contraseña se actualizaron correctamente!"
+                    )
+                else:
+                    messages.success(
+                        request,
+                        "¡Tus datos se actualizaron correctamente!"
+                    )
+
+                return redirect(request.path)
+
+    return render(request, 'editar_cuenta.html', {
+        "ocultar_notificaciones_globales": True
+    })
 
 def vista_premium(request):
     return render(request, "premium.html")

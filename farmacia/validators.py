@@ -27,3 +27,5 @@ class StrongPasswordValidator:
             "Debe incluir mayúsculas, minúsculas, números "
             "y al menos un carácter especial."
         )
+    
+    
