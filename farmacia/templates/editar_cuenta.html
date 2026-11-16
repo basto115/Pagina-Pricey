@@ -20,9 +20,13 @@
             <p>Actualiza la información de tu cuenta.</p>
 
             {% if messages %}
-                {% for message in messages %}
-                    <p class="cuenta-mensaje">{{ message }}</p>
-                {% endfor %}
+                <div class="auth-mensajes">
+                    {% for message in messages %}
+                        <div class="auth-mensaje {{ message.tags }}">
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
             {% endif %}
 
             <form method="POST">

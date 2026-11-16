@@ -23,14 +23,17 @@
 
             {% if messages %}
                 <div class="auth-mensajes">
-                    {% for message in messages %}
-                        <div class="auth-mensaje {{ message.tags }}">
-                            <span>{{ message }}</span>
-                            <button type="button" class="auth-mensaje-cerrar" aria-label="Cerrar">
-                                &times;
-                            </button>
+                    <div class="auth-mensaje error">
+                        <div class="auth-mensaje-contenido">
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+
+                        <button type="button" class="auth-mensaje-cerrar" aria-label="Cerrar">
+                            &times;
+                        </button>
+                    </div>
                 </div>
             {% endif %}
 
@@ -87,7 +90,7 @@
 
                     <small class="auth-ayuda-password">
                         Tu contraseña debe tener:
-                        <br>• Mínimo 8 caracteres.
+                        <br>• Mínimo 10 caracteres.
                         <br>• Una letra mayúscula y una minúscula.
                         <br>• Al menos un número.
                         <br>• Al menos un carácter especial (por ejemplo: @, #, !).
