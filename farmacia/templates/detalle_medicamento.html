@@ -117,7 +117,19 @@
                     {% for producto in productos_relacionados %}
                         <article class="presentacion-mini">
                             <div class="presentacion-icono" aria-hidden="true">
-                                
+                                {% if producto.medicamento_id %}
+                                    <img 
+                                        src="{% url 'imagen_medicamento' producto.medicamento_id %}"
+                                        alt="{{ producto.nombre }}"
+                                        loading="lazy"
+                                    >
+                                {% else %}
+                                    <img
+                                        src="{% url 'imagen_producto' producto.id %}"
+                                        alt="{{ producto.nombre }}"
+                                        loading="lazy"
+                                    >
+                                {% endif %}
                             </div>
 
                             <div class="presentacion-mini-info">
@@ -127,9 +139,11 @@
                                     <p>{{ producto.presentacion }}</p>
                                 {% endif %}
 
+                                <!--
                                 <a href="#producto-{{ producto.id }}">
                                     Comparar precios →
                                 </a>
+                                -->
                                 <form method="POST"
                                     action="{% url 'agregar_a_lista' producto.id %}">
                                     {% csrf_token %}
@@ -178,7 +192,7 @@
                     >
 
                         <div class="tarjetas-precios">
-                            {% for precio in producto.precios.all|dictsort:"precio" %}
+                            {% for precio in producto.precios|dictsort:"precio" %}
                                 <article class="tarjeta-precio">
 
                                     {% if forloop.first %}

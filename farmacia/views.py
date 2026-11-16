@@ -36,6 +36,8 @@ from itertools import combinations
 
 from math import radians, sin, cos, sqrt, atan2
 
+from types import SimpleNamespace
+
 def inicio(request):
     busqueda = request.GET.get("buscar", "").strip()
 
@@ -176,9 +178,65 @@ def detalle_medicamento(request, medicamento_id):
         id=medicamento_id,
     )
 
-    productos = list(medicamento.productos.all())
+    productos_originales = list(medicamento.productos.all())
     
+    # Agrupar productos equivalentes.
+    grupos_productos = {}
     
+    for producto in productos_originales:
+        
+        clave = normalizar_nombre_producto(producto.nombre)
+
+        if clave not in grupos_productos:
+            grupos_productos[clave] = {
+                "producto": producto,
+                "precios": {}
+            }
+
+        # Reunir los precios de todas las versiones.
+        for precio in producto.precios.all():
+            
+            farmacia_id = precio.farmacia_id
+
+            if not farmacia_id:
+                continue
+            
+            precio_actual = grupos_productos[clave]["precios"].get(
+                farmacia_id
+            )
+            
+            # Si una farmacia aparece dos veces, conservar el precio más bajo.
+            if (
+                precio_actual is None
+                or precio.precio < precio_actual.precio
+            ):
+                grupos_productos[clave]["precios"][farmacia_id] = precio
+                
+    # Construir productos unificados.
+    productos = []
+    
+    for grupo in grupos_productos.values():
+        
+        producto = grupo["producto"]
+        
+        precios_unificados = sorted(
+            grupo["precios"].values(),
+            key=lambda precio: precio.precio
+        )
+
+        productos.append(
+            SimpleNamespace(
+                id=producto.id,
+                nombre=producto.nombre,
+                presentacion=producto.presentacion,
+                medicamento_id=producto.medicamento_id,
+                precios=precios_unificados
+            )
+        )
+        
+    # El comparador utiliza solamente los productos unificados.
+    productos_detalle = productos
+        
     #Buscar otras presentaciones con el mismo principio activo
     productos_relacionados = []
         
@@ -188,26 +246,19 @@ def detalle_medicamento(request, medicamento_id):
                 medicamento__principio_activo__iexact=medicamento.principio_activo
             )
             .exclude(medicamento_id=medicamento.id)
-            .prefetch_related(
-                Prefetch(
-                    "precios",
-                    queryset=Precio.objects.select_related(
-                        "farmacia"
-                    ).order_by("precio"),
-                )
-            )
-            .order_by("nombre")
+            .select_related("medicamento")
+            .order_by("nombre")[:4]
         )
         
-    # Productos que aparecerán en el comparador de precios.
-    productos_detalle = productos + productos_relacionados
+    # Esto muestra la comparación de precios solo del producto que estamos viendo
+    productos_detalle = productos
     
     # obtener farmacias que tienen precios para tal medicamento
     farmacias_ids = set()
     productos_por_farmacia = {}
 
     for producto in productos_detalle:
-        for precio in producto.precios.all():
+        for precio in producto.precios:
             farmacia_id = precio.farmacia_id
             
             if not farmacia_id:
@@ -1498,3 +1549,19 @@ def imagen_producto(request, producto_id):
 
     response["Cache-Control"] = "public, max-age=3600"
     return response
+
+def normalizar_nombre_producto(nombre):
+    texto = unicodedata.normalize(
+        "NFKD", nombre or ""
+    ).encode("ascii", "ignore").decode("ascii")
+    
+    texto = texto.lower()
+    
+    #corregir variaciones de escritura
+    texto = re.sub(r"\bgm\b", "mg", texto)
+
+    #eliminar separadores que no cambian la presentacion
+    texto = re.sub(r"\bx\b", " ", texto)
+    texto = re.sub(r"[^a-z0-9]+", " ", texto)
+    
+    return " ".join(texto.split())
