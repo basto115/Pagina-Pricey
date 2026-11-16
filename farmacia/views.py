@@ -572,7 +572,7 @@ def extraer_concentraciones(texto):
 @require_http_methods(["GET", "POST"])
 def leer_receta(request):
     if not request.user.is_authenticated:
-        return redirect("login")
+        return redirect("premium")
 
     if not hasattr(request.user, "suscripcion") or not request.user.suscripcion.es_premium:
         return redirect("premium")

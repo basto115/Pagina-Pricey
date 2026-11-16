@@ -14,21 +14,7 @@
 
 <body class="premium-body">
 
-    <!-- ENCABEZADO -->
-    <header class="premium-header">
-
-        <div class="premium-logo">
-            <a href="{% url 'inicio' %}">FARMA PRICEY</a>
-        </div>
-
-        <nav>
-            <a href="{% url 'inicio' %}">Inicio</a>
-            <a href="{% url 'leer_receta' %}">Leer receta</a>
-            <a href="{% url 'ver_lista' %}">Mi lista</a>
-        </nav>
-
-    </header>
-
+    {% include "partials/navbar.html" %}
 
     <main class="premium-pagina">
 
@@ -87,25 +73,6 @@
 
             </article>
 
-
-            <article class="premium-beneficio">
-
-                <div class="premium-icono">👨‍👩‍👧</div>
-
-                <h2>Perfiles familiares</h2>
-
-                <p>
-                    Crea perfiles para los integrantes de tu familia
-                    y organiza sus medicamentos mediante listas
-                    independientes desde una misma cuenta.
-                </p>
-
-                <span class="premium-disponible">
-                    Incluido en Premium
-                </span>
-
-            </article>
-
         </section>
 
 
@@ -143,12 +110,30 @@
 
 
     <!-- PIE DE PÁGINA -->
-    <footer class="premium-footer">
 
-        <p>
-            © 2026 FARMA PRICEY | Comparar para ahorrar 💗
-        </p>
-
+    <footer>
+        <div class="footer-contenido">
+            <div>
+                <h3>FARMA PRICEY</h3>
+                <p>Compara precios de medicamentos de forma sencilla.</p>
+            </div>
+    
+            <div>
+                <h4>Enlaces</h4>
+                <a href="{% url 'inicio' %}">Inicio</a>
+                <a href="#medicamentos">Medicamentos</a>
+                <a href="#farmacias">Farmacias</a>
+            </div>
+    
+            <div>
+                <h4>Contacto</h4>
+                <p>farmapricey.soporte@gmail.com</p>
+            </div>
+        </div>
+    
+        <div class="footer-bottom">
+            <p>&copy; 2026 FARMA PRICEY. Todos los derechos reservados.</p>
+        </div>
     </footer>
 
 </body>
