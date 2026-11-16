@@ -50,6 +50,11 @@
                 <article class="ficha-producto">
 
                     <div class="producto-imagen">
+                        <img
+                            src="{% url 'imagen_medicamento' medicamento.id %}"
+                            alt="{{ medicamento.nombre }}"
+                            loading="lazy"
+                        >
                     </div>
 
                     <div class="producto-descripcion">

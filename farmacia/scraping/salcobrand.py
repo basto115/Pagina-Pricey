@@ -1,7 +1,7 @@
 import re
 import requests
 from bs4 import BeautifulSoup
-
+from farmacia.scraping.imagenes import extraer_url_imagen
 
 def limpiar_precio(valor):
     """Convierte un precio como '$1.399' en número entero."""
@@ -177,6 +177,8 @@ def obtener_producto(url):
         "presentacion": "",
 
         "precio_internet": precio_internet,
+
+        "imagen_url": extraer_url_imagen(soup, url),
 
         "url": url
     }

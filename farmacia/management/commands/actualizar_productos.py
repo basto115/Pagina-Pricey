@@ -14,7 +14,7 @@ from farmacia.scraping.ahumada import obtener_producto as obtener_ahumada
 from farmacia.scraping.cruz_verde import obtener_producto as obtener_cruz_verde
 from farmacia.scraping.salcobrand import obtener_producto as obtener_salcobrand
 from farmacia.scraping.dr_simi import obtener_producto as obtener_dr_simi
-
+from farmacia.scraping.imagenes import guardar_imagen_producto
 
 SITEMAPS = {
     "Ahumada": [
@@ -278,15 +278,25 @@ class Command(BaseCommand):
 
                     if guardar:
                         with transaction.atomic():
-                            guardar_producto(
+                            producto_guardado = guardar_producto(
                                 datos,
                                 nombre_farmacia,
                                 producto_existente=producto_existente
                             )
-                        guardados += 1
 
-                    time.sleep(0.3)
+                    if datos.get("imagen_url"):
+                        imagen_guardada = guardar_imagen_producto(
+                            datos["imagen_url"],
+                            producto_guardado
+                        )
 
+                        if imagen_guardada:
+                            self.stdout.write(
+                                self.style.SUCCESS("  Imagen guardada correctamente.")
+                            )
+
+                    guardados += 1
+                    
                 except Exception as error:
                     errores += 1
                     self.stderr.write(

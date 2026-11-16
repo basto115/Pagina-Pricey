@@ -5,7 +5,7 @@ import requests
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-
+from farmacia.scraping.imagenes import extraer_url_imagen
 
 BASE_URL = "https://www.drsimi.cl"
 
@@ -338,6 +338,7 @@ def obtener_producto(url):
         "precio": precio,
         "precio_normal": precio_normal,
         "disponible": disponible,
+        "imagen_url": extraer_url_imagen(soup, url),
         "url": url
     }
 

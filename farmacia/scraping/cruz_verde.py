@@ -1,6 +1,8 @@
 import re
 from playwright.sync_api import sync_playwright
 from farmacia.scraping.dr_simi import extraer_principio_activo
+from farmacia.scraping.imagenes import extraer_url_imagen
+from bs4 import BeautifulSoup
 
 def limpiar_precio(valor):
     """Convierte un precio chileno en un número entero."""
@@ -117,7 +119,13 @@ def obtener_producto(url):
                 raise ValueError(
                     "Producto sin precio válido."
                 )
-                
+
+            soup_imagenes = BeautifulSoup(
+                pagina.content(),
+                "html.parser"
+            )
+            imagen_url = extraer_url_imagen(soup_imagenes, url)
+            
             return {
                 "nombre": nombre,
                 "principio_activo": extraer_principio_activo(nombre),
@@ -128,6 +136,7 @@ def obtener_producto(url):
                 "laboratorio": "",
                 "presentacion": "",
                 "url": url,
+                "imagen_url": imagen_url,
             }
 
         finally:

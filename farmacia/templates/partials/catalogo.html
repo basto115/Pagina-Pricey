@@ -10,15 +10,25 @@
         <div class="medicamentos">
             {% for producto in productos %}
                 <article class="medicamento">
-                    <h3>{{ producto.nombre }}</h3>
-
-                    <p class="medicamento-categoria">
-                        <strong>Categoría:</strong>
-                        {{ producto.get_categoria_display|default:producto.categoria }}
-                    </p>
-
-
-                    <h4>Precios por farmacia</h4>
+                    <h3 class="catalogo-nombre">
+                        {{ producto.nombre }}
+                    </h3>
+                    
+                    <div class="catalogo-imagen">
+                        {% if producto.medicamento_id %}
+                            <img
+                                src="{% url 'imagen_medicamento' producto.medicamento_id %}"
+                                alt="{{ producto.nombre }}"
+                                loading="lazy"
+                            >
+                        {% else %}
+                            <img
+                                src="{% url 'imagen_producto' producto.id %}"
+                                alt="{{ producto.nombre }}"
+                                loading="lazy"
+                            >
+                        {% endif %}
+                    </div>
 
                     {% with precios=producto.precios.all %}
                         {% if precios %}

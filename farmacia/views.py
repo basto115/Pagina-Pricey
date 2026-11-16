@@ -17,6 +17,8 @@ from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
+from django.http import HttpResponse
+from farmacia.models import ImagenProducto  
 
 from django.contrib.auth import (
     authenticate,
@@ -1407,3 +1409,53 @@ def editar_cuenta(request):
 
 def vista_premium(request):
     return render(request, "premium.html")
+
+
+@require_GET
+def imagen_medicamento(request, medicamento_id):
+    imagen = get_object_or_404(
+        ImagenProducto.objects.only("imagen", "formato"),
+        medicamento_id=medicamento_id
+    )
+
+    formatos = {
+        "WEBP": "image/webp",
+        "JPEG": "image/jpeg",
+        "PNG": "image/png",
+    }
+
+    response = HttpResponse(
+        bytes(imagen.imagen),
+        content_type=formatos.get(
+            imagen.formato.upper(),
+            "application/octet-stream"
+        )
+    )
+
+    response["Cache-Control"] = "public, max-age=3600"
+    return response
+
+
+@require_GET
+def imagen_producto(request, producto_id):
+    imagen = get_object_or_404(
+        ImagenProducto.objects.only("imagen", "formato"),
+        producto_id=producto_id
+    )
+
+    formatos = {
+        "WEBP": "image/webp",
+        "JPEG": "image/jpeg",
+        "PNG": "image/png",
+    }
+
+    response = HttpResponse(
+        bytes(imagen.imagen),
+        content_type=formatos.get(
+            imagen.formato.upper(),
+            "application/octet-stream"
+        )
+    )
+
+    response["Cache-Control"] = "public, max-age=3600"
+    return response

@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from . import views
 
 urlpatterns = [
     path('', views.inicio, name='inicio'),
@@ -75,6 +76,18 @@ urlpatterns = [
         'api/medicamentos/',
         views.api_medicamentos,
         name='api_medicamentos'
+    ),
+
+    path(
+    "imagen/medicamento/<int:medicamento_id>/",
+    views.imagen_medicamento,
+    name="imagen_medicamento"
+    ),
+
+    path(
+        "imagen/producto/<int:producto_id>/",
+        views.imagen_producto,
+        name="imagen_producto"
     ),
     
     path('leer-receta/', views.leer_receta, name='leer_receta'),

@@ -140,6 +140,57 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
+class ImagenProducto(models.Model):
+    medicamento = models.OneToOneField(
+        Medicamento,
+        on_delete=models.CASCADE,
+        related_name="imagen",
+        null=True,
+        blank=True
+    )
+
+    producto = models.OneToOneField(
+        Producto,
+        on_delete=models.CASCADE,
+        related_name="imagen",
+        null=True,
+        blank=True
+    )
+
+    imagen = models.BinaryField()
+    
+    formato = models.CharField(
+        max_length=20,
+        default="WEBP"
+    )
+
+    actualizado_en = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    models.Q(
+                        medicamento__isnull=False,
+                        producto__isnull=True
+                    )
+                    | models.Q(
+                        medicamento__isnull=True,
+                        producto__isnull=False
+                    )
+                ),
+                name="imagen_medicamento_o_producto"
+            )
+        ]
+
+    def __str__(self):
+        return (
+            f"Imagen de {self.medicamento}"
+            if self.medicamento_id
+            else f"Imagen de {self.producto}"
+        )
 
 class Precio(models.Model):
     producto = models.ForeignKey(

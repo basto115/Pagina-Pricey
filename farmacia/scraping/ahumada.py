@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
+from farmacia.scraping.imagenes import extraer_url_imagen
+
 def limpiar_precio(valor):
     """Convierte precios como '$1.309' en 1309."""
 
@@ -317,7 +319,9 @@ def obtener_producto(url):
         "presentacion": presentacion,
 
         "url": url,
-        
+
+        "imagen_url": extraer_url_imagen(soup, url),
+
         "es_bioequivalente": es_bioequivalente,
     }
 
