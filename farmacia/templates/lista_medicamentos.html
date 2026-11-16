@@ -32,9 +32,24 @@
             {% for item in items %}
                 <article class="medicamento">
 
+                    <div class="catalogo-imagen">
+                        {% if item.producto.medicamento_id %}
+                            <img
+                                src="{% url 'imagen_medicamento' item.producto.medicamento_id %}"
+                                alt="{{ item.producto.nombre }}"
+                                loading="lazy"
+                            >
+                        {% else %}
+                            <img
+                                src="{% url 'imagen_producto' item.producto.id %}"
+                                alt="{{ item.producto.nombre }}"
+                                loading="lazy"
+                            >
+                        {% endif %}
+                    </div>
+
                     <h3>{{ item.producto.nombre }}</h3>
-
-
+                    
                     <div class="cantidad-controles"
                         data-url="{% url 'modificar_cantidad_lista' item.producto.id %}">
                         {% csrf_token %}
