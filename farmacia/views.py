@@ -178,11 +178,35 @@ def detalle_medicamento(request, medicamento_id):
 
     productos = list(medicamento.productos.all())
     
+    
+    #Buscar otras presentaciones con el mismo principio activo
+    productos_relacionados = []
+        
+    if medicamento.principio_activo:
+        productos_relacionados = list(
+            Producto.objects.filter(
+                medicamento__principio_activo__iexact=medicamento.principio_activo
+            )
+            .exclude(medicamento_id=medicamento.id)
+            .prefetch_related(
+                Prefetch(
+                    "precios",
+                    queryset=Precio.objects.select_related(
+                        "farmacia"
+                    ).order_by("precio"),
+                )
+            )
+            .order_by("nombre")
+        )
+        
+    # Productos que aparecerán en el comparador de precios.
+    productos_detalle = productos + productos_relacionados
+    
     # obtener farmacias que tienen precios para tal medicamento
     farmacias_ids = set()
     productos_por_farmacia = {}
 
-    for producto in productos:
+    for producto in productos_detalle:
         for precio in producto.precios.all():
             farmacia_id = precio.farmacia_id
             
@@ -237,7 +261,8 @@ def detalle_medicamento(request, medicamento_id):
         "detalle_medicamento.html",
         {
             "medicamento": medicamento,
-            "productos_detalle": productos,
+            "productos_detalle": productos_detalle,
+            "productos_relacionados": productos_relacionados,
             "farmacias_mapa": farmacias_mapa,
         },
     )
