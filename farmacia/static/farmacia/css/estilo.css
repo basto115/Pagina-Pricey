@@ -3079,3 +3079,69 @@ main .medicamento .cantidad-controles button.btn-eliminar:hover {
     font-size: 14px;
     line-height: 1.6;
 }
+
+/* Contraseñas */
+.auth-password-contenedor {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.auth-password-contenedor input {
+    width: 100%;
+    padding-right: 45px;
+}
+
+.auth-ver-password {
+    position: absolute;
+    right: 12px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+.auth-ayuda-password {
+    display: block;
+    margin-top: 8px;
+    color: var(--texto-secundario);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* Notificaciones */
+.auth-mensaje {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    transition: opacity 0.3s ease;
+}
+
+.auth-mensaje-cerrar {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.auth-mensaje.error {
+    background: #ffe5e5;
+    color: #c62828;
+    border: 1px solid #f5b5b5;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.auth-mensaje.success {
+    background: #e4f7eb;
+    color: #247a45;
+    border: 1px solid #b5e3c5;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.auth-mensaje-cerrar {
+    color: inherit;
+}

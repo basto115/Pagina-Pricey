@@ -408,6 +408,9 @@ def vista_registro(request):
     if request.user.is_authenticated:
         return redirect("inicio")
 
+    nombre_completo = ""
+    correo = ""
+
     if request.method == "POST":
         nombre_completo = request.POST.get("nombre_completo", "").strip()
         correo = request.POST.get("correo", "").strip().lower()
@@ -420,10 +423,7 @@ def vista_registro(request):
             messages.error(request, "Todos los campos son obligatorios.")
 
         elif len(partes_nombre) < 2:
-            messages.error(
-                request,
-                "Ingresa tu nombre y al menos un apellido."
-            )
+            messages.error(request, "Ingresa tu nombre y al menos un apellido.")
 
         elif len(correo) > 150:
             messages.error(
@@ -436,22 +436,13 @@ def vista_registro(request):
                 validate_email(correo)
 
                 if User.objects.filter(email__iexact=correo).exists():
-                    messages.error(
-                        request,
-                        "Ese correo electrónico ya está registrado."
-                    )
+                    messages.error(request, "Ese correo electrónico ya está registrado.")
 
                 elif User.objects.filter(username__iexact=correo).exists():
-                    messages.error(
-                        request,
-                        "Ese correo ya está registrado como usuario."
-                    )
+                    messages.error(request, "Ese correo ya está registrado como usuario.")
 
                 elif contrasena != confirmar:
-                    messages.error(
-                        request,
-                        "Las contraseñas no coinciden."
-                    )
+                    messages.error(request, "Las contraseñas no coinciden.")
 
                 else:
                     usuario = User(
@@ -470,24 +461,40 @@ def vista_registro(request):
                         first_name=partes_nombre[0],
                         last_name=" ".join(partes_nombre[1:])
                     )
+
                     Suscripcion.objects.create(
                         usuario=usuario,
                         es_premium=False
                     )
 
-                    messages.success(
+                    # Iniciar sesión automáticamente
+                    usuario_autenticado = authenticate(
                         request,
-                        "¡Tu cuenta fue creada correctamente! Ya puedes iniciar sesión."
+                        username=correo,
+                        password=contrasena
                     )
 
-                    return redirect("login")
+                    if usuario_autenticado is not None:
+                        login(request, usuario_autenticado)
+                        messages.success(
+                            request,
+                            "¡Tu cuenta fue creada correctamente! Bienvenido/a a FARMA PRICEY."
+                        )
+                        return redirect("inicio")
+
+                    messages.error(
+                        request,
+                        "Tu cuenta fue creada, pero no se pudo iniciar sesión automáticamente."
+                    )
 
             except ValidationError as errores:
                 for error in errores.messages:
                     messages.error(request, error)
 
-    return render(request, "registro.html")
-
+    return render(request, "registro.html", {
+        "nombre_completo": nombre_completo,
+        "correo": correo
+    })
 
 @require_http_methods(["GET", "POST"])
 def vista_login(request):

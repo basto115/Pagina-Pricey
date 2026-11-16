@@ -24,9 +24,12 @@
             {% if messages %}
                 <div class="auth-mensajes">
                     {% for message in messages %}
-                        <p class="auth-mensaje {{ message.tags }}">
-                            {{ message }}
-                        </p>
+                        <div class="auth-mensaje {{ message.tags }}">
+                            <span>{{ message }}</span>
+                            <button type="button" class="auth-mensaje-cerrar" aria-label="Cerrar">
+                                &times;
+                            </button>
+                        </div>
                     {% endfor %}
                 </div>
             {% endif %}
@@ -41,6 +44,7 @@
                         id="nombre-completo"
                         name="nombre_completo"
                         placeholder="Ej: María González"
+                        value="{{ nombre_completo }}"
                         required
                     >
                 </div>
@@ -52,6 +56,7 @@
                         id="correo"
                         name="correo"
                         placeholder="correo@gmail.com"
+                        value="{{ correo }}"
                         autocomplete="email"
                         required
                     >
@@ -59,27 +64,58 @@
 
                 <div class="auth-campo">
                     <label for="contrasena">Contraseña</label>
-                    <input 
-                        type="password"
-                        id="contrasena"
-                        name="contrasena"
-                        placeholder="Crea una contraseña"
-                        autocomplete="new-password"
-                        required
-                    >
+
+                    <div class="auth-password-contenedor">
+                        <input
+                            type="password"
+                            id="contrasena"
+                            name="contrasena"
+                            placeholder="Crea una contraseña"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <button type="button" class="auth-ver-password"
+                                data-target="contrasena" aria-label="Mostrar contraseña">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <small class="auth-ayuda-password">
+                        Tu contraseña debe tener:
+                        <br>• Mínimo 8 caracteres.
+                        <br>• Una letra mayúscula y una minúscula.
+                        <br>• Al menos un número.
+                        <br>• Al menos un carácter especial (por ejemplo: @, #, !).
+                    </small>
                 </div>
 
                 <div class="auth-campo">
-                    <label for="confirmar-contrasena">
-                        Confirmar contraseña</label>
-                    <input 
-                        type="password"
-                        id="confirmar-contrasena"
-                        name="confirmar-contrasena"
-                        placeholder="Repite tu contraseña"
-                        autocomplete="new-password"
-                        required
-                    >
+                    <label for="confirmar-contrasena">Confirmar contraseña</label>
+
+                    <div class="auth-password-contenedor">
+                        <input
+                            type="password"
+                            id="confirmar-contrasena"
+                            name="confirmar-contrasena"
+                            placeholder="Repite tu contraseña"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <button type="button" class="auth-ver-password"
+                                data-target="confirmar-contrasena" aria-label="Mostrar contraseña">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="auth-boton">
@@ -124,6 +160,62 @@
         <p>&copy; 2026 FARMA PRICEY. Todos los derechos reservados.</p>
     </div>
 </footer>
+
+<script>
+    // Mostrar y ocultar contraseñas
+    document.querySelectorAll(".auth-ver-password").forEach(boton => {
+        boton.addEventListener("click", function () {
+            const input = document.getElementById(this.dataset.target);
+
+            if (input.type === "password") {
+                input.type = "text";
+
+                this.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3l18 18"/>
+                        <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                        <path d="M9.9 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3 3.8"/>
+                        <path d="M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7c1.1 0 2.1-.2 3-.5"/>
+                    </svg>
+                `;
+
+                this.setAttribute("aria-label", "Ocultar contraseña");
+
+            } else {
+                input.type = "password";
+
+                this.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                `;
+
+                this.setAttribute("aria-label", "Mostrar contraseña");
+            }
+        });
+    });
+
+
+    // Cerrar notificaciones manualmente
+    document.querySelectorAll(".auth-mensaje-cerrar").forEach(boton => {
+        boton.addEventListener("click", function () {
+            const mensaje = this.closest(".auth-mensaje");
+
+            mensaje.style.opacity = "0";
+
+            setTimeout(() => {
+                mensaje.remove();
+            }, 300);
+        });
+    });
+
+</script>
+        
 
 </body>
 
