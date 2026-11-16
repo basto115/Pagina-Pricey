@@ -127,6 +127,9 @@ async function planificarRutaCompras() {
             compras.map(compra => compra.farmacia)
         );
 
+        const productosSinConfirmar = 
+            datos.precios_sin_disponibilidad_confirmada || [];
+
         // Obtener las farmacias sin duplicados.
         const farmaciasUnicas = [
             ...new Map(
@@ -261,7 +264,7 @@ async function planificarRutaCompras() {
 
             if (productosSinConfirmar.length > 0) {
                 const detalle = productosSinConfirmar.map(producto =>
-                    producto.nombre + " (" + producto.farmacia + ")"
+                    producto.producto + " (" + producto.farmacia + ")"
                 ).join(", ");
 
                 mensajeUbicacion.textContent =
