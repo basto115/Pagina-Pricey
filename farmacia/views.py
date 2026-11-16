@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Q, Prefetch
+from django.db.models import Q, Prefetch, Count
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django.core.paginator import Paginator
@@ -39,13 +39,18 @@ def inicio(request):
 
     categoria_seleccionada = request.GET.get("categoria", "").strip()
 
-    productos = Producto.objects.prefetch_related(
+    productos = Producto.objects.annotate(
+        cantidad_farmacias=Count(
+            "precios__farmacia",
+            distinct=True
+        )
+    ).prefetch_related(
         Prefetch(
             "precios",
             queryset=Precio.objects.select_related("farmacia").order_by("precio"),
         ),
         "medicamento",
-    ).order_by("nombre")
+    ).order_by("-cantidad_farmacias", "nombre")
     
     no_encontrados = []
 
