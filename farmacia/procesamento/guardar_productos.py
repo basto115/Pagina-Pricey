@@ -620,18 +620,23 @@ def buscar_producto_compatible(
     es_bioequivalente,
     laboratorio="",
 ):
-    """Busca productos compatibles usando el índice en memoria."""
+    """Busca productos compatibles usando el índice y una búsqueda de respaldo."""
 
     claves = obtener_clave_marca(nombre)
-
-    if not claves:
-        return None
-
     indice = obtener_indice_productos()
     candidatos = {}
 
-    for clave in claves:
+    # Primera búsqueda: índice por marca.
+    for clave in claves or []:
         for producto in indice.get(clave, []):
+            candidatos[producto.id] = producto
+
+    # Respaldo: revisar productos de la misma categoría.
+    # Evita crear duplicados cuando el índice no encuentra la marca.
+    if not candidatos:
+        for producto in Producto.objects.filter(
+            categoria=categoria
+        ).select_related("medicamento"):
             candidatos[producto.id] = producto
 
     compatibles = []
@@ -650,6 +655,12 @@ def buscar_producto_compatible(
 
     if not compatibles:
         return None
+
+    # Preferir el producto con más precios asociados.
+    compatibles.sort(
+        key=lambda producto: producto.precios.count(),
+        reverse=True,
+    )
 
     return compatibles[0]
 
@@ -761,6 +772,9 @@ def guardar_producto(datos, nombre_farmacia, producto_existente=_BUSQUEDA_NO_REA
             )
 
     farmacia = obtener_farmacia(nombre_farmacia)
+
+    # Evitar duplicados cuando la farmacia repite la misma URL.
+    url_producto = str(datos.get("url") or "").strip()
 
     if producto is None:
         producto = Producto.objects.create(
