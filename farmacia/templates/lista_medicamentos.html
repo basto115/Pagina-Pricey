@@ -114,8 +114,8 @@
                         Todavía no has agregado productos.
                         Explora nuestro catálogo para comenzar.
                     </p>
-                    <a href="{% url 'inicio' %}" class="btn-mediamento">
-                        Explorar productos
+                    <a href="{% url 'inicio' %}" class="btn-medicamento">
+                        <strong>Explorar productos</strong>
                     </a>
 
                 </article>
@@ -237,43 +237,44 @@
             </div>
 
 
-            <section class="seccion-ruta-compras">
-                <h2>Ruta de compra</h2>
-            
-                <div class="instrucciones-ruta">
-                    <span class="instrucciones-ruta-icono"></span>
-            
-                    <p>
-                        ¿Cómo planificar tu ruta?
-                        Obtén tu ubicación, agrega productos a tu lista y presiona
-                        <strong>Planificar ruta de compra</strong>
-                        para visualizar en el mapa el recorrido hacia las farmacias
-                        que tienen los medicamentos de tu lista.
-
-                    </p>
-                </div>
-            
-                <p id="mensaje-ubicacion">
-                    Obtén tu ubicación para planificar tu recorrido.
-                </p>
-
-                
-
-                <button
-                    type="button"
-                    id="btn-planificar-ruta"
-                    class="btn-ruta"
-                >
-                    Planificar ruta de compra
-                </button>
-
-                <div
-                    id="mapa-farmacias"
-                    class="mapa-farmacias"
-                ></div>
-            </section>
-
         {% endif %}
+
+
+        <section class="seccion-ruta-compras">
+            <h2>Ruta de compra</h2>
+        
+            <div class="instrucciones-ruta">
+                <span class="instrucciones-ruta-icono"></span>
+        
+                <p>
+                    ¿Cómo planificar tu ruta?
+                    Obtén tu ubicación, agrega productos a tu lista y presiona
+                    <strong>Planificar ruta de compra</strong>
+                    para visualizar en el mapa el recorrido hacia las farmacias
+                    que tienen los medicamentos de tu lista.
+
+                </p>
+            </div>
+        
+            <p id="mensaje-ubicacion">
+                Obtén tu ubicación para planificar tu recorrido.
+            </p>
+
+            
+
+            <button
+                type="button"
+                id="btn-planificar-ruta"
+                class="btn-ruta"
+            >
+                Planificar ruta de compra
+            </button>
+
+            <div
+                id="mapa-farmacias"
+                class="mapa-farmacias"
+            ></div>
+        </section>
     </section>
 
 </main>
