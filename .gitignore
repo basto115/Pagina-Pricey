@@ -6,3 +6,13 @@ ENV/
 
 #variable de entorno
 .env
+.env.*
+
+#bd antigua
+db.sqlite3
+db.sqlite3-journal
+
+# Archivos Python
+__pycache__/
+*.py[cod]
+*$py.class
