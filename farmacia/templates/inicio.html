@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
     <link rel="icon" type="image/png" href="{% static 'farmacia/img/pandaloool.png' %}">
+    
 
 </head>
 <body>
@@ -28,7 +29,7 @@
 
 <main>
     <section class="buscador">
-        <h2>Encuentra el mejor precio</h2>
+        <h2>¡Encuentra el mejor precio!</h2>
         <p>Busca medicamentos, cosméticos, productos de higiene y más.</p>
         <form method="GET" action="{% url 'inicio' %}">
             <input type="text" name="buscar"
@@ -36,7 +37,17 @@
                    value="{{ busqueda }}">
             <button type="submit">Buscar</button>
         </form>
+        <div class="mensaje-ruta">
+            <span class="mensaje-ruta-icono">🗺️</span>
+            <p>
+                Agrega productos a tu lista, encuentra las farmacias que ofrecen
+                tus medicamentos y visualiza una ruta para organizar tu recorrido
+                y ahorrar tiempo.
+            </p>
+        </div>
+
     </section>
+    
 
     <!-- Filtros por categorías -->
     <section class="filtros-categorias">
@@ -59,6 +70,10 @@
     </section>
 
     {% include "partials/catalogo.html" %}
+
+
+
+    </section>
 
     <section class="farmacias" id="farmacias">
         <h2>Farmacias</h2>
