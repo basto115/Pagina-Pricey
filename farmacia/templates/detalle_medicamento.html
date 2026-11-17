@@ -50,11 +50,19 @@
                 <article class="ficha-producto">
 
                     <div class="producto-imagen">
-                        <img
-                            src="{% url 'imagen_medicamento' medicamento.id %}"
-                            alt="{{ medicamento.nombre }}"
-                            loading="lazy"
-                        >
+                        {% if es_producto_independiente %}
+                            <img
+                                src="{% url 'imagen_producto' medicamento.id %}"
+                                alt="{{ medicamento.nombre }}"
+                                loading="lazy"
+                            >
+                        {% else %}
+                            <img
+                                src="{% url 'imagen_medicamento' medicamento.id %}"
+                                alt="{{ medicamento.nombre }}"
+                                loading="lazy"
+                            >
+                        {% endif %}
                     </div>
 
                     <div class="producto-descripcion">
