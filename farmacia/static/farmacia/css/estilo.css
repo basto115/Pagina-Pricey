@@ -3249,3 +3249,61 @@ main .medicamento .cantidad-controles button.btn-eliminar:hover {
     object-fit: contain;
     object-position: center;
 }
+
+.instrucciones-ruta {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #fff0f6;
+    border: 1px solid #f3c5d9;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 15px 0 20px;
+}
+
+.instrucciones-ruta-icono {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.instrucciones-ruta p {
+    margin: 0;
+    line-height: 1.6;
+    color: #555;
+}
+
+.mensaje-ruta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    max-width: 750px;
+    margin: 20px auto 0;
+    color: white;
+    padding: 15px 0;
+}
+
+.mensaje-ruta-icono {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.mensaje-ruta p {
+    margin: 0;
+    color: white;
+    line-height: 1.6;
+}
+
+.mensaje-ruta {
+    margin-bottom: 0;
+}
+
+.buscador {
+    padding-bottom: 80px;
+}
+
+.buscador {
+    padding-top: px;
+    padding-bottom: 40px;
+}
+
