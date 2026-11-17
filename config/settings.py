@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 import dj_database_url  # type: ignore
 from dotenv import load_dotenv
+import platform
 
 # Rutas del proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -151,7 +152,13 @@ if not DEBUG:
 # Correo electrónico para desarrollo
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-TESSERACT_CMD = os.getenv("TESSERACT_CMD", "tesseract")
+if platform.system() == "Windows":
+    TESSERACT_CMD = os.getenv(
+        "TESSERACT_CMD",
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    )
+else:
+    TESSERACT_CMD = os.getenv("TESSERACT_CMD", "tesseract")
 
 # Configuración de correo electrónico - Brevo
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
