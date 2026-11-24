@@ -1,357 +1,363 @@
-# FARMA PRICEY
+FARMA PRICEY
 
-Aplicación web desarrollada con **Django** que permite consultar medicamentos y comparar sus precios entre distintas cadenas de farmacias en Chile.
+Aplicación web desarrollada con Django que permite consultar medicamentos y comparar sus precios entre distintas cadenas de farmacias en Chile.
 
-FARMA PRICEY busca facilitar el acceso a información sobre medicamentos, permitiendo consultar productos, comparar precios, localizar sucursales cercanas y reconocer medicamentos a partir de imágenes de recetas médicas.
+FARMA PRICEY busca facilitar el acceso a información sobre medicamentos, permitiendo consultar productos, comparar precios, localizar sucursales cercanas, planificar rutas de compra y reconocer medicamentos a partir de imágenes de recetas mediante OCR.
 
-## 1. Funcionalidades principales
+1. Funcionalidades
 
-- **Búsqueda de medicamentos:** búsqueda por nombre comercial, principio activo y coincidencias parciales.
-- **Comparación de precios:** consulta y comparación de precios entre Cruz Verde, Salcobrand, Farmacia Ahumada y Dr. Simi.
-- **Detalle de medicamentos:** información de medicamentos, presentaciones, productos asociados y precios disponibles.
-- **Mi lista:** permite agregar medicamentos, modificar cantidades y comparar el costo de una compra entre farmacias.
-- **Mapas y geolocalización:** visualización de sucursales, ubicación del usuario y planificación de rutas de compra.
-- **Lectura de recetas médicas (OCR):** reconocimiento de texto en imágenes de recetas mediante Tesseract OCR y búsqueda de medicamentos coincidentes en el catálogo.
-- **Autenticación de usuarios:** registro e inicio de sesión, con funcionalidades premium.
-- **Actualización de información:** extracción e incorporación de productos y actualización automatizada de precios.
+Búsqueda de medicamentos: permite buscar por nombre, principio activo y coincidencias parciales.
 
-## 2. Tecnologías utilizadas
+Comparación de precios: consulta y compara los precios de medicamentos entre Cruz Verde, Salcobrand, Farmacia Ahumada y Dr. Simi.
 
-| Tecnología | Uso |
-|---|---|
-| Python 3.12 | Lenguaje principal |
-| Django | Framework backend |
-| HTML5, CSS3 y JavaScript | Desarrollo frontend |
-| PostgreSQL | Base de datos |
-| Neon | Servicio de base de datos PostgreSQL |
-| Git y GitHub | Control de versiones |
-| GitHub Actions | Automatización de actualizaciones |
-| BeautifulSoup | Extracción y procesamiento de información |
-| Playwright | Automatización de navegación durante el scraping |
-| Pillow | Procesamiento de imágenes |
-| Tesseract OCR | Reconocimiento de texto en recetas |
-| pytesseract | Integración de Tesseract con Python |
-| Leaflet | Mapas interactivos |
-| Docker | Contenerización de la aplicación |
-| Gunicorn | Servidor de aplicaciones Django |
-| WhiteNoise | Administración de archivos estáticos |
+Detalle de medicamentos: muestra información del medicamento, productos disponibles, precios por farmacia y enlaces a las tiendas.
 
-## 3. Requisitos previos
+Mi lista: permite agregar medicamentos, modificar cantidades y eliminar productos de una lista.
+
+Comparación de compra: calcula el costo de los productos agrupados por farmacia y permite identificar alternativas de compra al menor precio.
+
+Geolocalización: permite obtener la ubicación del usuario mediante el navegador y visualizar sucursales cercanas.
+
+Mapas y rutas: muestra las farmacias disponibles en el mapa y permite planificar rutas de compra según los medicamentos de la lista.
+
+Reconocimiento de recetas (OCR): permite cargar imágenes de recetas médicas para extraer los nombres de los medicamentos mediante reconocimiento óptico de caracteres.
+
+Registro e inicio de sesión: permite crear cuentas de usuario e iniciar sesión en la plataforma.
+
+Recuperación de contraseña: permite solicitar la recuperación de contraseña mediante correo electrónico.
+
+2. Tecnologías utilizadas
+
+Tecnología
+
+Uso
+
+Python 3.12
+
+Lenguaje principal del proyecto.
+
+Django 6.1.1
+
+Framework para el desarrollo backend.
+
+PostgreSQL
+
+Sistema de gestión de base de datos.
+
+Neon
+
+Servicio de base de datos PostgreSQL en la nube.
+
+HTML5
+
+Estructura de las páginas web.
+
+CSS3
+
+Diseño y estilos de la interfaz.
+
+JavaScript
+
+Interactividad y funcionalidades dinámicas del frontend.
+
+Bootstrap
+
+Diseño adaptable y componentes de interfaz.
+
+Django REST Framework
+
+Desarrollo de endpoints para la consulta de información.
+
+Leaflet
+
+Visualización de mapas interactivos.
+
+OpenStreetMap
+
+Fuente de información geográfica y cartográfica.
+
+Leaflet Routing Machine
+
+Planificación y visualización de rutas.
+
+Leaflet MarkerCluster
+
+Agrupación de marcadores de sucursales en el mapa.
+
+Tesseract OCR
+
+Reconocimiento de texto en imágenes de recetas.
+
+Pytesseract
+
+Integración de Tesseract con Python.
+
+Pillow
+
+Procesamiento de imágenes para el reconocimiento OCR.
+
+BeautifulSoup
+
+Procesamiento y extracción de información durante el scraping.
+
+Requests
+
+Solicitudes HTTP para la obtención de información.
+
+Docker
+
+Contenerización de la aplicación.
+
+Gunicorn
+
+Servidor WSGI para ejecutar Django en producción.
+
+WhiteNoise
+
+Gestión y publicación de archivos estáticos en producción.
+
+Git y GitHub
+
+Control de versiones y almacenamiento del código fuente.
+
+GitHub Actions
+
+Automatización de tareas de actualización de precios.
+
+Render
+
+Plataforma de despliegue de la aplicación.
+
+3. Requisitos previos
 
 Para ejecutar el proyecto localmente se necesita:
 
-- Python 3.12.
-- Git.
-- Acceso a una base de datos PostgreSQL configurada en Neon.
-- Tesseract OCR con el idioma español, para utilizar la lectura de recetas.
-- Docker Desktop, si se desea ejecutar el proyecto mediante contenedores.
+Python 3.12 o superior.
 
-## 4. Instalación del proyecto
+PostgreSQL o una base de datos PostgreSQL alojada en Neon.
 
-### 4.1. Clonar el repositorio
+Git.
 
-```bash
-git clone https://github.com/basto115/Pagina-Pricey.git
-```
+Tesseract OCR instalado en el sistema.
 
-Ingresar a la carpeta del proyecto:
+Un navegador web actualizado.
 
-```bash
+4. Instalación y configuración
+
+4.1 Clonar el repositorio
+
+git clone URL_DEL_REPOSITORIO
 cd Pagina-Pricey
-```
 
-### 4.2. Crear el entorno virtual
+4.2 Crear y activar el entorno virtual
 
-```bash
 python -m venv venv
-```
 
-### 4.3. Activar el entorno virtual
+En Windows:
 
-En Windows PowerShell:
+venv\Scripts\activate
 
-```powershell
-.\venv\Scripts\Activate.ps1
-```
+En Linux o macOS:
 
-### 4.4. Instalar las dependencias
+source venv/bin/activate
 
-```bash
-python -m pip install -r requirements.txt
-```
+4.3 Instalar dependencias
 
-### 4.5. Configurar las variables de entorno
+pip install -r requirements.txt
 
-Crear un archivo `.env` en la raíz del proyecto, donde se encuentra `manage.py`.
+4.4 Configurar variables de entorno
 
-Configurar las variables necesarias:
+Crear un archivo .env en la raíz del proyecto con las siguientes variables:
 
-```env
+# Django
 SECRET_KEY=tu_clave_secreta
 DEBUG=True
-DATABASE_URL=tu_url_de_conexion_postgresql
 ALLOWED_HOSTS=localhost,127.0.0.1
-TESSERACT_CMD=C:\Program Files\Tesseract-OCR\tesseract.exe
-```
 
-Si se utiliza el envío de correos electrónicos mediante SMTP, también se deben configurar:
+# Base de datos
+DATABASE_URL=tu_url_de_postgresql
 
-```env
-EMAIL_HOST=servidor_smtp
+# Tesseract OCR (ruta de instalación en Windows)
+TESSERACT_CMD="C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+# Correo electrónico
+EMAIL_HOST=tu_servidor_smtp
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
-EMAIL_HOST_USER=usuario_smtp
-EMAIL_HOST_PASSWORD=clave_smtp
-DEFAULT_FROM_EMAIL=correo_remitente
-```
+EMAIL_HOST_USER=tu_correo
+EMAIL_HOST_PASSWORD=tu_contraseña
+DEFAULT_FROM_EMAIL=tu_correo
 
-Las variables deben coincidir con las utilizadas en `config/settings.py`.
+Nota: La variable DATABASE_URL debe contener la URL de conexión a la base de datos PostgreSQL. En producción, las variables se configuran directamente en el entorno de Render.
 
-**Importante:** El archivo `.env` contiene credenciales e información sensible. No debe subirse al repositorio ni compartirse públicamente.
+La variable TESSERACT_CMD debe apuntar a la ubicación del ejecutable de Tesseract en el entorno local. En Docker y Render se utiliza tesseract.
 
-## 5. Base de datos y migraciones
+4.5 Aplicar migraciones
 
-El proyecto utiliza PostgreSQL alojado en Neon.
-
-Una vez configurada la conexión mediante `DATABASE_URL`, ejecutar:
-
-```bash
 python manage.py migrate
-```
 
-Para crear un usuario administrador:
+4.6 Ejecutar el servidor
 
-```bash
-python manage.py createsuperuser
-```
-
-La base de datos de Neon contiene la información persistente del proyecto. El archivo SQLite local no se utiliza como base de datos principal.
-
-## 6. Ejecución de la aplicación
-
-Con el entorno virtual activado y las variables de entorno configuradas, ejecutar:
-
-```bash
 python manage.py runserver
-```
 
-Abrir en el navegador:
+La aplicación estará disponible en:
 
-```text
 http://127.0.0.1:8000/
-```
 
-## 7. API REST
+5. API REST
 
-La aplicación dispone de los siguientes endpoints de consulta:
+El proyecto cuenta con endpoints para consultar información relacionada con medicamentos, farmacias y precios.
 
-| Endpoint | Método HTTP | Descripción |
-|---|---|---|
-| `/api/medicamentos/` | GET | Devuelve medicamentos con su identificador, nombre y principio activo. |
-| `/api/farmacias/` | GET | Devuelve información de las farmacias registradas. |
-| `/api/precios/` | GET | Devuelve información de precios, productos, farmacias y disponibilidad. |
+Endpoint
 
-Los tres endpoints están destinados a consultas mediante GET. Las peticiones POST son rechazadas con el código HTTP `405 Method Not Allowed`.
+Descripción
 
-Las respuestas se entregan en formato JSON.
+/api/medicamentos/
 
-## 8. Pruebas automatizadas del backend
+Consulta los medicamentos registrados.
 
-Para ejecutar las pruebas de Django:
+/api/farmacias/
 
-```bash
+Consulta las sucursales de farmacias disponibles.
+
+/api/precios/
+
+Consulta los precios registrados de los productos.
+
+Los endpoints permiten obtener información mediante solicitudes HTTP GET.
+
+6. Pruebas
+
+El proyecto cuenta con pruebas automatizadas para verificar el funcionamiento de diferentes componentes del sistema, incluyendo:
+
+Modelos y relaciones entre entidades.
+
+Consultas y búsqueda de medicamentos.
+
+Gestión de productos y precios.
+
+Endpoints de la API.
+
+Funcionalidades principales de la aplicación.
+
+Para ejecutar las pruebas:
+
 python manage.py test farmacia
-```
 
-Las siete pruebas implementadas comprueban:
+7. Scraping y actualización de información
 
-- La respuesta de los tres endpoints.
-- El rechazo de peticiones POST.
-- El formato JSON de la API de medicamentos.
-- La presencia de un medicamento de prueba en la respuesta.
+FARMA PRICEY incorpora procesos de extracción de información desde los sitios web de las cadenas de farmacias para obtener productos y actualizar sus precios.
 
-Django utiliza una base de datos temporal para ejecutar las pruebas, que se elimina al finalizar.
+Las farmacias consideradas son:
 
-## 9. Extracción y actualización de datos
+Cruz Verde.
 
-El proyecto dispone de comandos de Django para incorporar productos y actualizar precios de las distintas cadenas de farmacias.
+Salcobrand.
 
-### 9.1. Actualización de productos
+Farmacia Ahumada.
 
-El comando `actualizar_productos` permite extraer e incorporar productos desde las fuentes disponibles.
+Dr. Simi.
+
+7.1 Importar productos
+
+El comando actualizar_productos permite obtener e importar productos desde las fuentes configuradas para cada farmacia.
 
 Ejemplo:
 
-```bash
-python manage.py actualizar_productos --farmacia Ahumada --limite 20000 --guardar
-```
+python manage.py actualizar_productos --farmacia Ahumada --limite 1000 --guardar
 
-El parámetro `--farmacia` permite seleccionar la cadena de farmacias y `--limite` establecer la cantidad máxima de productos a procesar.
+7.2 Actualizar precios
 
-El parámetro `--guardar` permite almacenar los resultados en la base de datos.
+El comando actualizar_precios permite consultar los precios de los productos registrados.
 
-### 9.2. Actualización de precios
+Para ejecutar una actualización y guardar los cambios:
 
-El comando `actualizar_precios` permite consultar los precios de los productos registrados.
-
-Vista previa, sin guardar modificaciones:
-
-```bash
-python manage.py actualizar_precios
-```
-
-Guardar los precios obtenidos:
-
-```bash
 python manage.py actualizar_precios --guardar
-```
 
-Se recomienda revisar primero la vista previa para identificar posibles errores de extracción o datos inválidos.
+7.3 Automatización con GitHub Actions
 
-## 10. Automatización con GitHub Actions
+El proyecto utiliza GitHub Actions para automatizar la ejecución del proceso de actualización de precios mediante el flujo de trabajo:
 
-El repositorio cuenta con un flujo de GitHub Actions para ejecutar actualizaciones de precios de manera programada o manual.
-
-Archivo de configuración:
-
-```text
 .github/workflows/actualizar-precios.yml
-```
 
-El flujo instala las dependencias necesarias y ejecuta el comando de actualización utilizando los secretos configurados en GitHub.
+Este proceso permite ejecutar periódicamente la actualización de precios de las farmacias configuradas, además de permitir su ejecución manual desde GitHub Actions.
 
-Para que la automatización funcione, las credenciales requeridas deben estar configuradas en los secretos del repositorio.
+8. Reconocimiento de recetas mediante OCR
 
-No se deben almacenar contraseñas ni credenciales directamente en los archivos de configuración del flujo.
+El sistema incorpora reconocimiento óptico de caracteres (OCR) mediante Tesseract, integrado con Python a través de Pytesseract.
 
-## 11. Configuración de OCR
+Esta funcionalidad permite cargar imágenes de recetas médicas y extraer el texto presente en ellas, identificando los nombres de los medicamentos para facilitar su búsqueda dentro de la plataforma.
 
-El módulo de lectura de recetas utiliza:
+Se utiliza Pillow para el procesamiento de las imágenes y Tesseract OCR con soporte para el idioma español.
 
-- **Tesseract OCR:** motor de reconocimiento de texto.
-- **pytesseract:** integración de Tesseract con Python.
-- **Pillow:** procesamiento y mejora de imágenes.
+9. Arquitectura del sistema
 
-El sistema procesa imágenes de recetas médicas, mejora su contraste y aplica reconocimiento de texto utilizando el idioma español.
+FARMA PRICEY utiliza el patrón arquitectónico MVT (Model-View-Template) proporcionado por Django.
 
-### 11.1. Instalación en Windows
+Model: administra los datos y las relaciones entre medicamentos, productos, precios, farmacias y sucursales.
 
-Instalar Tesseract OCR desde:
+View: procesa las solicitudes, ejecuta la lógica de negocio y entrega la información correspondiente.
 
-https://github.com/UB-Mannheim/tesseract/wiki
+Template: presenta la información al usuario mediante las interfaces desarrolladas con HTML, CSS y JavaScript.
 
-Instalar los datos de idioma español (`spa.traineddata`) desde:
+Esta arquitectura permite mantener separada la gestión de datos, la lógica de la aplicación y la presentación de la información.
 
-https://github.com/tesseract-ocr/tessdata
+10. Docker
 
-El archivo debe estar ubicado en la carpeta `tessdata` de la instalación de Tesseract.
+El proyecto incorpora Docker para contenerizar la aplicación y facilitar su ejecución en distintos entornos.
 
-Configurar la ruta del ejecutable en el archivo `.env`:
+El Dockerfile utiliza una imagen base de Python 3.12-slim e instala las dependencias necesarias para ejecutar Django y Tesseract OCR, incluyendo el soporte para el idioma español.
 
-```env
-TESSERACT_CMD=C:\Program Files\Tesseract-OCR\tesseract.exe
-```
+También se utiliza un archivo .dockerignore para excluir archivos y directorios que no deben incorporarse a la imagen, como el entorno virtual, archivos .env, cachés y archivos temporales.
 
-### 11.2. Verificación de la instalación
+10.1 Construir la imagen
 
-Comprobar que Tesseract esté disponible:
-
-```bash
-tesseract --version
-```
-
-Comprobar los idiomas instalados:
-
-```bash
-tesseract --list-langs
-```
-
-Debe aparecer `spa` entre los idiomas disponibles.
-
-## 12. Ejecución mediante Docker
-
-El proyecto incluye un `Dockerfile` y un `.dockerignore` para construir y ejecutar la aplicación en un entorno Linux mediante contenedores.
-
-La imagen Docker incorpora:
-
-- Python 3.12.
-- Dependencias del proyecto.
-- Tesseract OCR.
-- Datos de idioma español.
-- Configuración de archivos estáticos mediante WhiteNoise.
-- Gunicorn como servidor de aplicaciones.
-
-### 12.1. Construir la imagen
-
-Desde la raíz del proyecto:
-
-```bash
 docker build -t farma-pricey .
-```
 
-### 12.2. Verificar Tesseract dentro del contenedor
+10.2 Ejecutar el contenedor
 
-```bash
-docker run --rm farma-pricey tesseract --version
-```
+docker run --rm --env-file .env -p 8000:10000 farma-pricey
 
-Comprobar los idiomas disponibles:
+En caso de utilizar una configuración local de Tesseract con una ruta de Windows en el archivo .env, se puede sobrescribir la variable al ejecutar el contenedor:
 
-```bash
-docker run --rm farma-pricey tesseract --list-langs
-```
-
-### 12.3. Ejecutar la aplicación
-
-En Windows, si el archivo `.env` contiene una ruta de Tesseract propia del sistema operativo, utilizar:
-
-```powershell
 docker run --rm --env-file .env -e TESSERACT_CMD=tesseract -p 8000:10000 farma-pricey
-```
 
-Abrir:
+La aplicación estará disponible en:
 
-```text
 http://localhost:8000/
-```
 
-El servidor permanece ejecutándose mientras el contenedor esté activo. Para detenerlo, presionar `Ctrl + C` en la terminal.
+11. Despliegue en Render
 
-**Importante:** El contenedor ejecuta las migraciones de Django al iniciar. Debe verificarse que `DATABASE_URL` apunte a la base de datos correcta antes de ejecutarlo.
+FARMA PRICEY se encuentra desplegado en Render utilizando Docker como entorno de ejecución y Neon como servicio de base de datos PostgreSQL.
 
-## 13. Despliegue en Render
+La configuración de producción contempla:
 
-La aplicación está preparada para desplegarse mediante Docker en Render, utilizando Neon como servicio de base de datos PostgreSQL.
+Docker: construcción de la imagen con las dependencias necesarias para ejecutar la aplicación.
 
-La configuración de producción requiere las siguientes variables de entorno:
+Python 3.12: entorno de ejecución del proyecto.
 
-| Variable | Descripción |
-|---|---|
-| `SECRET_KEY` | Clave secreta de Django. |
-| `DEBUG` | Debe establecerse en `False`. |
-| `DATABASE_URL` | URL de conexión a PostgreSQL en Neon. |
-| `ALLOWED_HOSTS` | Dominios autorizados para Django. |
-| `CSRF_TRUSTED_ORIGINS` | Orígenes HTTPS autorizados para solicitudes CSRF. |
-| `TESSERACT_CMD` | Ejecutable de Tesseract; utilizar `tesseract`. |
+Gunicorn: servidor WSGI encargado de ejecutar Django.
 
-Si se utiliza SMTP, también deben configurarse las variables correspondientes al servicio de correo.
+WhiteNoise: gestión de archivos estáticos.
 
-La aplicación utiliza Gunicorn para atender solicitudes y WhiteNoise para servir archivos estáticos.
+Tesseract OCR: instalado dentro del contenedor, con soporte para el idioma español.
 
-El `Dockerfile` se encarga de instalar las dependencias del sistema, recopilar los archivos estáticos y ejecutar las migraciones antes de iniciar el servidor.
+Neon: almacenamiento de la información mediante PostgreSQL.
 
-## 14. Control de versiones
+Variables de entorno: configuración de claves, conexión a la base de datos y credenciales de correo electrónico.
 
-El proyecto utiliza Git y GitHub para mantener el historial de modificaciones y facilitar la colaboración entre los integrantes del equipo.
+Las variables sensibles se configuran desde el apartado de Environment de Render, evitando almacenarlas directamente en el repositorio.
 
-El archivo `.gitignore` excluye archivos y directorios locales, incluyendo:
+12. Control de versiones
 
-- Entornos virtuales.
-- Archivos `.env`.
-- Base de datos SQLite local.
-- Archivos temporales y caché.
-- Archivos generados durante la ejecución.
+El proyecto utiliza Git para el control de versiones y GitHub como plataforma de almacenamiento y colaboración.
 
----
+Para obtener los últimos cambios:
 
-**Repositorio:** https://github.com/basto115/Pagina-Pricey
+git pull origin main
+
+Para registrar nuevos cambios:
+
+git add .
+git commit -m "Descripción de los cambios"
+git push origin main
